@@ -1,0 +1,146 @@
+
+function sysCall_init()
+    planarSnakeCarHandle = sim.getObjectAssociatedWithScript(sim.handle_self)
+    
+    pos = sim.getObjectPosition(planarSnakeCarHandle, -1)
+    orientation = sim.getObjectOrientation(planarSnakeCarHandle, -1)
+
+    -- Number of Joints
+    K = 8
+
+    -- Car Joint Handles
+    carJoints = {}
+    for i=1,K,1 do
+        carJoints[i] = sim.getObjectHandle('Car_joint_'..(i))
+    end
+
+    -- Time since simulation Start
+    t = 0
+ 
+    -- Lenght of one Snake-Car-Module
+    m = 0.35
+
+    -- linear reduction parameters (set y = 0 and z = 1 for disabling)
+    y = 0.5
+    z = 1 - y
+
+    -- Motion Parameters
+
+    lambda = 60*math.pi / 180
+    -- Turning Radius
+    a = 60*math.pi / 180
+
+    -- angular frequency
+    w = math.pi
+
+    p = -0.3
+
+    -- Calculate the mean effective lenght of the snake
+    -- Direction of the n-th Module relative to the head
+    theta = {0}
+    -- Mean Direction of the Snake
+    snakeDir = 0
+
+    for i=1,K,1 do
+        amp = a * ((i - 1) * y / K + z)
+        theta[i + 1] = theta[i] + amp * math.cos(lambda * (i - 1))
+        snakeDir = snakeDir + theta[i + 1]
+    end
+
+    snakeDir = snakeDir / (K + 1)
+
+    -- Mean effective lenght of the snake
+    l = 0
+    for i=1,K+1,1 do
+        l = l + m * math.cos(theta[i] - snakeDir)
+    end
+
+    setTurningRadius(10)
+
+end
+
+function sysCall_actuation()
+    t = t + sim.getSimulationTimeStep()
+
+    -- Calculate and set the Target angle phi for each carJoint except the first
+    for i=2,K,1 do
+        amp = a * ((i - 1) * y / K + z)
+        phi = b + amp * math.cos(w * t - lambda * (i - 1))
+        sim.setJointTargetPosition(carJoints[i], -phi*(1 - math.exp(p * t)))
+    end
+
+    -- Head Orientation Compensation
+    local theta = 0
+    local snakeDir = 0
+
+    for i=2,K,1 do
+        phi = sim.getJointPosition(carJoints[i])
+        theta = theta + phi
+        snakeDir = snakeDir + theta
+    end
+
+    snakeDir = snakeDir/(K+1)
+
+    sim.setJointTargetPosition(carJoints[1], -snakeDir * (1 - math.exp(p * t)))
+
+end
+
+function setTurningRadius(r)
+    b = 0
+    if(r ~= 0) then
+        b = l / (K * r)
+    end
+    print('Changed radius to '..(r))
+end
+
+function sysCall_sensing()
+    -- put your sensing code here
+end
+
+function sysCall_cleanup()
+    -- do some clean-up here
+end
+
+-- You can define additional system calls here:
+--[[
+function sysCall_suspend()
+end
+
+function sysCall_resume()
+end
+
+function sysCall_jointCallback(inData)
+    return outData
+end
+
+function sysCall_contactCallback(inData)
+    return outData
+end
+
+function sysCall_beforeCopy(inData)
+    for key,value in pairs(inData.objectHandles) do
+        print("Object with handle "..key.." will be copied")
+    end
+end
+
+function sysCall_afterCopy(inData)
+    for key,value in pairs(inData.objectHandles) do
+        print("Object with handle "..key.." was copied")
+    end
+end
+
+function sysCall_beforeDelete(inData)
+    for key,value in pairs(inData.objectHandles) do
+        print("Object with handle "..key.." will be deleted")
+    end
+    -- inData.allObjects indicates if all objects in the scene will be deleted
+end
+
+function sysCall_afterDelete(inData)
+    for key,value in pairs(inData.objectHandles) do
+        print("Object with handle "..key.." was deleted")
+    end
+    -- inData.allObjects indicates if all objects in the scene were deleted
+end
+--]]
+
