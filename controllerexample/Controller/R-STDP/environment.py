@@ -48,7 +48,6 @@ class VrepEnvironment:
 			# normalized centroid position
 			self.cx = 2*M['m10']/(M['m00']*img_resolution[1]) - 1.0
 
-		r = self.cx
 		dst = cv.resize(self.img, (200, 200))
 		cv.imshow('image', dst)
 		cv.waitKey(2)
@@ -82,7 +81,7 @@ class VrepEnvironment:
 		self.rate.sleep()
 
 		# Set reward signal
-		r = self.cx
+		r = self.get_linear_reward()
 
 		s = self.get_state()
 		n = self.steps
@@ -108,7 +107,7 @@ class VrepEnvironment:
 		angle = a_l + a_r
 		c = math.sqrt((m_l**2 + m_r**2)/2.0)
 		self.angle_pre = c * angle + (1 - c) * self.angle_pre
-		print c, angle, self.angle_pre
+		# print c, angle, self.angle_pre
 		return self.angle_pre
 
 	def get_turning_radius(self, n_l, n_r):
@@ -135,3 +134,6 @@ class VrepEnvironment:
 						ypos = y//((img_resolution[0] - crop_top - crop_bottom)//resolution[1])
 						new_state[xpos, ypos] += 4
 		return new_state
+
+	def get_linear_reward(self):
+		return self.cx
