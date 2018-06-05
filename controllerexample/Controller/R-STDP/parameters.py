@@ -31,7 +31,7 @@ reward_factor = 0.01				# Reward factor modulating reward signal strength
 A_plus = 1.							# Constant scaling strength of potentiaion
 A_minus = 1.						# Constant scaling strength of depression				
 
-# Steering wheel model
+# Snake turning model
 v_max = 1.5							# Maximum speed
 v_min = 1.							# Minimum speed
 turn_factor = 0.5					# Factor controls turn radius

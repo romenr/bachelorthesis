@@ -81,7 +81,7 @@ class VrepEnvironment:
 		self.rate.sleep()
 
 		# Set reward signal
-		r = self.get_linear_reward()
+		r = self.cx
 
 		s = self.get_state()
 		n = self.steps
@@ -134,6 +134,3 @@ class VrepEnvironment:
 						ypos = y//((img_resolution[0] - crop_top - crop_bottom)//resolution[1])
 						new_state[xpos, ypos] += 4
 		return new_state
-
-	def get_linear_reward(self):
-		return self.cx
