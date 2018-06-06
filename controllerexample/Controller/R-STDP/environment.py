@@ -105,10 +105,8 @@ class VrepEnvironment:
 		a_l = m_l * a_max
 		a_r = m_r * -a_max
 		angle = a_l + a_r
-		c = math.sqrt((m_l**2 + m_r**2)/2.0)
-		self.angle_pre = c * angle + (1 - c) * self.angle_pre
 		# print c, angle, self.angle_pre
-		return self.angle_pre
+		return angle
 
 	def get_turning_radius(self, n_l, n_r):
 		# Snake turning model
