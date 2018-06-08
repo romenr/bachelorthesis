@@ -45,4 +45,4 @@ a_max = math.pi / 2					# Maximum turning angle
 # Other
 reset_distance = 0.2				# Reset distance
 rate = 20.							# ROS publication rate motor speed
-training_length = 10000		    # Lenth of training procedure (1 step ~ 50 ms)
+training_length = 100000		    # Lenth of training procedure (1 step ~ 50 ms)
