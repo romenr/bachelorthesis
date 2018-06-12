@@ -57,7 +57,7 @@ class VrepEnvironment:
 		return
 
 	def reset(self):
-		print "Reset after ", self.steps, " Steps"
+		print "Reset after", self.steps, "Steps"
 		# Reset model
 		self.turn_pre = 0.0
 		self.radius_pub.publish(0.0)
@@ -90,7 +90,7 @@ class VrepEnvironment:
 		# Terminate episode of robot reaches start position again
 		# or reset distance
 		t = self.terminate
-		if t:
+		if t or self.steps == trial_step_max:
 			self.reset()
 			self.steps = 0
 			self.terminate = False
