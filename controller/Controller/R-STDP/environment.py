@@ -57,7 +57,6 @@ class VrepEnvironment:
 		return
 
 	def reset(self):
-		print "Reset after", self.steps, "Steps"
 		# Reset model
 		self.turn_pre = 0.0
 		self.radius_pub.publish(0.0)
@@ -68,6 +67,12 @@ class VrepEnvironment:
 		return np.zeros((resolution[0], resolution[1]), dtype=int), 0.
 
 	def step(self, n_l, n_r):
+
+		if self.terminate:
+			print "Reset after", self.steps, "Steps"
+			self.reset()
+			self.steps = 0
+			self.terminate = False
 
 		self.steps += 1
 
@@ -87,16 +92,11 @@ class VrepEnvironment:
 		n = self.steps
 		lane = self.startLeft
 
-		# Terminate episode of robot reaches start position again
-		# or reset distance
-		t = self.terminate
-		if t or self.steps == trial_step_max:
-			self.reset()
-			self.steps = 0
-			self.terminate = False
+		# Terminate episode at the start of the next Step
+		self.terminate = self.terminate or self.steps >= trial_step_max
 
 		# Return state, distance, position, reward, termination, steps, lane
-		return s, self.cx, r, t, n, lane
+		return s, self.cx, r, self.terminate, n, lane
 
 	def get_turning_angle(self, n_l, n_r):
 		# Snake turning model
