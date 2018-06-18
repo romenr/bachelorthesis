@@ -42,6 +42,9 @@ n_max = sim_time//t_refrac          # Maximum input activity
 r_min = 3.0							# Minimum turning radius
 a_max = math.pi / 2					# Maximum turning angle
 
+# Thermal Vision
+default_temperature = 128			# Default temperature of the simulation
+
 # Other
 reset_distance = 0.2				# Reset distance
 rate = 20.							# ROS publication rate motor speed
