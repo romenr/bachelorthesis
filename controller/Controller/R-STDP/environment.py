@@ -38,7 +38,7 @@ class VrepEnvironment:
 
 		# Get an OpenCV image
 		cv_image = self.bridge.imgmsg_to_cv2(msg, "rgb8")
-		self.img = cv.flip(cv_image, 0)[:, :, 1]			# get red (temperature) channel
+		self.img = cv.flip(cv_image, 0)[:, :, 0]			# get red (temperature) channel
 		M = cv.moments(self.img, True)			# compute image moments for centroid
 		if M['m00'] == 0:
 			self.terminate = True
