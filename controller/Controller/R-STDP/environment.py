@@ -103,11 +103,20 @@ class VrepEnvironment:
 		# Snake turning model
 		m_l = n_l/n_max
 		m_r = n_r/n_max
+
+		if m_l > 1 or m_r > 1:
+			print "Error ", m_l, " or ", m_r, " > 1"
+
 		a_l = m_l * a_max
 		a_r = m_r * -a_max
 		angle = a_l + a_r
+
+		c = 0.1
+
+		self.turn_pre = c * angle + (1 - c) * self.turn_pre
+
 		# print c, angle, self.angle_pre
-		return angle
+		return self.turn_pre
 
 	def get_turning_radius(self, n_l, n_r):
 		# Snake turning model
