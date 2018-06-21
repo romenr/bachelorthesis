@@ -14,8 +14,6 @@ env = VrepEnvironment()
 
 h5f = h5py.File(param.path + '/rstdp_data.h5', 'r')
 
-xlim = 100000
-
 w_l = np.array(h5f['w_l'], dtype=float)
 w_r = np.array(h5f['w_r'], dtype=float)
 w_i = np.array(h5f['w_i'], dtype=float)
@@ -25,6 +23,8 @@ e_i = np.array(h5f['e_i'], dtype=float)
 e_i_i = np.array(h5f['e_i_i'], dtype=float)
 rewards = np.array(h5f['reward'], dtype=float)
 episode_steps = np.array(h5f["episode_steps"], dtype=float)
+
+xlim = w_r.shape[0] * 100
 
 fig = plt.figure(figsize=(7, 8))
 gs = gridspec.GridSpec(3, 1, height_ratios=[1, 2, 2])
