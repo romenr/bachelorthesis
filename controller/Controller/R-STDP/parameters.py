@@ -25,18 +25,18 @@ w_min = 0.							# Minimum weight value
 w_max = 3000.						# Maximum weight value
 w0_min = 200.						# Minimum initial random value
 w0_max = 201.						# Maximum initial random value
+# These tau_n and tau_c parameters are suggested by Izhikevich, E.M. (2007). Solving the distal reward problem
+# through linkage of STDP and dopamine signaling. Cereb. Cortex, 17(10), 2443-2452.
 tau_n = 200.						# Time constant of reward signal
+# Reducing tau_c reduces the variance in the training significantly
 tau_c = 1000.						# Time constant of eligibility trace
+
 reward_factor = 0.01				# Reward factor modulating reward signal strength
+# Reducing these constants reduces the variance in the training significantly
 A_plus = 1.							# Constant scaling strength of potentiaion
-A_minus = 1.						# Constant scaling strength of depression				
+A_minus = 1.						# Constant scaling strength of depression
 
 # Snake turning model
-v_max = 1.5							# Maximum speed
-v_min = 1.							# Minimum speed
-turn_factor = 0.5					# Factor controls turn radius
-turn_pre = 0						# Initial turn speed
-v_pre = v_max						# Initial speed
 n_max = sim_time//t_refrac          # Maximum input activity
 
 r_min = 3.0							# Minimum turning radius
@@ -48,5 +48,5 @@ default_temperature = 128			# Default temperature of the simulation
 # Other
 reset_distance = 0.2				# Reset distance
 rate = 20.							# ROS publication rate motor speed
-training_length = 100000		    # Lenth of training procedure (1 step ~ 50 ms)
-trial_step_max = 4000				# Maximum number of Steps in one Trial
+training_length = 4000		    # Lenth of training procedure (1 step ~ 50 ms)
+trial_step_max = 1000				# Maximum number of Steps in one Trial
