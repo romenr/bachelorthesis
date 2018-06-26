@@ -13,8 +13,8 @@ h5f = h5py.File(param.path + '/rstdp_data.h5', 'r')
 w_l = np.array(h5f['w_l'], dtype=float)
 w_r = np.array(h5f['w_r'], dtype=float)
 print w_l.shape
-weights_l = np.flipud(w_l[-1].T)
-weights_r = np.flipud(w_r[-1].T)
+weights_l = w_l[-1].T
+weights_r = w_r[-1].T
 
 fig = plt.figure(figsize=(6,6))
 
