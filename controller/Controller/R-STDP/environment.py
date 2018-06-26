@@ -11,7 +11,7 @@ from std_msgs.msg import Float32, Bool
 from sensor_msgs.msg import Image
 from parameters import *
 
-sys.path.append('/usr/lib/python2.7/dist-packages') # weil ROS nicht mit Anaconda installiert
+sys.path.append('/usr/lib/python2.7/dist-packages')  # weil ROS nicht mit Anaconda installiert
 
 
 class VrepEnvironment:
@@ -51,6 +51,16 @@ class VrepEnvironment:
 
 		dst = cv.resize(self.img, (200, 200))
 		cv.imshow('image', dst)
+		cv.waitKey(2)
+
+		state = self.get_state()
+		state = np.swapaxes(state, 0, 1)
+		state = np.interp(state, (state.min(), state.max()), (-1, +1))
+
+		im = np.array(state * 255, dtype=np.uint8)
+		img = cv.adaptiveThreshold(im, 255, cv.ADAPTIVE_THRESH_MEAN_C, cv.THRESH_BINARY, 3, 0)
+
+		cv.imshow("state", img)
 		cv.waitKey(2)
 
 		self.imgFlag = True
@@ -104,9 +114,6 @@ class VrepEnvironment:
 		m_l = n_l/n_max
 		m_r = n_r/n_max
 
-		if m_l > 1 or m_r > 1:
-			print "Error ", m_l, " or ", m_r, " > 1"
-
 		a_l = m_l * a_max
 		a_r = m_r * -a_max
 		angle = a_l + a_r
@@ -140,5 +147,5 @@ class VrepEnvironment:
 					if self.img[y + crop_top, x] > 0:
 						xpos = x//(img_resolution[1]//resolution[0])
 						ypos = y//((img_resolution[0] - crop_top - crop_bottom)//resolution[1])
-						new_state[xpos, ypos] += 4
+						new_state[xpos, ypos] += 1
 		return new_state
