@@ -59,4 +59,5 @@ ax4.set_ylabel("Weight")
 
 
 fig.tight_layout()
+plt.savefig('training.png')
 plt.show()
