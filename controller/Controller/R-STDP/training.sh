@@ -25,8 +25,8 @@ python plot_rstdp_training.py -n -f ${data} -o "${dir}/training.png"
 
 # Evaluate the Network
 echo "Checking Network performance, saving results in ${eval}"
-python conroller.py -f ${data} -o ${eval}
+python controller.py -f ${data} -o ${eval}
 
 # Create the Evaluation plots
-#echo "Creating Evaluation plots"
-#python plot_rstdp_eval.py -n -f ${eval} -o "${dir}/eval.png"
+echo "Creating Evaluation plots"
+python plot_rstdp_eval.py -n -f ${eval} -o "${dir}/eval.png"

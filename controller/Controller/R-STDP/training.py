@@ -14,6 +14,7 @@ parser.add_argument('-n', '--noShow', help='Do not show training information in 
 parser.add_argument('-o', '--outputFile', help="Output file", default='./data/rstdp_data.h5')
 args = parser.parse_args()
 
+
 def signal_handler(signal, frame):
 	sys.exit(0)
 signal.signal(signal.SIGINT, signal_handler)

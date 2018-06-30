@@ -10,12 +10,10 @@ import argparse
 # Configure Command Line interface
 parser = argparse.ArgumentParser(description='Plot the final weights and show it in a Window')
 parser.add_argument('-n', '--noShow', help='Do not show the resulting Plot in a window', action="store_true")
-parser.add_argument('-f', '--inputFile', help="Input file", default=param.path + '/rstdp_data.h5')
+parser.add_argument('-f', '--inputFile', help="Input file", default='./data/rstdp_data.h5')
 parser.add_argument('-o', '--outputFile', help="Output file")
 args = parser.parse_args()
 
-# R-STDP training progress
-# Fig. 5.6, Fig. 5.9
 h5f = h5py.File(args.inputFile, 'r')
 
 w_l = np.array(h5f['w_l'], dtype=float)

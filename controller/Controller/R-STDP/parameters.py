@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-import numpy as np
 import math
 
 # Input image
@@ -46,6 +45,6 @@ default_temperature = 128			# Default temperature of the simulation
 # Other
 reset_distance = 0.2				# Reset distance
 rate = 20.							# ROS publication rate motor speed
-training_length = 40000		    # Length of training procedure (1 step ~ 50 ms)
-evaluation_length = 40000		# Length of evaluation procedure
+training_length = 4000		    # Length of training procedure (1 step ~ 50 ms)
+evaluation_length = 4000		# Length of evaluation procedure
 trial_step_max = 2000				# Maximum number of Steps in one Trial

@@ -4,6 +4,7 @@ import sys
 import rospy
 import time
 import cv2 as cv
+import numpy as np
 from cv_bridge import CvBridge, CvBridgeError
 from std_msgs.msg import Float32, Bool
 from sensor_msgs.msg import Image
