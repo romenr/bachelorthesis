@@ -45,7 +45,6 @@ class VrepEnvironment:
 			self.terminate = True
 			self.cx = 0.0
 		else:
-			self.terminate = False
 			# normalized centroid position
 			self.cx = 2*M['m10']/(M['m00']*img_resolution[1]) - 1.0
 
@@ -71,9 +70,7 @@ class VrepEnvironment:
 		# Reset model
 		self.turn_pre = 0.0
 		self.radius_pub.publish(0.0)
-		# Change lane
-		self.startLeft = not self.startLeft
-		self.reset_pub.publish(Bool(self.startLeft))
+		self.terminate = True
 		time.sleep(1)
 		return np.zeros((resolution[0], resolution[1]), dtype=int), 0.
 
@@ -83,6 +80,7 @@ class VrepEnvironment:
 			print "Reset after", self.steps, "Steps"
 			self.reset()
 			self.steps = 0
+			self.reset_pub.publish(True)
 			self.terminate = False
 
 		self.steps += 1
@@ -114,9 +112,7 @@ class VrepEnvironment:
 		m_l = n_l/n_max
 		m_r = n_r/n_max
 
-		a_l = m_l * a_max
-		a_r = m_r * -a_max
-		angle = a_l + a_r
+		angle = a_max * (m_l - m_r)
 
 		c = 0.1
 
