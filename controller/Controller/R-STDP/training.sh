@@ -1,4 +1,7 @@
 #!/bin/bash
+# Uncomment this if you want verbose output. It prints every command before executing it.
+set -x
+
 # Train the network, create plots and save all important data in the directory described by the first Parameter
 dir="data/${1}"
 data="${dir}/training_data.h5"

@@ -55,9 +55,10 @@ ax4.set_xlabel("Step")
 # Plot 5 Distribution of Distance
 ax5 = plt.subplot(gs[1:, 1])
 ax5.hist(distance, 50, density=1, facecolor='g', alpha=0.75)
-ax5.set_ylabel("Probability")
+ax5.set_ylabel("Frequency")
 ax5.set_xlabel("Distance error")
 ax5.grid(True)
+ax5.text(-0.75, 1.50, 'mean = ' + str(np.mean(distance)) + ' variance = ' + str(np.var(distance)))
 
 fig.tight_layout()
 if args.outputFile is not None:

@@ -28,7 +28,7 @@ tau_n = 200.						# Time constant of reward signal
 # Reducing tau_c reduces the variance in the training significantly
 tau_c = 1000.						# Time constant of eligibility trace
 
-reward_factor = 0.01				# Reward factor modulating reward signal strength
+reward_factor = 0.0025				# Reward factor modulating reward signal strength
 # Reducing these constants reduces the variance in the training significantly
 A_plus = 1.						# Constant scaling strength of potentiaion
 A_minus = 1.						# Constant scaling strength of depression
@@ -45,6 +45,6 @@ default_temperature = 128			# Default temperature of the simulation
 # Other
 reset_distance = 0.2				# Reset distance
 rate = 20.							# ROS publication rate motor speed
-training_length = 40000		    # Length of training procedure (1 step ~ 50 ms)
-evaluation_length = 20000		# Length of evaluation procedure
+training_length = 1000		    # Length of training procedure (1 step ~ 50 ms)
+evaluation_length = 1000		# Length of evaluation procedure
 trial_step_max = 2000				# Maximum number of Steps in one Trial

@@ -22,6 +22,7 @@ w_l = np.array(h5f['w_l'], dtype=float)
 w_r = np.array(h5f['w_r'], dtype=float)
 weights_l = w_l[-1].T
 weights_r = w_r[-1].T
+print w_r.shape
 
 fig = plt.figure(figsize=(6,6))
 

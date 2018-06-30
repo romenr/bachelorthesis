@@ -32,7 +32,7 @@ fig = plt.figure(figsize=(7, 8))
 gs = gridspec.GridSpec(3, 1, height_ratios=[1, 2, 2])
 
 ax1 = plt.subplot(gs[0])
-plt.plot(episode_steps)
+ax1.plot(episode_steps)
 ax1.set_ylabel('Time steps')
 ax1.set_xlabel('Episode')
 
