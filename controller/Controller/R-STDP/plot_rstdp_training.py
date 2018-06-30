@@ -2,16 +2,20 @@
 
 import numpy as np
 import h5py
-from environment import *
 import matplotlib.pyplot as plt
 from matplotlib import gridspec
 import parameters as param
+import argparse
+
+# Configure Command Line interface
+parser = argparse.ArgumentParser(description='Plot the final weights and show it in a Window')
+parser.add_argument('-n', '--noShow', help='Do not show the resulting Plot in a window', action="store_true")
+parser.add_argument('-f', '--inputFile', help="Input file", default=param.path + '/rstdp_data.h5')
+parser.add_argument('-o', '--outputFile', help="Output file")
+args = parser.parse_args()
 
 # R-STDP training progress
 # Fig. 5.6, Fig. 5.9
-
-env = VrepEnvironment()
-
 h5f = h5py.File(param.path + '/rstdp_data.h5', 'r')
 
 w_l = np.array(h5f['w_l'], dtype=float)
@@ -59,5 +63,7 @@ ax4.set_ylabel("Weight")
 
 
 fig.tight_layout()
-plt.savefig('training.png')
-plt.show()
+if args.outputFile is not None:
+	plt.savefig(args.outputFile)
+if not args.noShow:
+	plt.show()

@@ -1,12 +1,18 @@
 #!/usr/bin/env python
 
-import numpy as np
 from network import *
 from environment import *
 from parameters import *
 import h5py
 import signal
 import sys
+import argparse
+
+# Configure Command Line interface
+parser = argparse.ArgumentParser(description='Train the model')
+parser.add_argument('-n', '--noShow', help='Do not show training information in additional window', action="store_true")
+parser.add_argument('-o', '--outputFile', help="Output file", default=path + '/rstdp_data.h5')
+args = parser.parse_args()
 
 def signal_handler(signal, frame):
 	sys.exit(0)
@@ -62,7 +68,7 @@ for i in range(training_length):
 		print "Training progress ", (i / (training_length/100)), "%"
 
 # Save data
-h5f = h5py.File(path + '/rstdp_data.h5', 'w')
+h5f = h5py.File(args.outputFile, 'w')
 h5f.create_dataset('w_l', data=weights_l)
 h5f.create_dataset('w_r', data=weights_r)
 h5f.create_dataset('w_i', data=weights_i)

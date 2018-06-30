@@ -2,9 +2,7 @@
 
 import sys
 import rospy
-import math
 import time
-import numpy as np
 import cv2 as cv
 from cv_bridge import CvBridge, CvBridgeError
 from std_msgs.msg import Float32, Bool
@@ -80,7 +78,6 @@ class VrepEnvironment:
 			print "Reset after", self.steps, "Steps"
 			self.reset()
 			self.steps = 0
-			self.reset_pub.publish(True)
 			self.terminate = False
 
 		self.steps += 1
@@ -103,6 +100,9 @@ class VrepEnvironment:
 
 		# Terminate episode at the start of the next Step
 		self.terminate = self.terminate or self.steps >= trial_step_max
+		# Send the Reset now so that the simulation will be reset at the start of the next step
+		if self.terminate:
+			self.reset_pub.publish(True)
 
 		# Return state, distance, position, reward, termination, steps, lane
 		return s, self.cx, r, self.terminate, n, lane

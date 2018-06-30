@@ -7,8 +7,8 @@ path = "./data"			# Path for saving data
 
 # Input image
 img_resolution = [32, 32]			# Original DVS frame resolution
-crop_top = 8						# Crop at the top
-crop_bottom = 8					# Crop at the bottom
+crop_top = 14						# Crop at the top
+crop_bottom = 14					# Crop at the bottom
 resolution = [8, 4]					# Resolution of reduced image
 
 # Network parameters
@@ -33,14 +33,14 @@ tau_c = 1000.						# Time constant of eligibility trace
 
 reward_factor = 0.01				# Reward factor modulating reward signal strength
 # Reducing these constants reduces the variance in the training significantly
-A_plus = 1.							# Constant scaling strength of potentiaion
+A_plus = 1.						# Constant scaling strength of potentiaion
 A_minus = 1.						# Constant scaling strength of depression
 
 # Snake turning model
 n_max = sim_time//t_refrac          # Maximum input activity
 
 r_min = 3.0							# Minimum turning radius
-a_max = math.pi / 2					# Maximum turning angle
+a_max = math.pi/2					# Maximum turning angle
 
 # Thermal Vision
 default_temperature = 128			# Default temperature of the simulation
@@ -48,5 +48,5 @@ default_temperature = 128			# Default temperature of the simulation
 # Other
 reset_distance = 0.2				# Reset distance
 rate = 20.							# ROS publication rate motor speed
-training_length = 4000		    # Lenth of training procedure (1 step ~ 50 ms)
-trial_step_max = 1000				# Maximum number of Steps in one Trial
+training_length = 40000		    # Lenth of training procedure (1 step ~ 50 ms)
+trial_step_max = 2000				# Maximum number of Steps in one Trial
