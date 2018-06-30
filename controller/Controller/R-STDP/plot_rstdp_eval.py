@@ -19,13 +19,13 @@ rewards = np.array(h5f['reward'], dtype=float)
 episode_steps = np.array(h5f["episode_steps"], dtype=int)
 distance = np.array(h5f['distance'], dtype=float)
 
-fig = plt.figure(figsize=(7, 8))
+fig = plt.figure(figsize=(12, 6))
 gs = gridspec.GridSpec(3, 2)
 
 # Calculate Values
 distance_sum = [0]
-for i in range(distance.size[0]):
-	distance_sum.append(distance_sum[i-1] + distance[i])
+for i in range(distance.size):
+	distance_sum.append(distance_sum[i-1] + abs(distance[i]))
 
 
 # Plot 1 Plot Steps in Episode i
@@ -58,3 +58,9 @@ ax5.hist(distance, 50, density=1, facecolor='g', alpha=0.75)
 ax5.set_ylabel("Probability")
 ax5.set_xlabel("Distance error")
 ax5.grid(True)
+
+fig.tight_layout()
+if args.outputFile is not None:
+	plt.savefig(args.outputFile)
+if not args.noShow:
+	plt.show()
