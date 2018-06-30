@@ -15,7 +15,7 @@ sys.path.append('/usr/lib/python2.7/dist-packages')  # weil ROS nicht mit Anacon
 class VrepEnvironment:
 	def __init__(self):
 		self.image_sub = rospy.Subscriber('redImage', Image, self.image_callback)
-		# You can controll the Snake by publishing the Radius OR Angle Publisher
+		# Control the Snake by publishing the Radius OR Angle Publisher
 		self.radius_pub = rospy.Publisher('turningRadius', Float32, queue_size=1)
 		self.angle_pub = rospy.Publisher('turningAngle', Float32, queue_size=1)
 		self.reset_pub = rospy.Publisher('resetRobot', Bool, queue_size=1)
@@ -23,7 +23,6 @@ class VrepEnvironment:
 		self.imgFlag = False
 		self.cx = 0.0
 		self.terminate = False
-		self.startLeft = True
 		self.steps = 0
 		self.turn_pre = 0.0
 		self.angle_pre = 0.0
@@ -96,7 +95,6 @@ class VrepEnvironment:
 
 		s = self.get_state()
 		n = self.steps
-		lane = self.startLeft
 
 		# Terminate episode at the start of the next Step
 		self.terminate = self.terminate or self.steps >= trial_step_max
@@ -105,7 +103,7 @@ class VrepEnvironment:
 			self.reset_pub.publish(True)
 
 		# Return state, distance, position, reward, termination, steps, lane
-		return s, self.cx, r, self.terminate, n, lane
+		return s, self.cx, r, self.terminate, n
 
 	def get_turning_angle(self, n_l, n_r):
 		# Snake turning model
@@ -114,7 +112,7 @@ class VrepEnvironment:
 
 		angle = a_max * (m_l - m_r)
 
-		c = 0.1
+		c = 1
 
 		self.turn_pre = c * angle + (1 - c) * self.turn_pre
 

@@ -11,7 +11,7 @@ import argparse
 # Configure Command Line interface
 parser = argparse.ArgumentParser(description='Train the model')
 parser.add_argument('-n', '--noShow', help='Do not show training information in additional window', action="store_true")
-parser.add_argument('-o', '--outputFile', help="Output file", default=path + '/rstdp_data.h5')
+parser.add_argument('-o', '--outputFile', help="Output file", default='./data/rstdp_data.h5')
 args = parser.parse_args()
 
 def signal_handler(signal, frame):
@@ -20,6 +20,8 @@ signal.signal(signal.SIGINT, signal_handler)
 
 snn = SpikingNeuralNetwork()
 env = VrepEnvironment()
+
+# Variables that will be saved
 weights_r = []
 weights_l = []
 weights_i = []
@@ -37,32 +39,21 @@ for i in range(training_length):
 	
 	# Simulate network for 50 ms
 	# get number of output spikes and network weights
-	n_l, n_r, w_l, w_r = snn.simulate(s,r)
+	# Fix the Reward at 0 to prevent the network from changing
+	n_l, n_r, w_l, w_r = snn.simulate(s, 0)
 
 	# Feed output spikes in steering wheel model
-	# Get state, distance, reward, termination, step, lane
-	s, d, r, t, n, o = env.step(n_l, n_r)
-
-	rewards.append(r)
+	# Get state, distance, reward, termination, step
+	s, d, r, t, n = env.step(n_l, n_r)
 
 	if t:
 		episode_steps.append(n)
 
-	# Save weights every 100 simulation steps
-	if i % 100 == 0:
-		weights_l.append(w_l)
-		weights_r.append(w_r)
-		weights_i.append(i)
-
-	# Save last position if episode is terminated
-	#if t:
-	#	if o:
-	#		episode_position_o.append(p)
-	#		episode_i_o.append(i)
-	#	else:
-	#		episode_position_i.append(p)
-	#		episode_i_i.append(i)
-	#	print i, p
+	# Save weights every simulation step
+	weights_l.append(w_l)
+	weights_r.append(w_r)
+	weights_i.append(i)
+	rewards.append(r)
 
 	if i % (training_length/100) == 0:
 		print "Training progress ", (i / (training_length/100)), "%"
