@@ -57,8 +57,8 @@ for i in range(evaluation_length):
 	reward.append(r)
 	distance.append(d)
 
-	if i % (training_length / 100) == 0:
-		print "Evaluation progress ", (i / (training_length / 100)), "%"
+	if i % (evaluation_length / 100) == 0:
+		print "Evaluation progress ", (i / (evaluation_length / 100)), "%"
 
 # Save performance data
 h5f = h5py.File(args.outputFile, 'w')
