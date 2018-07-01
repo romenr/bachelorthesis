@@ -5,6 +5,7 @@ import h5py
 import matplotlib.pyplot as plt
 from matplotlib import gridspec
 import argparse
+import parameters as param
 
 # Configure Command Line interface
 parser = argparse.ArgumentParser(description='Plot the Controller evaluation results and show it in a Window')
@@ -31,6 +32,7 @@ for i in range(distance.size):
 # Plot 1 Plot Steps in Episode i
 ax1 = plt.subplot(gs[0, 0])
 ax1.plot(episode_steps)
+ax1.plot([0, episode_steps.shape[0]], [param.trial_step_max, param.trial_step_max], color='g', linestyle='--', linewidth=2)
 ax1.set_ylabel("Duration")
 ax1.set_xlabel("Episode")
 
@@ -54,11 +56,11 @@ ax4.set_xlabel("Step")
 
 # Plot 5 Distribution of Distance
 ax5 = plt.subplot(gs[1:, 1])
-ax5.hist(distance, 50, density=1, facecolor='g', alpha=0.75)
+ax5.hist(distance, 50, facecolor='b', alpha=0.75)
 ax5.set_ylabel("Frequency")
 ax5.set_xlabel("Distance error")
 ax5.grid(True)
-ax5.text(-0.75, 1.50, 'mean = ' + str(np.mean(distance)) + ' variance = ' + str(np.var(distance)))
+ax5.text(0.1, 0.9, 'mean = '+str(np.mean(distance))+' variance = '+str(np.var(distance)), transform=ax5.transAxes)
 
 fig.tight_layout()
 if args.outputFile is not None:

@@ -19,11 +19,6 @@ h5f = h5py.File(args.inputFile, 'r')
 w_l = np.array(h5f['w_l'], dtype=float)
 w_r = np.array(h5f['w_r'], dtype=float)
 w_i = np.array(h5f['w_i'], dtype=float)
-e_o = np.array(h5f['e_o'], dtype=float)
-e_i_o = np.array(h5f['e_i_o'], dtype=float)
-e_i = np.array(h5f['e_i'], dtype=float)
-e_i_i = np.array(h5f['e_i_i'], dtype=float)
-rewards = np.array(h5f['reward'], dtype=float)
 episode_steps = np.array(h5f["episode_steps"], dtype=float)
 
 xlim = w_r.shape[0]
