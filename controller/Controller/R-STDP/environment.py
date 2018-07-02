@@ -113,7 +113,7 @@ class VrepEnvironment:
 
 		angle = a_max * (m_l - m_r)
 
-		c = 0.1
+		c = math.sqrt((m_l**2 + m_r**2)/2.0)
 
 		self.turn_pre = c * angle + (1 - c) * self.turn_pre
 
