@@ -72,7 +72,7 @@ class VrepEnvironment:
 		time.sleep(1)
 		return np.zeros((resolution[0], resolution[1]), dtype=int), 0.
 
-	def step(self, n_l, n_r):
+	def step(self, n_l, n_r, t, t_max):
 
 		if self.terminate:
 			print "Reset after", self.steps, "Steps"
@@ -92,7 +92,7 @@ class VrepEnvironment:
 		self.rate.sleep()
 
 		# Set reward signal
-		r = self.cx
+		r = self.get_scaling_linear_reward(t, t_max)
 
 		s = self.get_state()
 		n = self.steps
@@ -105,6 +105,12 @@ class VrepEnvironment:
 
 		# Return state, distance, position, reward, termination, steps, lane
 		return s, self.cx, r, self.terminate, n
+
+	def get_linear_reward(self):
+		return self.cx * reward_factor
+
+	def get_scaling_linear_reward(self, t, t_max):
+		return self.get_linear_reward() * (t_max - t) / t_max
 
 	def get_turning_angle(self, n_l, n_r):
 		# Snake turning model

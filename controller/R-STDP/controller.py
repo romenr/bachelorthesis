@@ -44,11 +44,11 @@ for i in range(evaluation_length):
 	# Simulate network for 50 ms
 	# Get left and right output spikes, get weights
 	# Fix the Reward at 0 to prevent the network from changing
-	n_l, n_r, w_l, w_r = snn.simulate(s, 0)
+	n_l, n_r, w_l, w_r = snn.simulate(s, 0.)
 
 	# Feed output spikes into steering wheel model
 	# Get state, distance, position, reward, termination, step
-	s, d, r, t, n = env.step(n_l, n_r)
+	s, d, r, t, n = env.step(n_l, n_r, i, evaluation_length)
 
 	if t:
 		episode_steps.append(n)

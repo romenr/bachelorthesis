@@ -44,7 +44,7 @@ for i in range(training_length):
 
 	# Feed output spikes in steering wheel model
 	# Get state, distance, reward, termination, step
-	s, d, r, t, n = env.step(n_l, n_r)
+	s, d, r, t, n = env.step(n_l, n_r, i, training_length)
 
 	if t:
 		episode_steps.append(n)
