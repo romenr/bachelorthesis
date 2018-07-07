@@ -25,8 +25,8 @@ distance = np.array(h5f['distance'], dtype=float)
 
 xlim = w_r.shape[0]
 
-fig = plt.figure(figsize=(7, 8))
-gs = gridspec.GridSpec(5, 1, height_ratios=[1, 2, 2])
+fig = plt.figure(figsize=(7, 12))
+gs = gridspec.GridSpec(5, 1, height_ratios=[1, 2, 2, 1, 1])
 
 ax1 = plt.subplot(gs[0])
 ax1.plot(episode_steps)
