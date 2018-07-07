@@ -31,6 +31,7 @@ episode_i_o = []
 episode_position_i = []
 episode_i_i = []
 rewards = []
+distance = []
 episode_steps = []
 
 # Initialize environment, get initial state, initial reward
@@ -54,6 +55,7 @@ for i in range(training_length):
 	weights_r.append(w_r)
 	weights_i.append(i)
 	rewards.append(r)
+	distance.append(d)
 
 	if i % (training_length/100) == 0:
 		print "Training progress ", (i / (training_length/100)), "%"
@@ -68,5 +70,6 @@ h5f.create_dataset('e_i_o', data=episode_i_o)
 h5f.create_dataset('e_i', data=episode_position_i)
 h5f.create_dataset('e_i_i', data=episode_i_i)
 h5f.create_dataset('reward', data=rewards)
+h5f.create_dataset('distance', data=distance)
 h5f.create_dataset('episode_steps', data=episode_steps)
 h5f.close()

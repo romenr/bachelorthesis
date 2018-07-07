@@ -20,39 +20,53 @@ w_l = np.array(h5f['w_l'], dtype=float)
 w_r = np.array(h5f['w_r'], dtype=float)
 w_i = np.array(h5f['w_i'], dtype=float)
 episode_steps = np.array(h5f["episode_steps"], dtype=float)
+rewards = np.array(h5f['reward'], dtype=float)
+distance = np.array(h5f['distance'], dtype=float)
 
 xlim = w_r.shape[0]
 
 fig = plt.figure(figsize=(7, 8))
-gs = gridspec.GridSpec(3, 1, height_ratios=[1, 2, 2])
+gs = gridspec.GridSpec(5, 1, height_ratios=[1, 2, 2])
 
 ax1 = plt.subplot(gs[0])
 ax1.plot(episode_steps)
 ax1.set_ylabel('Time steps')
 ax1.set_xlabel('Episode')
 
-ax3 = plt.subplot(gs[1])
-ax3.set_xlim((0, xlim))
-ax3.set_ylim((param.w_min, param.w_max))
-ax3.set_xticklabels([])
-ax3.text(1000, 2800, 'Left Motor', color='0.4')
-ax3.tick_params(axis='both', which='both', direction='in', bottom=True, top=True, left=True, right=True)
+ax2 = plt.subplot(gs[1])
+ax2.set_xlim((0, xlim))
+ax2.set_ylim((param.w_min, param.w_max))
+ax2.set_xticklabels([])
+ax2.text(1000, 2800, 'Left Motor', color='0.4')
+ax2.tick_params(axis='both', which='both', direction='in', bottom=True, top=True, left=True, right=True)
 for i in range(w_l.shape[1]):
 	for j in range(w_l.shape[2]):
 		plt.plot(w_i, w_l[:, i, j])
-ax3.set_xlabel('Simulation Time [1 step = 50 ms]')
-ax3.set_ylabel("Weight")
+ax2.set_xlabel('Simulation Time [1 step = 50 ms]')
+ax2.set_ylabel("Weight")
 
-ax4 = plt.subplot(gs[2])
-ax4.set_xlim((0, xlim))
-ax4.set_ylim((param.w_min, param.w_max))
-ax4.text(1000, 2800, 'Right Motor', color='0.4')
-ax4.tick_params(axis='both', which='both', direction='in', bottom=True, top=True, left=True, right=True)
+ax3 = plt.subplot(gs[2])
+ax3.set_xlim((0, xlim))
+ax3.set_ylim((param.w_min, param.w_max))
+ax3.text(1000, 2800, 'Right Motor', color='0.4')
+ax3.tick_params(axis='both', which='both', direction='in', bottom=True, top=True, left=True, right=True)
 for i in range(w_r.shape[1]):
 	for j in range(w_r.shape[2]):
 		plt.plot(w_i, w_r[:, i, j])
-ax4.set_xlabel('Simulation Time [1 step = 50 ms]')
-ax4.set_ylabel("Weight")
+ax3.set_xlabel('Simulation Time [1 step = 50 ms]')
+ax3.set_ylabel("Weight")
+
+# Plot 4 Plot Reward at each Step
+ax4 = plt.subplot(gs[3])
+ax4.plot(rewards)
+ax4.set_ylabel("Reward right neuron")
+ax4.set_xlabel("Step")
+
+# Plot 5 Plot Distance between Car and camera center at each Step
+ax5 = plt.subplot(gs[4])
+ax5.plot(distance)
+ax5.set_ylabel("Distance error")
+ax5.set_xlabel("Step")
 
 
 fig.tight_layout()
