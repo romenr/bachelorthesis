@@ -110,7 +110,7 @@ class VrepEnvironment:
 		return self.cx * reward_factor
 
 	def get_scaling_linear_reward(self, t, t_max):
-		return self.get_linear_reward() * (t_max - t) / t_max
+		return self.get_linear_reward() * math.sqrt((float(t_max) - float(t)) / float(t_max))
 
 	def get_turning_angle(self, n_l, n_r):
 		# Snake turning model
