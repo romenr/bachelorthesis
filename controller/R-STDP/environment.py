@@ -20,6 +20,8 @@ class VrepEnvironment:
 		self.radius_pub = rospy.Publisher('turningRadius', Float32, queue_size=1)
 		self.angle_pub = rospy.Publisher('turningAngle', Float32, queue_size=1)
 		self.reset_pub = rospy.Publisher('resetRobot', Bool, queue_size=1)
+		self.angleToTargetSub = rospy.Subscriber('angleToTarget', Float32, self.angle_to_target_callback)
+		self.angleToTarget = 0.
 		self.img = None
 		self.imgFlag = False
 		self.cx = 0.0
@@ -41,10 +43,10 @@ class VrepEnvironment:
 		M = cv.moments(self.img, True)			# compute image moments for centroid
 		if M['m00'] == 0:
 			self.terminate = True
-			self.cx = 0.0
-		else:
+			#self.cx = 0.0
+		#else:
 			# normalized centroid position
-			self.cx = 2*M['m10']/(M['m00']*img_resolution[1]) - 1.0
+			#self.cx = 2*M['m10']/(M['m00']*img_resolution[1]) - 1.0
 
 		dst = cv.resize(self.img, (200, 200))
 		cv.imshow('image', dst)
@@ -63,6 +65,10 @@ class VrepEnvironment:
 		self.imgFlag = True
 
 		return
+
+	def angle_to_target_callback(self, msg):
+		self.angleToTarget = -msg.data
+		self.cx = self.angleToTarget
 
 	def reset(self):
 		# Reset model
