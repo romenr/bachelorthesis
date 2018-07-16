@@ -98,7 +98,8 @@ class VrepEnvironment:
 		self.rate.sleep()
 
 		# Set reward signal
-		r = self.get_scaling_linear_reward(t, t_max)
+		# r = self.get_scaling_linear_reward(t, t_max)
+		r = self.get_linear_reward()
 
 		s = self.get_state()
 		n = self.steps

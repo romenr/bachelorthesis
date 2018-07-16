@@ -53,7 +53,7 @@ ax4 = plt.subplot(gs[0, 1])
 ax4.plot(distance_sum)
 ax4.set_ylabel("Absolute distance error sum")
 ax4.set_xlabel("Step")
-ax4.text(0.1, 0.9, "sum = " + str(np.sum(np.abs(distance))), transform=ax4.transAxes)
+ax4.text(0.1, 0.9, "sum = " + str(distance_sum[-1]), transform=ax4.transAxes)
 
 # Plot 5 Distribution of Distance
 ax5 = plt.subplot(gs[1:, 1])
