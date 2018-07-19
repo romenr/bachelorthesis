@@ -114,7 +114,7 @@ class VrepEnvironment:
 		return s, self.cx, r, self.terminate, n
 
 	def get_linear_reward(self):
-		return self.cx * reward_factor
+		return self.cx
 
 	def get_scaling_linear_reward(self, t, t_max):
 		return self.get_linear_reward() * math.sqrt((float(t_max) - float(t)) / float(t_max))

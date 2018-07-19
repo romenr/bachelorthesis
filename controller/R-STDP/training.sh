@@ -1,6 +1,6 @@
 #!/bin/bash
 # Uncomment this if you want verbose output. It prints every command before executing it.
-#set -x
+set -x
 
 # Train the network, create plots and save all important data in the directory described by the first Parameter
 dir="data/${1}"
@@ -25,6 +25,7 @@ python training.py -o ${data}
 echo "Creating Training Plots"
 python plot_rstdp_weights.py -n -f ${data} -o "${dir}/weights.png"
 python plot_rstdp_training.py -n -f ${data} -o "${dir}/training.png"
+python plot_rstdp_rewards.py -n -f ${data} -o "${dir}/rewards.png"
 
 # Evaluate the Network
 echo "Checking Network performance, saving results in ${eval}"
