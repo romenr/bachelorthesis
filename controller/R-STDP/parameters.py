@@ -4,8 +4,8 @@ import math
 
 # Input image
 img_resolution = [32, 32]			# Original DVS frame resolution
-crop_top = 14						# Crop at the top
-crop_bottom = 14					# Crop at the bottom
+crop_top = 8						# Crop at the top
+crop_bottom = 12					# Crop at the bottom
 resolution = [8, 4]					# Resolution of reduced image
 
 # Network parameters
@@ -28,7 +28,7 @@ tau_n = 200.						# Time constant of reward signal
 # Reducing tau_c reduces the variance in the training significantly
 tau_c = 1000.						# Time constant of eligibility trace
 
-reward_factor = 0.0005				# Reward factor modulating reward signal strength
+reward_factor = 0.01				# Reward factor modulating reward signal strength
 # Reducing these constants reduces the variance in the training significantly
 A_plus = 1.						# Constant scaling strength of potentiaion
 A_minus = 1.						# Constant scaling strength of depression
@@ -47,4 +47,4 @@ reset_distance = 0.2				# Reset distance
 rate = 20.							# ROS publication rate motor speed
 training_length = 40000		    # Length of training procedure (1 step ~ 50 ms)
 evaluation_length = 20000		# Length of evaluation procedure
-trial_step_max = 2000				# Maximum number of Steps in one Trial
+trial_step_max = 5000				# Maximum number of Steps in one Trial

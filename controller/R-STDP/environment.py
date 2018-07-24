@@ -74,15 +74,14 @@ class VrepEnvironment:
 		# Reset model
 		self.turn_pre = 0.0
 		self.radius_pub.publish(0.0)
-		self.terminate = True
-		time.sleep(1)
+		self.reset_pub.publish(True)
+		print "Sending reset signal to simulation"
 		return np.zeros((resolution[0], resolution[1]), dtype=int), 0.
 
 	def step(self, n_l, n_r, t, t_max):
 
 		if self.terminate:
-			print "Reset after", self.steps, "Steps"
-			self.reset()
+			print "Terminate episode after", self.steps, "steps"
 			self.steps = 0
 			self.terminate = False
 
@@ -108,7 +107,7 @@ class VrepEnvironment:
 		self.terminate = self.terminate or self.steps >= trial_step_max
 		# Send the Reset now so that the simulation will be reset at the start of the next step
 		if self.terminate:
-			self.reset_pub.publish(True)
+			self.reset()
 
 		# Return state, distance, position, reward, termination, steps, lane
 		return s, self.cx, r, self.terminate, n
