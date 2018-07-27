@@ -5,8 +5,8 @@ import rospy
 import time
 import cv2 as cv
 import numpy as np
-from cv_bridge import CvBridge, CvBridgeError
-from std_msgs.msg import Float32, Bool
+from cv_bridge import CvBridge
+from std_msgs.msg import Float32, Bool, Int32
 from sensor_msgs.msg import Image
 from parameters import *
 
@@ -14,17 +14,15 @@ sys.path.append('/usr/lib/python2.7/dist-packages')  # weil ROS nicht mit Anacon
 
 
 class VrepEnvironment:
-	def __init__(self):
-		self.image_sub = rospy.Subscriber('redImage', Image, self.image_callback)
+	def __init__(self, path, path_mirrored):
 		# Control the Snake by publishing the Radius OR Angle Publisher
 		self.radius_pub = rospy.Publisher('turningRadius', Float32, queue_size=1)
 		self.angle_pub = rospy.Publisher('turningAngle', Float32, queue_size=1)
 		self.reset_pub = rospy.Publisher('resetRobot', Bool, queue_size=1)
-		self.angleToTargetSub = rospy.Subscriber('angleToTarget', Float32, self.angle_to_target_callback)
-		self.angleToTarget = 0.
+		self.select_path_pub = rospy.Publisher('selectPath', Int32, queue_size=1)
+		self.angleToTarget = 0.0
 		self.img = None
 		self.imgFlag = False
-		self.cx = 0.0
 		self.terminate = False
 		self.steps = 0
 		self.turn_pre = 0.0
@@ -32,6 +30,15 @@ class VrepEnvironment:
 		self.bridge = CvBridge()
 		rospy.init_node('rstdp_controller')
 		self.rate = rospy.Rate(rate)
+		self.path = path
+		self.path_mirrored = path_mirrored
+		self.mirrored = False
+		self.select_path_pub.publish(self.path)
+		self.targetLastSeen = 0
+		# Initialize the subscriber last
+		self.image_sub = rospy.Subscriber('redImage', Image, self.image_callback)
+		self.completedPathSub = rospy.Subscriber('completedPath', Bool, self.path_completed)
+		self.angleToTargetSub = rospy.Subscriber('angleToTarget', Float32, self.angle_to_target_callback)
 
 	def image_callback(self, msg):
 		# Process incoming image data
@@ -42,11 +49,9 @@ class VrepEnvironment:
 		self.img = self.img - default_temperature			# Put the default temperature to 0
 		M = cv.moments(self.img, True)			# compute image moments for centroid
 		if M['m00'] == 0:
-			self.terminate = True
-			#self.cx = 0.0
-		#else:
-			# normalized centroid position
-			#self.cx = 2*M['m10']/(M['m00']*img_resolution[1]) - 1.0
+			self.targetLastSeen += 1
+			if self.targetLastSeen >= reset_steps:
+				self.terminate = True
 
 		dst = cv.resize(self.img, (200, 200))
 		cv.imshow('image', dst)
@@ -67,23 +72,36 @@ class VrepEnvironment:
 		return
 
 	def angle_to_target_callback(self, msg):
-		self.angleToTarget = -msg.data
-		self.cx = self.angleToTarget
+		self.angleToTarget = -msg.data  # Why -msg.data
+
+	def path_completed(self, msg):
+		print "Path completed resetting simulation ..."
+		self.terminate = True
+		self.change_path()
+
+	def change_path(self):
+		if self.mirrored:
+			self.select_path_pub.publish(self.path)
+		else:
+			self.select_path_pub.publish(self.path_mirrored)
+		self.mirrored = not self.mirrored
 
 	def reset(self):
 		# Reset model
+		print "Terminate episode after", self.steps, "steps"
+		self.steps = 0
+		self.targetLastSeen = 0
+		self.terminate = False
 		self.turn_pre = 0.0
 		self.radius_pub.publish(0.0)
 		self.reset_pub.publish(True)
-		print "Sending reset signal to simulation"
+		time.sleep(1)
 		return np.zeros((resolution[0], resolution[1]), dtype=int), 0.
 
-	def step(self, n_l, n_r, t, t_max):
+	def step(self, n_l, n_r):
 
 		if self.terminate:
-			print "Terminate episode after", self.steps, "steps"
-			self.steps = 0
-			self.terminate = False
+			self.reset()
 
 		self.steps += 1
 
@@ -97,26 +115,16 @@ class VrepEnvironment:
 		self.rate.sleep()
 
 		# Set reward signal
-		# r = self.get_scaling_linear_reward(t, t_max)
 		r = self.get_linear_reward()
 
 		s = self.get_state()
 		n = self.steps
 
-		# Terminate episode at the start of the next Step
-		self.terminate = self.terminate or self.steps >= trial_step_max
-		# Send the Reset now so that the simulation will be reset at the start of the next step
-		if self.terminate:
-			self.reset()
-
 		# Return state, distance, position, reward, termination, steps, lane
-		return s, self.cx, r, self.terminate, n
+		return s, self.angleToTarget, r, self.terminate, n
 
 	def get_linear_reward(self):
-		return self.cx
-
-	def get_scaling_linear_reward(self, t, t_max):
-		return self.get_linear_reward() * math.sqrt((float(t_max) - float(t)) / float(t_max))
+		return self.angleToTarget
 
 	def get_turning_angle(self, n_l, n_r):
 		# Snake turning model

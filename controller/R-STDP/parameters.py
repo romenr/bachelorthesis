@@ -4,8 +4,8 @@ import math
 
 # Input image
 img_resolution = [32, 32]			# Original DVS frame resolution
-crop_top = 8						# Crop at the top
-crop_bottom = 12					# Crop at the bottom
+crop_top = 12						# Crop at the top
+crop_bottom = 14					# Crop at the bottom
 resolution = [8, 4]					# Resolution of reduced image
 
 # Network parameters
@@ -37,14 +37,19 @@ A_minus = 1.						# Constant scaling strength of depression
 n_max = sim_time//t_refrac          # Maximum input activity
 
 r_min = 3.0							# Minimum turning radius
-a_max = math.pi/2					# Maximum turning angle
+a_max = math.pi / 2					# Maximum turning angle
 
 # Thermal Vision
 default_temperature = 128			# Default temperature of the simulation
 
 # Other
-reset_distance = 0.2				# Reset distance
+reset_steps = 5					# After how many steps without seeing the target should the simulation reset
 rate = 20.							# ROS publication rate motor speed
 training_length = 40000		    # Length of training procedure (1 step ~ 50 ms)
 evaluation_length = 20000		# Length of evaluation procedure
-trial_step_max = 5000				# Maximum number of Steps in one Trial
+
+# Path numbers
+plus_path = 2					# Simple path in + shape
+plus_path_mirrored = 3
+evaluation_path = 4					# Simple path in + shape
+evaluation_path_mirrored = 5

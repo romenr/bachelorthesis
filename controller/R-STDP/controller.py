@@ -21,7 +21,7 @@ def signal_handler(signal, frame):
 signal.signal(signal.SIGINT, signal_handler)
 
 snn = SpikingNeuralNetwork()
-env = VrepEnvironment()
+env = VrepEnvironment(evaluation_path, evaluation_path_mirrored)
 
 # Read network weights
 h5f = h5py.File(args.inputFile, 'r')
@@ -48,7 +48,7 @@ for i in range(evaluation_length):
 
 	# Feed output spikes into steering wheel model
 	# Get state, distance, position, reward, termination, step
-	s, d, r, t, n = env.step(n_l, n_r, i, evaluation_length)
+	s, d, r, t, n = env.step(n_l, n_r)
 
 	if t:
 		episode_steps.append(n)

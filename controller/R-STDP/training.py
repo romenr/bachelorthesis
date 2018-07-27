@@ -20,7 +20,7 @@ def signal_handler(signal, frame):
 signal.signal(signal.SIGINT, signal_handler)
 
 snn = SpikingNeuralNetwork()
-env = VrepEnvironment()
+env = VrepEnvironment(plus_path, plus_path_mirrored)
 
 # Variables that will be saved
 weights_r = []
@@ -45,7 +45,7 @@ for i in range(training_length):
 
 	# Feed output spikes in steering wheel model
 	# Get state, distance, reward, termination, step
-	s, d, r, t, n = env.step(n_l, n_r, i, training_length)
+	s, d, r, t, n = env.step(n_l, n_r)
 
 	if t:
 		episode_steps.append(n)
