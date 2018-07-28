@@ -4,7 +4,7 @@ import math
 
 # Input image
 img_resolution = [32, 32]			# Original DVS frame resolution
-crop_top = 12						# Crop at the top
+crop_top = 10						# Crop at the top
 crop_bottom = 14					# Crop at the bottom
 resolution = [8, 4]					# Resolution of reduced image
 

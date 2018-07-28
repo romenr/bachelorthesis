@@ -21,21 +21,41 @@ episode_steps = np.array(h5f["episode_steps"], dtype=int)
 distance = np.array(h5f['distance'], dtype=float)
 
 fig = plt.figure(figsize=(12, 6))
-gs = gridspec.GridSpec(3, 1)
+gs = gridspec.GridSpec(3, 2)
 
 # Calculate Values
 distance_sum = [0]
 for i in range(distance.size):
 	distance_sum.append(distance_sum[i-1] + abs(distance[i]))
 
+
+# Plot 1 Plot Steps in Episode i
+ax1 = plt.subplot(gs[0, 0])
+ax1.plot(episode_steps)
+ax1.set_ylabel("Duration")
+ax1.set_xlabel("Episode")
+
+# Plot 2 Plot Reward at each Step
+ax2 = plt.subplot(gs[1, 0])
+ax2.plot(rewards)
+ax2.set_ylabel("Reward right neuron")
+ax2.set_xlabel("Step")
+
 # Plot 3 Plot Distance between Car and camera center at each Step
-ax3 = plt.subplot(gs[0, 0])
+ax3 = plt.subplot(gs[2, 0])
 ax3.plot(distance)
 ax3.set_ylabel("Distance error")
 ax3.set_xlabel("Step")
 
+# Plot 4 Plot Sum Distance between Car and camera center at each Step
+ax4 = plt.subplot(gs[0, 1])
+ax4.plot(distance_sum)
+ax4.set_ylabel("Absolute distance error sum")
+ax4.set_xlabel("Step")
+ax4.text(0.1, 0.9, "sum = " + str(distance_sum[-1]), transform=ax4.transAxes)
+
 # Plot 5 Distribution of Distance
-ax5 = plt.subplot(gs[1:, 0])
+ax5 = plt.subplot(gs[1:, 1])
 ax5.hist(distance, 50, facecolor='b', alpha=0.75)
 ax5.set_ylabel("Frequency")
 ax5.set_xlabel("Distance error")
