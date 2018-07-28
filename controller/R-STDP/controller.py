@@ -37,6 +37,7 @@ snn.set_weights(w_l, w_r)
 reward = []
 angle_to_target = []
 episode_steps = []
+episode_completed = []
 
 # Initialize environment, get state, get reward
 s, r = env.reset()
@@ -49,12 +50,13 @@ for i in range(param.evaluation_length):
 	n_l, n_r, w_l, w_r = snn.simulate(s, 0.)
 
 	# Feed output spikes into snake model
-	# Get state, angle to target, reward, termination, step
-	s, a, r, t, n = env.step(n_l, n_r)
+	# Get state, angle to target, reward, termination, step, path completed
+	s, a, r, t, n, p = env.step(n_l, n_r)
 
 	# Store information that should be saved
 	if t:
 		episode_steps.append(n)
+		episode_completed.append(p)
 	reward.append(r)
 	angle_to_target.append(a)
 
@@ -70,4 +72,5 @@ h5f = h5py.File(path.join(args.dir, param.evaluation_file), 'w')
 h5f.create_dataset('angle_to_target', data=angle_to_target)
 h5f.create_dataset('reward', data=reward)
 h5f.create_dataset('episode_steps', data=episode_steps)
+h5f.create_dataset('episode_completed', data=episode_completed)
 h5f.close()

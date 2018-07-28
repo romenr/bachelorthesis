@@ -36,6 +36,7 @@ episode_i_i = []
 rewards = []
 angle_to_target = []
 episode_steps = []
+episode_completed = []
 
 # Initialize environment, get state, get reward
 s, r = env.reset()
@@ -47,11 +48,12 @@ for i in range(param.training_length):
 	n_l, n_r, w_l, w_r = snn.simulate(s, r)
 
 	# Feed output spikes into snake model
-	# Get state, angle to target, reward, termination, step
-	s, a, r, t, n = env.step(n_l, n_r)
+	# Get state, angle to target, reward, termination, step, path completed
+	s, a, r, t, n, p = env.step(n_l, n_r)
 
 	if t:
 		episode_steps.append(n)
+		episode_completed.append(p)
 	weights_l.append(w_l)
 	weights_r.append(w_r)
 	weights_i.append(i)
@@ -77,6 +79,7 @@ h5f.create_dataset('e_i_i', data=episode_i_i)
 h5f.create_dataset('reward', data=rewards)
 h5f.create_dataset('angle_to_target', data=angle_to_target)
 h5f.create_dataset('episode_steps', data=episode_steps)
+h5f.create_dataset('episode_completed', data=episode_completed)
 h5f.close()
 
 # Save trained weights

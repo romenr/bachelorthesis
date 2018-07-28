@@ -19,6 +19,7 @@ class VrepEnvironment:
 		self.img_set = False
 		self.bridge = CvBridge()
 		self.terminate = False
+		self.path_complete = False
 		self.steps = 0
 		self.target_last_seen = 0
 		self.turn_pre = 0.0
@@ -77,6 +78,7 @@ class VrepEnvironment:
 	def path_completed(self, msg):
 		print "Path completed resetting simulation ..."
 		self.terminate = True
+		self.path_complete = True
 		self.mirrored = not self.mirrored
 
 	def update_path(self):
@@ -91,6 +93,7 @@ class VrepEnvironment:
 		self.steps = 0
 		self.target_last_seen = 0
 		self.terminate = False
+		self.path_complete = False
 		self.turn_pre = 0.0
 		self.radius_pub.publish(0.0)
 		self.reset_pub.publish(True)
@@ -115,8 +118,9 @@ class VrepEnvironment:
 		r = self.get_linear_reward()			# Received reward
 		t = self.terminate						# Episode Terminates
 		n = self.steps							# Current step
+		p = self.path_complete					# Terminated because Path was completed successfully
 
-		return s, a, r, t, n
+		return s, a, r, t, n, p
 
 	def get_linear_reward(self):
 		return self.angle_to_target
