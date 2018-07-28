@@ -1,12 +1,14 @@
 #!/usr/bin/env python
 
-from network import *
-from environment import *
-from parameters import *
+
 import h5py
 import signal
-import sys
 import argparse
+import numpy as np
+from network import SpikingNeuralNetwork
+from environment import VrepEnvironment
+import parameters as param
+
 
 # Configure Command Line interface
 parser = argparse.ArgumentParser(description='Run the model')
@@ -16,22 +18,25 @@ parser.add_argument('-o', '--outputFile', help="Output file", default='./data/co
 args = parser.parse_args()
 
 
+# Stop the Simulation and save results up to that point
 def signal_handler(signal, frame):
-	sys.exit(0)
-signal.signal(signal.SIGINT, signal_handler)
+	global stop_signal_received
+	stop_signal_received = True
 
-snn = SpikingNeuralNetwork()
-env = VrepEnvironment(evaluation_path, evaluation_path_mirrored)
+stop_signal_received = False
+signal.signal(signal.SIGINT, signal_handler)
 
 # Read network weights
 h5f = h5py.File(args.inputFile, 'r')
 w_l = np.array(h5f['w_l'], dtype=float)[-1]
 w_r = np.array(h5f['w_r'], dtype=float)[-1]
-# Set network weights
-snn.set_weights(w_l, w_r)
 h5f.close()
 
-# Variables that will be saved
+snn = SpikingNeuralNetwork()
+env = VrepEnvironment(param.evaluation_path, param.evaluation_path_mirrored)
+snn.set_weights(w_l, w_r)
+
+# Arrays of variables that will be saved
 reward = []
 distance = []
 episode_steps = []
@@ -39,26 +44,29 @@ episode_steps = []
 # Initialize environment, get state, get reward
 s, r = env.reset()
 
-for i in range(evaluation_length):
+for i in range(param.evaluation_length):
 
 	# Simulate network for 50 ms
 	# Get left and right output spikes, get weights
 	# Fix the Reward at 0 to prevent the network from changing
 	n_l, n_r, w_l, w_r = snn.simulate(s, 0.)
 
-	# Feed output spikes into steering wheel model
+	# Feed output spikes into snake model
 	# Get state, distance, position, reward, termination, step
 	s, d, r, t, n = env.step(n_l, n_r)
 
+	# Store information that should be saved
 	if t:
 		episode_steps.append(n)
-
-	# Store position, distance
 	reward.append(r)
 	distance.append(d)
 
-	if i % (evaluation_length / 100) == 0:
-		print "Evaluation progress ", (i / (evaluation_length / 100)), "%"
+	# Print progress
+	if i % (param.evaluation_length / 100) == 0:
+		print "Evaluation progress ", (i / (param.evaluation_length / 100)), "%"
+
+	if stop_signal_received:
+		break
 
 # Save performance data
 h5f = h5py.File(args.outputFile, 'w')
