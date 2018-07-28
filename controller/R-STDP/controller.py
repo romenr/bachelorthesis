@@ -4,15 +4,14 @@ import h5py
 import signal
 import argparse
 import numpy as np
+from os import path
 from network import SpikingNeuralNetwork
 from environment import VrepEnvironment
 import parameters as param
 
 # Configure Command Line interface
 parser = argparse.ArgumentParser(description='Run the model')
-parser.add_argument('-n', '--noShow', help='Do not show training information in additional window', action="store_true")
-parser.add_argument('-f', '--inputFile', help="Input file", default='./data/rstdp_data.h5')
-parser.add_argument('-o', '--outputFile', help="Output file", default='./data/controller_data.h5')
+parser.add_argument('dir', help='Base directory of the experiment eg. ./data/session_xyz', default=param.default_dir)
 args = parser.parse_args()
 
 
@@ -25,9 +24,9 @@ stop_signal_received = False
 signal.signal(signal.SIGINT, signal_handler)
 
 # Read network weights
-h5f = h5py.File(args.inputFile, 'r')
-w_l = np.array(h5f['w_l'], dtype=float)[-1]
-w_r = np.array(h5f['w_r'], dtype=float)[-1]
+h5f = h5py.File(path.join(args.dir, param.weights_file), 'r')
+w_l = np.array(h5f['w_l'], dtype=float)
+w_r = np.array(h5f['w_r'], dtype=float)
 h5f.close()
 
 snn = SpikingNeuralNetwork()
@@ -67,7 +66,7 @@ for i in range(param.evaluation_length):
 		break
 
 # Save performance data
-h5f = h5py.File(args.outputFile, 'w')
+h5f = h5py.File(path.join(args.dir, param.evaluation_file), 'w')
 h5f.create_dataset('angle_to_target', data=angle_to_target)
 h5f.create_dataset('reward', data=reward)
 h5f.create_dataset('episode_steps', data=episode_steps)

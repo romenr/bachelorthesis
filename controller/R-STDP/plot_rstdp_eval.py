@@ -4,17 +4,17 @@ import numpy as np
 import h5py
 import matplotlib.pyplot as plt
 from matplotlib import gridspec
+from os import path
 import argparse
 import parameters as param
 
 # Configure Command Line interface
 parser = argparse.ArgumentParser(description='Plot the Controller evaluation results and show it in a Window')
 parser.add_argument('-n', '--noShow', help='Do not show the resulting Plot in a window', action="store_true")
-parser.add_argument('-f', '--inputFile', help="Input file", default='./data/controller_data.h5')
-parser.add_argument('-o', '--outputFile', help="Output file")
+parser.add_argument('dir', help='Base directory of the experiment eg. ./data/session_xyz', default=param.default_dir)
 args = parser.parse_args()
 
-h5f = h5py.File(args.inputFile, 'r')
+h5f = h5py.File(path.join(args.dir, param.evaluation_file), 'r')
 
 rewards = np.array(h5f['reward'], dtype=float)
 episode_steps = np.array(h5f["episode_steps"], dtype=int)
@@ -63,7 +63,6 @@ ax5.grid(True)
 ax5.text(0.1, 0.9, 'mean = '+str(np.mean(angle_to_target))+' variance = '+str(np.var(angle_to_target)), transform=ax5.transAxes)
 
 fig.tight_layout()
-if args.outputFile is not None:
-	plt.savefig(args.outputFile)
+plt.savefig(path.join(args.dir, "eval.png"))
 if not args.noShow:
 	plt.show()

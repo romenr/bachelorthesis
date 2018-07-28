@@ -2,6 +2,12 @@
 
 import math
 
+# Save file Options
+default_dir = './data/default'				# Default dir if scrips are called without dir
+weights_file = 'weights.h5'				# Trained weights
+training_file = 'training_data.h5'			# Results from training
+evaluation_file = 'evaluation_data.h5'		# Results from evaluation
+
 # Input image
 img_resolution = [32, 32]			# Original DVS frame resolution
 crop_top = 10						# Crop at the top

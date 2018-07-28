@@ -4,17 +4,17 @@ import numpy as np
 import h5py
 import matplotlib.pyplot as plt
 from matplotlib import gridspec
+from os import path
 import parameters as param
 import argparse
 
 # Configure Command Line interface
 parser = argparse.ArgumentParser(description='Plot the final weights and show it in a Window')
 parser.add_argument('-n', '--noShow', help='Do not show the resulting Plot in a window', action="store_true")
-parser.add_argument('-f', '--inputFile', help="Input file", default='./data/rstdp_data.h5')
-parser.add_argument('-o', '--outputFile', help="Output file")
+parser.add_argument('dir', help='Base directory of the experiment eg. ./data/session_xyz', default=param.default_dir)
 args = parser.parse_args()
 
-h5f = h5py.File(args.inputFile, 'r')
+h5f = h5py.File(path.join(args.dir, param.training_file), 'r')
 
 w_l = np.array(h5f['w_l'], dtype=float)
 w_r = np.array(h5f['w_r'], dtype=float)
@@ -41,7 +41,6 @@ ax1.set_xlabel('Simulation Time [1 step = 50 ms]')
 ax1.set_ylabel("Weight")
 
 fig.tight_layout()
-if args.outputFile is not None:
-	plt.savefig(args.outputFile)
+plt.savefig(path.join(args.dir, "single.png"))
 if not args.noShow:
 	plt.show()

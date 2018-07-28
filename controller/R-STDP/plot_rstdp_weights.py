@@ -5,13 +5,13 @@ import h5py
 import matplotlib.pyplot as plt
 import parameters as param
 from matplotlib import gridspec
+from os import path
 import argparse
 
 # Configure Command Line interface
 parser = argparse.ArgumentParser(description='Plot Training progress and show it in a Window')
 parser.add_argument('-n', '--noShow', help='Do not show the resulting Plot in a window', action="store_true")
-parser.add_argument('-f', '--inputFile', help="Input file", default='./data/rstdp_data.h5')
-parser.add_argument('-o', '--outputFile', help="Output file")
+parser.add_argument('dir', help='Base directory of the experiment eg. ./data/session_xyz', default=param.default_dir)
 args = parser.parse_args()
 
 
@@ -24,7 +24,7 @@ def plot_weights(ax, weights):
 	for (j, i), label in np.ndenumerate(weights):
 		ax.text(i, j, int(label), ha='center', va='center')
 
-h5f = h5py.File(args.inputFile, 'r')
+h5f = h5py.File(path.join(args.dir, param.training_file), 'r')
 
 w_l = np.array(h5f['w_l'], dtype=float)
 w_r = np.array(h5f['w_r'], dtype=float)
@@ -63,7 +63,6 @@ ax6 = plt.subplot(gs[2, 1])
 plot_weights(ax6, weights_r2)
 
 fig.tight_layout()
-if args.outputFile is not None:
-	plt.savefig(args.outputFile)
+plt.savefig(path.join(args.dir, "weights.png"))
 if not args.noShow:
 	plt.show()
