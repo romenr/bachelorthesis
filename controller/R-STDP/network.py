@@ -2,16 +2,16 @@
 
 import nest
 import numpy as np
-import pylab
 import parameters as p
 
-class SpikingNeuralNetwork():
+
+class SpikingNeuralNetwork:
 	def __init__(self):
 		# NEST options
 		np.set_printoptions(precision=1)
 		nest.set_verbosity('M_WARNING')
 		nest.ResetKernel()
-		nest.SetKernelStatus({"local_num_threads" : 1, "resolution" : p.time_resolution})
+		nest.SetKernelStatus({"local_num_threads": 1, "resolution": p.time_resolution})
 		# Create Poisson neurons
 		self.spike_generators = nest.Create("poisson_generator", p.resolution[0]*p.resolution[1], params=p.poisson_params)
 		self.neuron_pre = nest.Create("parrot_neuron", p.resolution[0]*p.resolution[1])

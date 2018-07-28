@@ -30,7 +30,7 @@ tau_c = 1000.						# Time constant of eligibility trace
 
 reward_factor = 0.01				# Reward factor modulating reward signal strength
 # Reducing these constants reduces the variance in the training significantly
-A_plus = 1.						# Constant scaling strength of potentiaion
+A_plus = 1.							# Constant scaling strength of potentiaion
 A_minus = 1.						# Constant scaling strength of depression
 
 # Snake turning model
@@ -49,7 +49,7 @@ training_length = 4000		    	# Length of training procedure (1 step ~ 50 ms)
 evaluation_length = 2000			# Length of evaluation procedure
 
 # Path numbers
-plus_path = 2					# Simple path in + shape
+plus_path = 2						# Simple path in + shape
 plus_path_mirrored = 3
 evaluation_path = 4					# Simple path in + shape
 evaluation_path_mirrored = 5

@@ -1,12 +1,11 @@
 #!/usr/bin/env python
 
-from network import *
-from environment import *
-from parameters import *
 import h5py
 import signal
-import sys
 import argparse
+import parameters as param
+from network import SpikingNeuralNetwork
+from environment import VrepEnvironment
 
 # Configure Command Line interface
 parser = argparse.ArgumentParser(description='Train the model')
@@ -15,14 +14,18 @@ parser.add_argument('-o', '--outputFile', help="Output file", default='./data/rs
 args = parser.parse_args()
 
 
+# Stop the Simulation and save results up to that point
 def signal_handler(signal, frame):
-	sys.exit(0)
+	global stop_signal_received
+	stop_signal_received = True
+
+stop_signal_received = False
 signal.signal(signal.SIGINT, signal_handler)
 
 snn = SpikingNeuralNetwork()
-env = VrepEnvironment(plus_path, plus_path_mirrored)
+env = VrepEnvironment(param.plus_path, param.plus_path_mirrored)
 
-# Variables that will be saved
+# Arrays of variables that will be saved
 weights_r = []
 weights_l = []
 weights_i = []
@@ -34,13 +37,13 @@ rewards = []
 angle_to_target = []
 episode_steps = []
 
-# Initialize environment, get initial state, initial reward
+# Initialize environment, get state, get reward
 s, r = env.reset()
 
-for i in range(training_length):
+for i in range(param.training_length):
 	
 	# Simulate network for 50 ms
-	# get number of output spikes and network weights
+	# Get left and right output spikes, get weights
 	n_l, n_r, w_l, w_r = snn.simulate(s, r)
 
 	# Feed output spikes into snake model
@@ -49,18 +52,20 @@ for i in range(training_length):
 
 	if t:
 		episode_steps.append(n)
-
-	# Save weights every simulation step
 	weights_l.append(w_l)
 	weights_r.append(w_r)
 	weights_i.append(i)
 	rewards.append(r)
 	angle_to_target.append(a)
 
-	if i % (training_length/100) == 0:
-		print "Training progress ", (i / (training_length/100)), "%"
+	# Print progress
+	if i % (param.training_length/100) == 0:
+		print "Training progress ", (i / (param.training_length/100)), "%"
 
-# Save data
+	if stop_signal_received:
+		break
+
+# Save performance data
 h5f = h5py.File(args.outputFile, 'w')
 h5f.create_dataset('w_l', data=weights_l)
 h5f.create_dataset('w_r', data=weights_r)

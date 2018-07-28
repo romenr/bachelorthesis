@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-
 import h5py
 import signal
 import argparse
@@ -8,7 +7,6 @@ import numpy as np
 from network import SpikingNeuralNetwork
 from environment import VrepEnvironment
 import parameters as param
-
 
 # Configure Command Line interface
 parser = argparse.ArgumentParser(description='Run the model')
