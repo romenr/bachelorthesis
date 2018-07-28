@@ -10,69 +10,69 @@ from std_msgs.msg import Float32, Bool, Int32
 from sensor_msgs.msg import Image
 from parameters import *
 
-sys.path.append('/usr/lib/python2.7/dist-packages')  # weil ROS nicht mit Anaconda installiert
+sys.path.append('/usr/lib/python2.7/dist-packages')
 
 
 class VrepEnvironment:
 	def __init__(self, path, path_mirrored):
+		self.img = None
+		self.img_set = False
+		self.bridge = CvBridge()
+		self.terminate = False
+		self.steps = 0
+		self.target_last_seen = 0
+		self.turn_pre = 0.0
+		self.angle_pre = 0.0
+		self.angle_to_target = 0.0
+		self.path = path
+		self.path_mirrored = path_mirrored
+		self.mirrored = False
+
+		# Ros Node rstdp_controller setup
 		# Control the Snake by publishing the Radius OR Angle Publisher
 		self.radius_pub = rospy.Publisher('turningRadius', Float32, queue_size=1)
 		self.angle_pub = rospy.Publisher('turningAngle', Float32, queue_size=1)
 		self.reset_pub = rospy.Publisher('resetRobot', Bool, queue_size=1)
 		self.select_path_pub = rospy.Publisher('selectPath', Int32, queue_size=1)
-		self.angleToTarget = 0.0
-		self.img = None
-		self.imgFlag = False
-		self.terminate = False
-		self.steps = 0
-		self.turn_pre = 0.0
-		self.angle_pre = 0.0
-		self.bridge = CvBridge()
+		self.image_sub = rospy.Subscriber('redImage', Image, self.image_callback)
+		self.path_completed_sub = rospy.Subscriber('completedPath', Bool, self.path_completed)
+		self.angle_to_target_sub = rospy.Subscriber('angleToTarget', Float32, self.angle_to_target_callback)
 		rospy.init_node('rstdp_controller')
 		self.rate = rospy.Rate(rate)
-		self.path = path
-		self.path_mirrored = path_mirrored
-		self.mirrored = False
+
+		# Publish initial path
 		self.select_path_pub.publish(self.path)
-		self.targetLastSeen = 0
-		# Initialize the subscriber last
-		self.image_sub = rospy.Subscriber('redImage', Image, self.image_callback)
-		self.completedPathSub = rospy.Subscriber('completedPath', Bool, self.path_completed)
-		self.angleToTargetSub = rospy.Subscriber('angleToTarget', Float32, self.angle_to_target_callback)
 
 	def image_callback(self, msg):
-		# Process incoming image data
-
-		# Get an OpenCV image
 		cv_image = self.bridge.imgmsg_to_cv2(msg, "rgb8")
-		self.img = cv.flip(cv_image, 0)[:, :, 0]			# get red (temperature) channel
-		self.img = self.img - default_temperature			# Put the default temperature to 0
-		M = cv.moments(self.img, True)			# compute image moments for centroid
+		cv_image = cv.flip(cv_image, 0)[:, :, 0]			# get red (temperature) channel
+		self.img = cv_image - default_temperature			# Put the default temperature to 0
+		self.img_set = True
+		M = cv.moments(self.img, True)						# compute image moments
 		if M['m00'] == 0:
-			self.targetLastSeen += 1
-			if self.targetLastSeen >= reset_steps:
+			# If there is nothing visible
+			self.target_last_seen += 1
+			if self.target_last_seen >= reset_steps:
 				self.terminate = True
+		else:
+			self.target_last_seen = 0
 
+		# Show the black and white image that the snake sees
 		dst = cv.resize(self.img, (200, 200))
 		cv.imshow('image', dst)
 		cv.waitKey(2)
 
+		# Interpret and show state as a black and white image
 		state = self.get_state()
 		state = np.swapaxes(state, 0, 1)
 		state = np.interp(state, (state.min(), state.max()), (-1, +1))
-
 		im = np.array(state * 255, dtype=np.uint8)
 		img = cv.adaptiveThreshold(im, 255, cv.ADAPTIVE_THRESH_MEAN_C, cv.THRESH_BINARY, 3, 0)
-
 		cv.imshow("state", img)
 		cv.waitKey(2)
 
-		self.imgFlag = True
-
-		return
-
 	def angle_to_target_callback(self, msg):
-		self.angleToTarget = -msg.data  # Why -msg.data
+		self.angle_to_target = -msg.data  # Why -msg.data
 
 	def path_completed(self, msg):
 		print "Path completed resetting simulation ..."
@@ -90,7 +90,7 @@ class VrepEnvironment:
 		# Reset model
 		print "Terminate episode after", self.steps, "steps"
 		self.steps = 0
-		self.targetLastSeen = 0
+		self.target_last_seen = 0
 		self.terminate = False
 		self.turn_pre = 0.0
 		self.radius_pub.publish(0.0)
@@ -105,39 +105,29 @@ class VrepEnvironment:
 
 		self.steps += 1
 
-		# Publish turning radius
-		# radius = self.get_turning_radius(n_l, n_r)
-		# self.radius_pub.publish(radius)
-
-		# Publish turning angle
+		# Publish turning angle and sleep for ~50ms
 		angle = self.get_turning_angle(n_l, n_r)
 		self.angle_pub.publish(angle)
 		self.rate.sleep()
 
-		# Set reward signal
-		r = self.get_linear_reward()
+		s = self.get_state()					# New state
+		a = self.angle_to_target				# Angle to target (error angle)
+		r = self.get_linear_reward()			# Received reward
+		t = self.terminate						# Episode Terminates
+		n = self.steps							# Current step
 
-		s = self.get_state()
-		n = self.steps
-
-		# Return state, distance, position, reward, termination, steps, lane
-		return s, self.angleToTarget, r, self.terminate, n
+		return s, a, r, t, n
 
 	def get_linear_reward(self):
-		return self.angleToTarget
+		return self.angle_to_target
 
 	def get_turning_angle(self, n_l, n_r):
 		# Snake turning model
 		m_l = n_l/n_max
 		m_r = n_r/n_max
-
 		angle = a_max * (m_l - m_r)
-
 		c = math.sqrt((m_l**2 + m_r**2)/2.0)
-
 		self.turn_pre = c * angle + (1 - c) * self.turn_pre
-
-		# print c, angle, self.angle_pre
 		return self.turn_pre
 
 	def get_turning_radius(self, n_l, n_r):
@@ -156,7 +146,7 @@ class VrepEnvironment:
 	def get_state(self):
 		new_state = np.zeros((resolution[0], resolution[1]), dtype=int)  # 8x4
 		# bring the red filtered image in the form of the state
-		if self.imgFlag:
+		if self.img_set:
 			for y in range(img_resolution[0] - crop_top - crop_bottom):
 				for x in range(img_resolution[1]):				
 					if self.img[y + crop_top, x] > 0:

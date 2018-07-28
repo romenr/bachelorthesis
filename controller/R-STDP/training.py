@@ -31,7 +31,7 @@ episode_i_o = []
 episode_position_i = []
 episode_i_i = []
 rewards = []
-distance = []
+angle_to_target = []
 episode_steps = []
 
 # Initialize environment, get initial state, initial reward
@@ -43,9 +43,9 @@ for i in range(training_length):
 	# get number of output spikes and network weights
 	n_l, n_r, w_l, w_r = snn.simulate(s, r)
 
-	# Feed output spikes in steering wheel model
-	# Get state, distance, reward, termination, step
-	s, d, r, t, n = env.step(n_l, n_r)
+	# Feed output spikes into snake model
+	# Get state, angle to target, reward, termination, step
+	s, a, r, t, n = env.step(n_l, n_r)
 
 	if t:
 		episode_steps.append(n)
@@ -55,7 +55,7 @@ for i in range(training_length):
 	weights_r.append(w_r)
 	weights_i.append(i)
 	rewards.append(r)
-	distance.append(d)
+	angle_to_target.append(a)
 
 	if i % (training_length/100) == 0:
 		print "Training progress ", (i / (training_length/100)), "%"
@@ -70,6 +70,6 @@ h5f.create_dataset('e_i_o', data=episode_i_o)
 h5f.create_dataset('e_i', data=episode_position_i)
 h5f.create_dataset('e_i_i', data=episode_i_i)
 h5f.create_dataset('reward', data=rewards)
-h5f.create_dataset('distance', data=distance)
+h5f.create_dataset('angle_to_target', data=angle_to_target)
 h5f.create_dataset('episode_steps', data=episode_steps)
 h5f.close()

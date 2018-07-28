@@ -21,7 +21,7 @@ w_r = np.array(h5f['w_r'], dtype=float)
 w_i = np.array(h5f['w_i'], dtype=float)
 episode_steps = np.array(h5f["episode_steps"], dtype=float)
 rewards = np.array(h5f['reward'], dtype=float)
-distance = np.array(h5f['distance'], dtype=float)
+angle_to_target = np.array(h5f['angle_to_target'], dtype=float)
 
 xlim = w_r.shape[0]
 
@@ -64,8 +64,8 @@ ax4.set_xlabel("Step")
 
 # Plot 5 Plot Distance between Car and camera center at each Step
 ax5 = plt.subplot(gs[4])
-ax5.plot(distance)
-ax5.set_ylabel("Distance error")
+ax5.plot(angle_to_target)
+ax5.set_ylabel("Angle error")
 ax5.set_xlabel("Step")
 
 

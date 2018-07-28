@@ -18,15 +18,15 @@ h5f = h5py.File(args.inputFile, 'r')
 
 rewards = np.array(h5f['reward'], dtype=float)
 episode_steps = np.array(h5f["episode_steps"], dtype=int)
-distance = np.array(h5f['distance'], dtype=float)
+angle_to_target = np.array(h5f['angle_to_target'], dtype=float)
 
 fig = plt.figure(figsize=(12, 6))
 gs = gridspec.GridSpec(3, 2)
 
 # Calculate Values
-distance_sum = [0]
-for i in range(distance.size):
-	distance_sum.append(distance_sum[i-1] + abs(distance[i]))
+angle_to_target_sum = [0]
+for i in range(angle_to_target.size):
+	angle_to_target_sum.append(angle_to_target_sum[i-1] + abs(angle_to_target[i]))
 
 
 # Plot 1 Plot Steps in Episode i
@@ -43,24 +43,24 @@ ax2.set_xlabel("Step")
 
 # Plot 3 Plot Distance between Car and camera center at each Step
 ax3 = plt.subplot(gs[2, 0])
-ax3.plot(distance)
+ax3.plot(angle_to_target)
 ax3.set_ylabel("Distance error")
 ax3.set_xlabel("Step")
 
 # Plot 4 Plot Sum Distance between Car and camera center at each Step
 ax4 = plt.subplot(gs[0, 1])
-ax4.plot(distance_sum)
+ax4.plot(angle_to_target_sum)
 ax4.set_ylabel("Absolute distance error sum")
 ax4.set_xlabel("Step")
-ax4.text(0.1, 0.9, "sum = " + str(distance_sum[-1]), transform=ax4.transAxes)
+ax4.text(0.1, 0.9, "sum = " + str(angle_to_target_sum[-1]), transform=ax4.transAxes)
 
 # Plot 5 Distribution of Distance
 ax5 = plt.subplot(gs[1:, 1])
-ax5.hist(distance, 50, facecolor='b', alpha=0.75)
+ax5.hist(angle_to_target, 50, facecolor='b', alpha=0.75)
 ax5.set_ylabel("Frequency")
 ax5.set_xlabel("Distance error")
 ax5.grid(True)
-ax5.text(0.1, 0.9, 'mean = '+str(np.mean(distance))+' variance = '+str(np.var(distance)), transform=ax5.transAxes)
+ax5.text(0.1, 0.9, 'mean = '+str(np.mean(angle_to_target))+' variance = '+str(np.var(angle_to_target)), transform=ax5.transAxes)
 
 fig.tight_layout()
 if args.outputFile is not None:
