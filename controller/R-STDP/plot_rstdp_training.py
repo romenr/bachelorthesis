@@ -20,6 +20,7 @@ w_l = np.array(h5f['w_l'], dtype=float)
 w_r = np.array(h5f['w_r'], dtype=float)
 w_i = np.array(h5f['w_i'], dtype=float)
 episode_steps = np.array(h5f["episode_steps"], dtype=float)
+episode_completed = np.array(h5f['episode_completed'], dtype=bool)
 rewards = np.array(h5f['reward'], dtype=float)
 angle_to_target = np.array(h5f['angle_to_target'], dtype=float)
 
@@ -29,9 +30,15 @@ fig = plt.figure(figsize=(7, 12))
 gs = gridspec.GridSpec(5, 1, height_ratios=[1, 2, 2, 1, 1])
 
 ax1 = plt.subplot(gs[0])
-ax1.plot(episode_steps)
-ax1.set_ylabel('Time steps')
-ax1.set_xlabel('Episode')
+values_x = np.array(range(episode_steps.size))
+success_y = episode_steps[episode_completed]
+success_x = values_x[episode_completed]
+failures_y = episode_steps[~episode_completed]
+failures_x = values_x[~episode_completed]
+ax1.scatter(success_x, success_y, marker='^', color='g')
+ax1.scatter(failures_x, failures_y, marker='x', color='r')
+ax1.set_ylabel("Duration")
+ax1.set_xlabel("Episode")
 
 ax2 = plt.subplot(gs[1])
 ax2.set_xlim((0, xlim))
