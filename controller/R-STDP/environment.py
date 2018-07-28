@@ -41,7 +41,7 @@ class VrepEnvironment:
 		self.rate = rospy.Rate(rate)
 
 		# Publish initial path
-		self.select_path_pub.publish(self.path)
+		self.update_path()
 
 	def image_callback(self, msg):
 		cv_image = self.bridge.imgmsg_to_cv2(msg, "rgb8")
@@ -77,14 +77,13 @@ class VrepEnvironment:
 	def path_completed(self, msg):
 		print "Path completed resetting simulation ..."
 		self.terminate = True
-		self.change_path()
+		self.mirrored = not self.mirrored
 
-	def change_path(self):
+	def update_path(self):
 		if self.mirrored:
 			self.select_path_pub.publish(self.path)
 		else:
 			self.select_path_pub.publish(self.path_mirrored)
-		self.mirrored = not self.mirrored
 
 	def reset(self):
 		# Reset model
@@ -95,6 +94,7 @@ class VrepEnvironment:
 		self.turn_pre = 0.0
 		self.radius_pub.publish(0.0)
 		self.reset_pub.publish(True)
+		self.update_path()
 		time.sleep(1)
 		return np.zeros((resolution[0], resolution[1]), dtype=int), 0.
 
