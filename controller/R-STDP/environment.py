@@ -79,7 +79,6 @@ class VrepEnvironment:
 		print "Path completed resetting simulation ..."
 		self.terminate = True
 		self.path_complete = True
-		self.mirrored = not self.mirrored
 
 	def update_path(self):
 		if self.mirrored:
@@ -97,6 +96,7 @@ class VrepEnvironment:
 		self.turn_pre = 0.0
 		self.radius_pub.publish(0.0)
 		self.reset_pub.publish(True)
+		self.mirrored = not self.mirrored
 		self.update_path()
 		time.sleep(1)
 		return np.zeros((resolution[0], resolution[1]), dtype=int), 0.
@@ -124,6 +124,9 @@ class VrepEnvironment:
 
 	def get_linear_reward(self):
 		return self.angle_to_target
+
+	def get_relative_reward(self, angle):
+		return (self.angle_to_target - angle) / a_max
 
 	def get_turning_angle(self, n_l, n_r):
 		# Snake turning model
