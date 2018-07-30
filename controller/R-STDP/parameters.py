@@ -31,11 +31,9 @@ w0_max = 1501.						# Maximum initial random value
 # These tau_n and tau_c parameters are suggested by Izhikevich, E.M. (2007). Solving the distal reward problem
 # through linkage of STDP and dopamine signaling. Cereb. Cortex, 17(10), 2443-2452.
 tau_n = 200.						# Time constant of reward signal
-# Reducing tau_c reduces the variance in the training significantly
 tau_c = 1000.						# Time constant of eligibility trace
 
 reward_factor = 0.01				# Reward factor modulating reward signal strength
-# Reducing these constants reduces the variance in the training significantly
 A_plus = 1.							# Constant scaling strength of potentiaion
 A_minus = 1.						# Constant scaling strength of depression
 
