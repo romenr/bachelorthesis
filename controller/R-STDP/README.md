@@ -22,7 +22,7 @@ sudo chmod +x training.sh controller.sh
 The training.sh script will train and evaluate the controller. Then it will generate all plots.
 The controller.sh script will take a trained controller and execute it.
 
-Start v-rep load the snake_follows_car_scene.ttt and start the simulation.
+Start roscore, v-rep and load the snake_follows_car_scene.ttt then start the simulation.
 
 Run the experiment using the training script. The only parameter is the name of the directory
 in witch all results will be saved e.g. ./data/session_001/
