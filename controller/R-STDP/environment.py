@@ -28,6 +28,8 @@ class VrepEnvironment:
 		self.path = path
 		self.path_mirrored = path_mirrored
 		self.mirrored = False
+		self.resize_factor = (img_resolution[1]//resolution[0],
+							(img_resolution[0] - crop_top - crop_bottom)//resolution[1])
 
 		# Ros Node rstdp_controller setup
 		# Control the Snake by publishing the Radius OR Angle Publisher
@@ -67,7 +69,7 @@ class VrepEnvironment:
 		state = self.get_state()
 		state = np.swapaxes(state, 0, 1)
 		state = np.interp(state, (state.min(), state.max()), (-1, +1))
-		im = np.array(state * 255, dtype=np.uint8)
+		im = np.multiply(np.array(state), 255.)
 		img = cv.adaptiveThreshold(im, 255, cv.ADAPTIVE_THRESH_MEAN_C, cv.THRESH_BINARY, 3, 0)
 		cv.imshow("state", img)
 		cv.waitKey(2)
@@ -151,13 +153,11 @@ class VrepEnvironment:
 		return radius
 
 	def get_state(self):
-		new_state = np.zeros((resolution[0], resolution[1]), dtype=int)  # 8x4
+		new_state = np.zeros((resolution[0], resolution[1]), dtype=int)
 		# bring the red filtered image in the form of the state
 		if self.img_set:
 			for y in range(img_resolution[0] - crop_top - crop_bottom):
 				for x in range(img_resolution[1]):				
 					if self.img[y + crop_top, x] > 0:
-						xpos = x//(img_resolution[1]//resolution[0])
-						ypos = y//((img_resolution[0] - crop_top - crop_bottom)//resolution[1])
-						new_state[xpos, ypos] += 1
+						new_state[x//self.resize_factor[0], y//self.resize_factor[1]] += 1
 		return new_state

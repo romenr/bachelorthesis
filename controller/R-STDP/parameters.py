@@ -12,7 +12,7 @@ evaluation_file = 'evaluation_data.h5'		# Results from evaluation
 img_resolution = [32, 32]			# Original DVS frame resolution
 crop_top = 10						# Crop at the top
 crop_bottom = 14					# Crop at the bottom
-resolution = [8, 4]					# Resolution of reduced image
+resolution = [16, 4]					# Resolution of reduced image
 
 # Network parameters
 sim_time = 50.0						# Length of network simulation during each step in ms

@@ -36,7 +36,7 @@ weights_r1 = w_r[m].T
 weights_l2 = w_l[-1].T
 weights_r2 = w_r[-1].T
 
-fig = plt.figure(figsize=(9, 7))
+fig = plt.figure(figsize=(18, 7))
 gs = gridspec.GridSpec(3, 2)
 
 ax1 = plt.subplot(gs[0, 0])
