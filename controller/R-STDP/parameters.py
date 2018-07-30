@@ -12,7 +12,7 @@ evaluation_file = 'evaluation_data.h5'		# Results from evaluation
 img_resolution = [32, 32]			# Original DVS frame resolution
 crop_top = 10						# Crop at the top
 crop_bottom = 14					# Crop at the bottom
-resolution = [8, 4]					# Resolution of reduced image
+resolution = [16, 4]					# Resolution of reduced image
 
 # Network parameters
 sim_time = 50.0						# Length of network simulation during each step in ms
@@ -21,7 +21,7 @@ time_resolution = 0.1				# Network simulation time resolution
 iaf_params = {}						# IAF neuron parameters
 poisson_params = {}					# Poisson neuron parameters
 max_poisson_freq = 300.				# Maximum Poisson firing frequency for n_max
-max_spikes = 15.					# number of events during each step for maximum poisson frequency
+max_spikes = 16.					# number of events during each step for maximum poisson frequency
 
 # R-STDP parameters
 w_min = 0.							# Minimum weight value

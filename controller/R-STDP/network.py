@@ -31,7 +31,7 @@ class SpikingNeuralNetwork:
 		self.conn_l = nest.GetConnections(target=[self.neuron_post[0]])
 		self.conn_r = nest.GetConnections(target=[self.neuron_post[1]])
 
-	def simulate(self, dvs_data, reward):
+	def simulate(self, state, reward):
 		# Set reward signal for left and right network
 		nest.SetStatus(self.conn_l, {"n": -reward * p.reward_factor})
 		nest.SetStatus(self.conn_r, {"n": reward * p.reward_factor})
@@ -40,16 +40,16 @@ class SpikingNeuralNetwork:
 		nest.SetStatus(self.spike_generators, {"origin": time})
 		nest.SetStatus(self.spike_generators, {"stop": p.sim_time})
 		# Set poisson neuron firing frequency
-		dvs_data = dvs_data.reshape(dvs_data.size)
-		for i in range(dvs_data.size):
-			rate = dvs_data[i]/p.max_spikes
-			rate = np.clip(rate,0,1)*p.max_poisson_freq
-			nest.SetStatus([self.spike_generators[i]], {"rate": rate})
+		state = state.reshape(state.size)
+		rate = np.divide(state, p.max_spikes)
+		rate = np.multiply(np.clip(rate, 0, 1), p.max_poisson_freq)
+		for i, r in enumerate(rate):
+			nest.SetStatus([self.spike_generators[i]], {"rate": r})
 		# Simulate network
 		nest.Simulate(p.sim_time)
 		# Get left and right output spikes
-		n_l = nest.GetStatus(self.spike_detector,keys="n_events")[0]
-		n_r = nest.GetStatus(self.spike_detector,keys="n_events")[1]
+		n_l = nest.GetStatus(self.spike_detector, keys="n_events")[0]
+		n_r = nest.GetStatus(self.spike_detector, keys="n_events")[1]
 		# Reset output spike detector
 		nest.SetStatus(self.spike_detector, {"n_events": 0})
 		# Get network weights
