@@ -68,9 +68,7 @@ class VrepEnvironment:
 		# Interpret and show state as a black and white image
 		state = self.get_state()
 		state = np.swapaxes(state, 0, 1)
-		state = np.interp(state, (state.min(), state.max()), (-1, +1))
-		im = np.multiply(np.array(state), 255.)
-		img = cv.adaptiveThreshold(im, 255, cv.ADAPTIVE_THRESH_MEAN_C, cv.THRESH_BINARY, 3, 0)
+		img = np.divide(np.array(state), 16.)
 		cv.imshow("state", img)
 		cv.waitKey(2)
 
@@ -159,5 +157,5 @@ class VrepEnvironment:
 			for y in range(img_resolution[0] - crop_top - crop_bottom):
 				for x in range(img_resolution[1]):				
 					if self.img[y + crop_top, x] > 0:
-						new_state[x//self.resize_factor[0], y//self.resize_factor[1]] += 1
+						new_state[x//self.resize_factor[0], y//self.resize_factor[1]] += 4
 		return new_state
