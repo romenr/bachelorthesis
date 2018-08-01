@@ -49,7 +49,9 @@ class VrepEnvironment:
 	def image_callback(self, msg):
 		cv_image = self.bridge.imgmsg_to_cv2(msg, "rgb8")
 		cv_image = cv.flip(cv_image, 0)[:, :, 0]			# get red (temperature) channel
-		self.img = cv_image - default_temperature			# Put the default temperature to 0
+		# Put the default temperature to 0 and normalize to [0; 1].
+		# Temperatures lower than default get mapped to [-1; 0]
+		self.img = (cv_image - default_temperature) / (256. - default_temperature)
 		self.img_set = True
 		M = cv.moments(self.img, True)						# compute image moments
 		if M['m00'] == 0:
@@ -62,14 +64,13 @@ class VrepEnvironment:
 
 		# Show the black and white image that the snake sees
 		dst = cv.resize(self.img, (200, 200))
-		cv.imshow('image', dst)
+		cv.imshow('Infrared vision', dst)
 		cv.waitKey(2)
 
 		# Interpret and show state as a black and white image
 		state = self.get_state()
 		state = np.swapaxes(state, 0, 1)
-		img = np.divide(np.array(state), 16.)
-		cv.imshow("state", img)
+		cv.imshow("State", np.array(state))
 		cv.waitKey(2)
 
 	def angle_to_target_callback(self, msg):
@@ -151,11 +152,10 @@ class VrepEnvironment:
 		return radius
 
 	def get_state(self):
-		new_state = np.zeros((resolution[0], resolution[1]), dtype=int)
+		new_state = np.zeros((resolution[0], resolution[1]), dtype=float)
 		# bring the red filtered image in the form of the state
 		if self.img_set:
 			for y in range(img_resolution[0] - crop_top - crop_bottom):
-				for x in range(img_resolution[1]):				
-					if self.img[y + crop_top, x] > 0:
-						new_state[x//self.resize_factor[0], y//self.resize_factor[1]] += 4
-		return new_state
+				for x in range(img_resolution[1]):
+					new_state[x//self.resize_factor[0], y//self.resize_factor[1]] += self.img[y + crop_top, x]
+		return new_state / float(np.prod(self.resize_factor))

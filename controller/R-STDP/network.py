@@ -41,8 +41,7 @@ class SpikingNeuralNetwork:
 		nest.SetStatus(self.spike_generators, {"stop": p.sim_time})
 		# Set poisson neuron firing frequency
 		state = state.reshape(state.size)
-		rate = np.divide(state, p.max_spikes)
-		rate = np.multiply(np.clip(rate, 0, 1), p.max_poisson_freq)
+		rate = np.multiply(np.clip(state, 0, 1), p.max_poisson_freq)
 		for i, r in enumerate(rate):
 			nest.SetStatus([self.spike_generators[i]], {"rate": r})
 		# Simulate network

@@ -21,7 +21,6 @@ time_resolution = 0.1				# Network simulation time resolution
 iaf_params = {}						# IAF neuron parameters
 poisson_params = {}					# Poisson neuron parameters
 max_poisson_freq = 300.				# Maximum Poisson firing frequency for n_max
-max_spikes = 16.					# number of events during each step for maximum poisson frequency
 
 # R-STDP parameters
 w_min = 0.							# Minimum weight value
