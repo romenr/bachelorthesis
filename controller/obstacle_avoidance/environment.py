@@ -89,6 +89,8 @@ class VrepEnvironment:
 			self.reset()
 
 		self.steps += 1
+		if self.steps >= episode_steps:
+			self.terminate = True
 
 		# Publish turning angle and sleep for ~50ms
 		angle = self.get_turning_angle(n_l, n_r)
@@ -113,7 +115,8 @@ class VrepEnvironment:
 		m_r = n_r/n_max
 		angle = a_max * (m_l - m_r)
 		c = math.sqrt((m_l**2 + m_r**2)/2.0)
-		self.turn_pre = c * angle + (1 - c) * self.turn_pre
+		# For obstacle avoidance we shouldn't continue the evasion movement if we see nothing
+		self.turn_pre = (1 - c) * angle + c * self.turn_pre
 		return self.turn_pre
 
 	def get_turning_radius(self, n_l, n_r):
