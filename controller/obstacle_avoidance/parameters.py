@@ -15,12 +15,19 @@ crop_bottom = 14					# Crop at the bottom
 resolution = [16, 4]					# Resolution of reduced image
 
 # Network parameters
-sim_time = 50.0						# Length of network simulation during each step in ms
+input_layer_size = resolution[0] * resolution[1]
+hidden_layer_size = 10
+output_layer_size = 2				# Left and Right neuron
+sim_time_step = 50.0				# Length of network simulation during each step in ms
 t_refrac = 2.						# Refractory period
 time_resolution = 0.1				# Network simulation time resolution
 iaf_params = {}						# IAF neuron parameters
 poisson_params = {}					# Poisson neuron parameters
 max_poisson_freq = 300.				# Maximum Poisson firing frequency for n_max
+nest_kernel_status = {				# Nest Kernel initialization options
+	"local_num_threads": 1,			# Number of Threads used by nest
+	"resolution": time_resolution
+}
 
 # R-STDP parameters
 w_min = 0.							# Minimum weight value
@@ -36,8 +43,17 @@ reward_factor = 0.01			# Reward factor modulating reward signal strength
 A_plus = 1.							# Constant scaling strength of potentiaion
 A_minus = 1.						# Constant scaling strength of depression
 
+r_stdp_synapse_options = {					# Initialisation Options for R-STDP Synapses
+	"model": "stdp_dopamine_synapse",		# R-STDP Model
+	"weight": {
+	"distribution": "uniform",				# Initial weight distribution
+		"low": w0_min,
+		"high": w0_max
+	}
+}
+
 # Snake turning model
-n_max = sim_time//t_refrac          # Maximum input activity
+n_max = sim_time_step//t_refrac          # Maximum input activity
 
 r_min = 3.0							# Minimum turning radius
 a_max = math.pi / 2					# Maximum turning angle
