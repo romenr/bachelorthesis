@@ -47,15 +47,18 @@ class SpikingNeuralNetwork:
 		self.conn_l = nest.GetConnections(target=[self.output_layer[0]])
 		self.conn_r = nest.GetConnections(target=[self.output_layer[1]])
 		self.input_hidden_con = []
-		for i in range(input_layer_size):
-			for j in range(hidden_layer_size):
-				con = nest.GetConnections(target=[self.hidden_layer[j]], source=[self.input_layer[i]])
-				self.input_hidden_con.append(con)
+		for i in range(hidden_layer_size):
+			self.input_hidden_con.append(nest.GetConnections(target=[self.hidden_layer[i]]))
 
 	def set_reward(self, reward):
 		# Set reward signal for left and right network
-		nest.SetStatus(self.conn_l, {"n": -reward * reward_factor})
-		nest.SetStatus(self.conn_r, {"n": reward * reward_factor})
+		nest.SetStatus(self.conn_l, {"n": reward[0]})
+		nest.SetStatus(self.conn_r, {"n": reward[1]})
+		w_l = nest.GetStatus(self.conn_l, keys="weight")
+		w_r = nest.GetStatus(self.conn_r, keys="weight")
+		for i, conn in enumerate(self.input_hidden_con):
+			w = np.array([w_l[i], w_r[i]])
+			nest.SetStatus(conn, {"n": np.sum(w * reward) / np.sum(w)})
 
 	def simulate(self, state):
 		time = nest.GetKernelStatus("time")

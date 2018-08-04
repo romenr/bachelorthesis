@@ -7,6 +7,7 @@ from os import path
 import parameters as param
 from snn import SpikingNeuralNetwork
 from environment import VrepEnvironment
+import numpy as np
 
 # Configure Command Line interface
 parser = argparse.ArgumentParser(description='Train the model')
@@ -45,7 +46,8 @@ for i in range(param.training_length):
 	
 	# Simulate network for 50 ms
 	# Get left and right output spikes, get weights
-	snn.set_reward(r)
+	reward = np.array([-r, r]) * param.reward_factor
+	snn.set_reward(reward)
 	n_l, n_r, w_l, w_r = snn.simulate(s)
 
 	# Feed output spikes into snake model
