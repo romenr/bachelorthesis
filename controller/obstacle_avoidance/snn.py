@@ -75,8 +75,10 @@ class SpikingNeuralNetwork:
 		# Simulate network
 		nest.Simulate(sim_time_step)
 		# Get left and right output spikes
-		n_l = nest.GetStatus(self.spike_detector, keys="n_events")[0]
-		n_r = nest.GetStatus(self.spike_detector, keys="n_events")[1]
+		n_events = nest.GetStatus(self.spike_detector, keys="n_events")
+		print n_events
+		n_l = n_events[0]
+		n_r = n_events[1]
 
 		# Reset output spike detector
 		nest.SetStatus(self.spike_detector, {"n_events": 0})

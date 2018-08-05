@@ -117,7 +117,7 @@ class VrepEnvironment:
 		c = math.sqrt((m_l**2 + m_r**2)/2.0)
 		# For obstacle avoidance we shouldn't continue the evasion movement if we see nothing
 		self.turn_pre = (1 - c) * angle + c * self.turn_pre
-		return self.turn_pre
+		return angle		# self.turn_pre
 
 	def get_turning_radius(self, n_l, n_r):
 		# Snake turning model

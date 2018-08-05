@@ -30,10 +30,10 @@ nest_kernel_status = {				# Nest Kernel initialization options
 }
 
 # R-STDP parameters
-w_min = 0.							# Minimum weight value
+w_min = -3000.							# Minimum weight value
 w_max = 3000.						# Maximum weight value
-w0_min = 1500.						# Minimum initial random value
-w0_max = 1501.						# Maximum initial random value
+w0_min = 1000.						# Minimum initial random value
+w0_max = 2000.						# Maximum initial random value
 # These tau_n and tau_c parameters are suggested by Izhikevich, E.M. (2007). Solving the distal reward problem
 # through linkage of STDP and dopamine signaling. Cereb. Cortex, 17(10), 2443-2452.
 tau_n = 200.						# Time constant of reward signal
@@ -53,7 +53,7 @@ r_stdp_synapse_options = {					# Initialisation Options for R-STDP Synapses
 }
 
 # Snake turning model
-n_max = sim_time_step//t_refrac          # Maximum input activity
+n_max = sim_time_step//t_refrac - 1         # Maximum input activity (- #hiddenlayers)
 
 r_min = 3.0							# Minimum turning radius
 a_max = math.pi / 2					# Maximum turning angle
@@ -65,8 +65,8 @@ default_temperature = 128			# Default temperature of the simulation
 reset_steps = 5						# After how many steps without seeing the target should the simulation reset
 episode_steps = 2000				# Maximum steps in one episode
 rate = 20.							# ROS publication rate (step = 1/rate = 50ms)
-training_length = 40000		    	# Length of training procedure (1 step ~ 50 ms)
-evaluation_length = 20000			# Length of evaluation procedure
+training_length = 4000		    	# Length of training procedure (1 step ~ 50 ms)
+evaluation_length = 2000			# Length of evaluation procedure
 
 # Path numbers
 plus_path = 2						# Simple path in + shape

@@ -16,6 +16,7 @@ args = parser.parse_args()
 
 
 def plot_weights(ax, weights):
+	weights = weights.reshape(param.hidden_layer_size/5, 5)
 	ax.imshow(weights.astype(int), alpha=0.5)
 	ax.set_yticklabels([])
 	ax.set_xticklabels([])
