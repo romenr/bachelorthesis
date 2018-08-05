@@ -58,7 +58,7 @@ class SpikingNeuralNetwork:
 		w_r = nest.GetStatus(self.conn_r, keys="weight")
 		for i, conn in enumerate(self.input_hidden_con):
 			w = np.array([w_l[i], w_r[i]])
-			nest.SetStatus(conn, {"n": np.sum(w * reward) / np.sum(w)})
+			nest.SetStatus(conn, {"n": 10 * np.sum(w * reward) / np.sum(w)})
 
 	def simulate(self, state):
 		time = nest.GetKernelStatus("time")
@@ -84,12 +84,18 @@ class SpikingNeuralNetwork:
 		nest.SetStatus(self.spike_detector, {"n_events": 0})
 
 		# Get network weights
+		weights_hidden = []
+		for conn in self.input_hidden_con:
+			weights_hidden.append(np.array(nest.GetStatus(conn, keys="weight")))
 		weights_l = np.array(nest.GetStatus(self.conn_l, keys="weight"))
 		weights_r = np.array(nest.GetStatus(self.conn_r, keys="weight"))
-		return n_l, n_r, weights_l, weights_r
+		return n_l, n_r, weights_l, weights_r, weights_hidden
 
-	def set_weights(self, weights_l, weights_r):
-		w_l = [{'weight': w} for w in weights_l.reshape(weights_l.size)]
-		w_r = [{'weight': w} for w in weights_r.reshape(weights_r.size)]
+	def set_weights(self, weights_l, weights_r, weights_h):
+		w_l = [{'weight': w} for w in weights_l]
+		w_r = [{'weight': w} for w in weights_r]
+		w_h = [[{'weight': w} for w in weights] for weights in weights_h]
 		nest.SetStatus(self.conn_l, w_l)
 		nest.SetStatus(self.conn_r, w_r)
+		for i, conn in enumerate(self.input_hidden_con):
+			nest.SetStatus(conn, w_h[i])

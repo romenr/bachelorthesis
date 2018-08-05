@@ -16,7 +16,7 @@ resolution = [16, 4]					# Resolution of reduced image
 
 # Network parameters
 input_layer_size = resolution[0] * resolution[1]
-hidden_layer_size = 10
+hidden_layer_size = 2
 output_layer_size = 2				# Left and Right neuron
 sim_time_step = 50.0				# Length of network simulation during each step in ms
 t_refrac = 2.						# Refractory period
@@ -65,8 +65,8 @@ default_temperature = 128			# Default temperature of the simulation
 reset_steps = 5						# After how many steps without seeing the target should the simulation reset
 episode_steps = 2000				# Maximum steps in one episode
 rate = 20.							# ROS publication rate (step = 1/rate = 50ms)
-training_length = 4000		    	# Length of training procedure (1 step ~ 50 ms)
-evaluation_length = 2000			# Length of evaluation procedure
+training_length = 40000		    	# Length of training procedure (1 step ~ 50 ms)
+evaluation_length = 20000			# Length of evaluation procedure
 
 # Path numbers
 plus_path = 2						# Simple path in + shape

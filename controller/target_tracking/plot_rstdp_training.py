@@ -47,8 +47,7 @@ ax2.set_xticklabels([])
 ax2.text(1000, 2800, 'Left Motor', color='0.4')
 ax2.tick_params(axis='both', which='both', direction='in', bottom=True, top=True, left=True, right=True)
 for i in range(w_l.shape[1]):
-	for j in range(w_l.shape[2]):
-		plt.plot(w_i, w_l[:, i, j])
+	plt.plot(w_i, w_l[:, i])
 ax2.set_xlabel('Simulation Time [1 step = 50 ms]')
 ax2.set_ylabel("Weight")
 
@@ -58,8 +57,7 @@ ax3.set_ylim((param.w_min, param.w_max))
 ax3.text(1000, 2800, 'Right Motor', color='0.4')
 ax3.tick_params(axis='both', which='both', direction='in', bottom=True, top=True, left=True, right=True)
 for i in range(w_r.shape[1]):
-	for j in range(w_r.shape[2]):
-		plt.plot(w_i, w_r[:, i, j])
+	plt.plot(w_i, w_l[:, i])
 ax3.set_xlabel('Simulation Time [1 step = 50 ms]')
 ax3.set_ylabel("Weight")
 

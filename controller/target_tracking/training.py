@@ -30,6 +30,7 @@ env = VrepEnvironment(param.plus_path, param.plus_path_mirrored)
 weights_r = []
 weights_l = []
 weights_i = []
+weights_h = []
 episode_position_o = []
 episode_i_o = []
 episode_position_i = []
@@ -49,7 +50,7 @@ for i in range(param.training_length):
 	reward = np.array([-r, r]) * param.reward_factor
 	if i % 10 == 0:
 		snn.set_reward(reward)
-	n_l, n_r, w_l, w_r = snn.simulate(s)
+	n_l, n_r, w_l, w_r, w_h = snn.simulate(s)
 
 	# Feed output spikes into snake model
 	# Get state, angle to target, reward, termination, step, path completed
@@ -61,6 +62,7 @@ for i in range(param.training_length):
 	weights_l.append(w_l)
 	weights_r.append(w_r)
 	weights_i.append(i)
+	weights_h.append(w_h)
 	rewards.append(r)
 	angle_to_target.append(a)
 
@@ -76,6 +78,7 @@ h5f = h5py.File(path.join(args.dir, param.training_file), 'w')
 h5f.create_dataset('w_l', data=weights_l)
 h5f.create_dataset('w_r', data=weights_r)
 h5f.create_dataset('w_i', data=weights_i)
+h5f.create_dataset('w_h', data=weights_h)
 h5f.create_dataset('e_o', data=episode_position_o)
 h5f.create_dataset('e_i_o', data=episode_i_o)
 h5f.create_dataset('e_i', data=episode_position_i)
@@ -90,5 +93,6 @@ h5f.close()
 h5f = h5py.File(path.join(args.dir, param.weights_file), 'w')
 h5f.create_dataset('w_l', data=weights_l[-1])
 h5f.create_dataset('w_r', data=weights_r[-1])
+h5f.create_dataset('w_h', data=weights_h[-1])
 h5f.close()
 
