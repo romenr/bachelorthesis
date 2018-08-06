@@ -34,14 +34,14 @@ nest_kernel_status = {				# Nest Kernel initialization options
 # R-STDP parameters
 w_min = -3000.							# Minimum weight value
 w_max = 3000.						# Maximum weight value
-w0_min = 1000.						# Minimum initial random value
-w0_max = 2000.						# Maximum initial random value
+w0_min = 1500.						# Minimum initial random value
+w0_max = 1501.						# Maximum initial random value
 # These tau_n and tau_c parameters are suggested by Izhikevich, E.M. (2007). Solving the distal reward problem
 # through linkage of STDP and dopamine signaling. Cereb. Cortex, 17(10), 2443-2452.
 tau_n = 200.						# Time constant of reward signal
 tau_c = 1000.						# Time constant of eligibility trace
 
-reward_factor = 0.01			# Reward factor modulating reward signal strength
+reward_factor = 0.0025			# Reward factor modulating reward signal strength
 A_plus = 1.							# Constant scaling strength of potentiaion
 A_minus = 1.						# Constant scaling strength of depression
 

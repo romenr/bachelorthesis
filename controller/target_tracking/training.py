@@ -47,9 +47,7 @@ for i in range(param.training_length):
 	
 	# Simulate network for 50 ms
 	# Get left and right output spikes, get weights
-	reward = np.array([-r, r]) * param.reward_factor
-	if i % 10 == 0:
-		snn.set_reward(reward)
+	snn.set_reward(r)
 	output, weights = snn.simulate(s)
 
 	# Feed output spikes into snake model

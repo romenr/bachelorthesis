@@ -100,7 +100,7 @@ class VrepEnvironment:
 		self.mirrored = not self.mirrored
 		self.update_path()
 		time.sleep(1)
-		return np.zeros((resolution[0], resolution[1]), dtype=int), 0.
+		return np.zeros((resolution[0], resolution[1]), dtype=int), np.zeros(output_layer_size)
 
 	def step(self, snn_output):
 
@@ -112,11 +112,12 @@ class VrepEnvironment:
 		# Publish turning angle and sleep for ~50ms
 		angle = self.get_turning_angle(snn_output)
 		self.angle_pub.publish(angle)
+		reward = self.get_relative_reward(snn_output)
 		self.rate.sleep()
 
 		s = self.get_state()					# New state
 		a = self.angle_to_target				# Angle to target (error angle)
-		r = self.get_linear_reward()			# Received reward
+		r = reward			# Received reward
 		t = self.terminate						# Episode Terminates
 		n = self.steps							# Current step
 		p = self.path_complete					# Terminated because Path was completed successfully
@@ -124,10 +125,13 @@ class VrepEnvironment:
 		return s, a, r, t, n, p
 
 	def get_linear_reward(self):
-		return self.angle_to_target
+		return np.array([-self.angle_to_target, self.angle_to_target]) * reward_factor
 
-	def get_relative_reward(self, angle):
-		return (self.angle_to_target - angle) / a_max
+	def get_relative_reward(self, snn_output):
+		target = n_max * self.angle_to_target / a_max
+		r = ((target + snn_output[0]) - snn_output[1])/n_max
+		reward = np.array([-r, r]) * reward_factor
+		return reward
 
 	def get_turning_angle(self, snn_output):
 		# Snake turning model
