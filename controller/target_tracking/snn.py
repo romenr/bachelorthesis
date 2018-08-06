@@ -74,11 +74,9 @@ class SpikingNeuralNetwork:
 
 		# Simulate network
 		nest.Simulate(sim_time_step)
-		# Get left and right output spikes
-		n_events = nest.GetStatus(self.spike_detector, keys="n_events")
-		print n_events
-		n_l = n_events[0]
-		n_r = n_events[1]
+		# Get left and right output spikes [left, right]
+		output = np.array(nest.GetStatus(self.spike_detector, keys="n_events"))
+		output = output / n_max
 
 		# Reset output spike detector
 		nest.SetStatus(self.spike_detector, {"n_events": 0})
@@ -89,7 +87,8 @@ class SpikingNeuralNetwork:
 			weights_hidden.append(np.array(nest.GetStatus(conn, keys="weight")))
 		weights_l = np.array(nest.GetStatus(self.conn_l, keys="weight"))
 		weights_r = np.array(nest.GetStatus(self.conn_r, keys="weight"))
-		return n_l, n_r, weights_l, weights_r, weights_hidden
+		weights = [weights_l, weights_r, weights_hidden]
+		return output, weights
 
 	def set_weights(self, weights_l, weights_r, weights_h):
 		w_l = [{'weight': w} for w in weights_l]

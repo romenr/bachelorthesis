@@ -48,11 +48,11 @@ for i in range(param.evaluation_length):
 	# Simulate network for 50 ms
 	# Get left and right output spikes, get weights
 	# Fix the Reward at 0 to prevent the network from changing
-	n_l, n_r, w_l, w_r, w_h = snn.simulate(s)
+	output, weights = snn.simulate(s)
 
 	# Feed output spikes into snake model
 	# Get state, angle to target, reward, termination, step, path completed
-	s, a, r, t, n, p = env.step(n_l, n_r)
+	s, a, r, t, n, p = env.step(output)
 
 	# Store information that should be saved
 	if t:

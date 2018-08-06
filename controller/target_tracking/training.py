@@ -50,19 +50,19 @@ for i in range(param.training_length):
 	reward = np.array([-r, r]) * param.reward_factor
 	if i % 10 == 0:
 		snn.set_reward(reward)
-	n_l, n_r, w_l, w_r, w_h = snn.simulate(s)
+	output, weights = snn.simulate(s)
 
 	# Feed output spikes into snake model
 	# Get state, angle to target, reward, termination, step, path completed
-	s, a, r, t, n, p = env.step(n_l, n_r)
+	s, a, r, t, n, p = env.step(output)
 
 	if t:
 		episode_steps.append(n)
 		episode_completed.append(p)
-	weights_l.append(w_l)
-	weights_r.append(w_r)
+	weights_l.append(weights[0])
+	weights_r.append(weights[1])
+	weights_h.append(weights[2])
 	weights_i.append(i)
-	weights_h.append(w_h)
 	rewards.append(r)
 	angle_to_target.append(a)
 

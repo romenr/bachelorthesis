@@ -18,6 +18,8 @@ resolution = [16, 4]					# Resolution of reduced image
 input_layer_size = resolution[0] * resolution[1]
 hidden_layer_size = 2
 output_layer_size = 2				# Left and Right neuron
+left_neuron = 0
+right_neuron = 1
 sim_time_step = 50.0				# Length of network simulation during each step in ms
 t_refrac = 2.						# Refractory period
 time_resolution = 0.1				# Network simulation time resolution
@@ -53,7 +55,7 @@ r_stdp_synapse_options = {					# Initialisation Options for R-STDP Synapses
 }
 
 # Snake turning model
-n_max = sim_time_step//t_refrac - 1         # Maximum input activity (- #hiddenlayers)
+n_max = float(sim_time_step//t_refrac - 1)         # Maximum input activity (- #hiddenlayers)
 
 r_min = 3.0							# Minimum turning radius
 a_max = math.pi / 2					# Maximum turning angle

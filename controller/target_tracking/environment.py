@@ -102,7 +102,7 @@ class VrepEnvironment:
 		time.sleep(1)
 		return np.zeros((resolution[0], resolution[1]), dtype=int), 0.
 
-	def step(self, n_l, n_r):
+	def step(self, snn_output):
 
 		if self.terminate:
 			self.reset()
@@ -110,7 +110,7 @@ class VrepEnvironment:
 		self.steps += 1
 
 		# Publish turning angle and sleep for ~50ms
-		angle = self.get_turning_angle(n_l, n_r)
+		angle = self.get_turning_angle(snn_output)
 		self.angle_pub.publish(angle)
 		self.rate.sleep()
 
@@ -129,14 +129,14 @@ class VrepEnvironment:
 	def get_relative_reward(self, angle):
 		return (self.angle_to_target - angle) / a_max
 
-	def get_turning_angle(self, n_l, n_r):
+	def get_turning_angle(self, snn_output):
 		# Snake turning model
-		m_l = n_l/n_max
-		m_r = n_r/n_max
+		m_l = snn_output[left_neuron]
+		m_r = snn_output[right_neuron]
 		angle = a_max * (m_l - m_r)
 		c = math.sqrt((m_l**2 + m_r**2)/2.0)
 		self.turn_pre = c * angle + (1 - c) * self.turn_pre
-		return self.turn_pre
+		return angle
 
 	def get_turning_radius(self, n_l, n_r):
 		# Snake turning model
