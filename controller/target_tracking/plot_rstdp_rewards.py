@@ -23,7 +23,7 @@ episode_max = np.max(episode_steps)
 for i in range(len(episode_steps) - 1):
 	episode_steps[i + 1] += episode_steps[i]
 rewards = np.split(rewards, episode_steps.astype(int))
-#rewards = rewards[1::4]
+#r# rewards = rewards[1::4]
 
 fig = plt.figure(figsize=(10, 6))
 gs = gridspec.GridSpec(1, 1)

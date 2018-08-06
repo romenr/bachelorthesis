@@ -25,7 +25,9 @@ class VrepEnvironment:
 		self.turn_pre = 0.0
 		self.angle_pre = 0.0
 		self.angle_to_target = 0.0
+		self.distance_to_target = d_target
 		self.path = path
+		self.path_step_count = 0
 		self.path_mirrored = path_mirrored
 		self.mirrored = False
 		self.resize_factor = (img_resolution[1]//resolution[0],
@@ -35,11 +37,13 @@ class VrepEnvironment:
 		# Control the Snake by publishing the Radius OR Angle Publisher
 		self.radius_pub = rospy.Publisher('turningRadius', Float32, queue_size=1)
 		self.angle_pub = rospy.Publisher('turningAngle', Float32, queue_size=1)
-		self.reset_pub = rospy.Publisher('resetRobot', Bool, queue_size=1)
+		self.velocity_pub = rospy.Publisher('velocity', Float32, queue_size=1)
 		self.select_path_pub = rospy.Publisher('selectPath', Int32, queue_size=1)
+		self.reset_pub = rospy.Publisher('resetRobot', Bool, queue_size=1)
 		self.image_sub = rospy.Subscriber('redImage', Image, self.image_callback)
 		self.path_completed_sub = rospy.Subscriber('completedPath', Bool, self.path_completed)
 		self.angle_to_target_sub = rospy.Subscriber('angleToTarget', Float32, self.angle_to_target_callback)
+		self.distance_to_target_sub = rospy.Subscriber('distanceToTarget', Float32, self.distance_to_target_callback)
 		rospy.init_node('rstdp_controller')
 		self.rate = rospy.Rate(rate)
 
@@ -68,13 +72,16 @@ class VrepEnvironment:
 		cv.waitKey(2)
 
 		# Interpret and show state as a black and white image
-		state = self.get_state()
+		state = self.get_state()[image_index]
 		state = np.swapaxes(state, 0, 1)
 		cv.imshow("State", np.array(state))
 		cv.waitKey(2)
 
 	def angle_to_target_callback(self, msg):
 		self.angle_to_target = -msg.data  # Why -msg.data
+
+	def distance_to_target_callback(self, msg):
+		self.distance_to_target = msg.data
 
 	def path_completed(self, msg):
 		print "Path completed resetting simulation ..."
@@ -90,17 +97,23 @@ class VrepEnvironment:
 	def reset(self):
 		# Reset model
 		print "Terminate episode after", self.steps, "steps"
+		# Change path only if there is at least half the progress on this path than on the other one
+		if self.steps > self.path_step_count / 2:
+			self.path_step_count = self.steps
+			self.mirrored = not self.mirrored
+			self.update_path()
 		self.steps = 0
 		self.target_last_seen = 0
 		self.terminate = False
 		self.path_complete = False
 		self.turn_pre = 0.0
+		self.distance_to_target = d_target
+		self.angle_to_target = 0
 		self.radius_pub.publish(0.0)
+		self.velocity_pub.publish(0.5)
 		self.reset_pub.publish(True)
-		self.mirrored = not self.mirrored
-		self.update_path()
 		time.sleep(1)
-		return np.zeros((resolution[0], resolution[1]), dtype=int), np.zeros(output_layer_size)
+		return [np.zeros((resolution[0], resolution[1]), dtype=int), d_target], np.zeros(output_layer_size)
 
 	def step(self, snn_output):
 
@@ -112,12 +125,13 @@ class VrepEnvironment:
 		# Publish turning angle and sleep for ~50ms
 		angle = self.get_turning_angle(snn_output)
 		self.angle_pub.publish(angle)
-		reward = self.get_relative_reward(snn_output)
+
+		self.velocity_pub.publish(snn_output[velocity_neuron])
 		self.rate.sleep()
 
 		s = self.get_state()					# New state
 		a = self.angle_to_target				# Angle to target (error angle)
-		r = reward			# Received reward
+		r = self.get_linear_reward()			# Received reward
 		t = self.terminate						# Episode Terminates
 		n = self.steps							# Current step
 		p = self.path_complete					# Terminated because Path was completed successfully
@@ -125,7 +139,8 @@ class VrepEnvironment:
 		return s, a, r, t, n, p
 
 	def get_linear_reward(self):
-		return np.array([-self.angle_to_target, self.angle_to_target]) * reward_factor
+		velocity_reward = (self.distance_to_target - d_target) / d_target
+		return np.array([-self.angle_to_target, self.angle_to_target, velocity_reward]) * reward_factor
 
 	def get_relative_reward(self, snn_output):
 		target = n_max * self.angle_to_target / a_max
@@ -162,4 +177,4 @@ class VrepEnvironment:
 			for y in range(img_resolution[0] - crop_top - crop_bottom):
 				for x in range(img_resolution[1]):
 					new_state[x//self.resize_factor[0], y//self.resize_factor[1]] += self.img[y + crop_top, x]
-		return new_state / float(np.prod(self.resize_factor))
+		return [new_state / float(np.prod(self.resize_factor)), self.distance_to_target]

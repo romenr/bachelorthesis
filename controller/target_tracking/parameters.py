@@ -14,12 +14,19 @@ crop_top = 10						# Crop at the top
 crop_bottom = 14					# Crop at the bottom
 resolution = [16, 4]					# Resolution of reduced image
 
+# State
+image_index = 0
+distance_index = 1
+
 # Network parameters
-input_layer_size = resolution[0] * resolution[1]
-hidden_layer_size = 2
-output_layer_size = 2				# Left and Right neuron
+input_layer_size = resolution[0] * resolution[1] + 1
+hidden_layer_size = 4
+output_layer_size = 3				# Left, Right and Velocity neuron
 left_neuron = 0
 right_neuron = 1
+velocity_neuron = 2
+
+
 sim_time_step = 50.0				# Length of network simulation during each step in ms
 t_refrac = 2.						# Refractory period
 time_resolution = 0.1				# Network simulation time resolution
@@ -34,14 +41,14 @@ nest_kernel_status = {				# Nest Kernel initialization options
 # R-STDP parameters
 w_min = -3000.							# Minimum weight value
 w_max = 3000.						# Maximum weight value
-w0_min = 1500.						# Minimum initial random value
-w0_max = 1501.						# Maximum initial random value
+w0_min = 1000.						# Minimum initial random value
+w0_max = 1500.						# Maximum initial random value
 # These tau_n and tau_c parameters are suggested by Izhikevich, E.M. (2007). Solving the distal reward problem
 # through linkage of STDP and dopamine signaling. Cereb. Cortex, 17(10), 2443-2452.
 tau_n = 200.						# Time constant of reward signal
 tau_c = 1000.						# Time constant of eligibility trace
 
-reward_factor = 0.0025			# Reward factor modulating reward signal strength
+reward_factor = 0.001			# Reward factor modulating reward signal strength
 A_plus = 1.							# Constant scaling strength of potentiaion
 A_minus = 1.						# Constant scaling strength of depression
 
@@ -59,6 +66,7 @@ n_max = float(sim_time_step//t_refrac - 1)         # Maximum input activity (- #
 
 r_min = 3.0							# Minimum turning radius
 a_max = math.pi / 2					# Maximum turning angle
+d_target = 3.0						# Distance the snake should be behind the target
 
 # Thermal Vision
 default_temperature = 128			# Default temperature of the simulation
@@ -67,8 +75,8 @@ default_temperature = 128			# Default temperature of the simulation
 reset_steps = 5						# After how many steps without seeing the target should the simulation reset
 episode_steps = 2000				# Maximum steps in one episode
 rate = 20.							# ROS publication rate (step = 1/rate = 50ms)
-training_length = 40000		    	# Length of training procedure (1 step ~ 50 ms)
-evaluation_length = 20000			# Length of evaluation procedure
+training_length = 4000		    	# Length of training procedure (1 step ~ 50 ms)
+evaluation_length = 2000			# Length of evaluation procedure
 
 # Path numbers
 plus_path = 2						# Simple path in + shape

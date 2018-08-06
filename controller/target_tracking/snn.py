@@ -44,8 +44,9 @@ class SpikingNeuralNetwork:
 		nest.Connect(self.hidden_layer, self.output_layer, "all_to_all", syn_spec=r_stdp_synapse_options)
 
 		# Create connection handles
-		self.conn_l = nest.GetConnections(target=[self.output_layer[0]])
-		self.conn_r = nest.GetConnections(target=[self.output_layer[1]])
+		self.conn_l = nest.GetConnections(target=[self.output_layer[left_neuron]])
+		self.conn_r = nest.GetConnections(target=[self.output_layer[right_neuron]])
+		self.conn_v = nest.GetConnections(target=[self.output_layer[velocity_neuron]])
 		self.input_hidden_con = []
 		for i in range(hidden_layer_size):
 			self.input_hidden_con.append(nest.GetConnections(target=[self.hidden_layer[i]]))
@@ -54,11 +55,13 @@ class SpikingNeuralNetwork:
 		# Set reward signal for left and right network
 		nest.SetStatus(self.conn_l, {"n": reward[0]})
 		nest.SetStatus(self.conn_r, {"n": reward[1]})
+		nest.SetStatus(self.conn_v, {"n": reward[2]})
 		w_l = nest.GetStatus(self.conn_l, keys="weight")
 		w_r = nest.GetStatus(self.conn_r, keys="weight")
+		w_v = nest.GetStatus(self.conn_v, keys="weight")
 		for i, conn in enumerate(self.input_hidden_con):
-			w = np.array([w_l[i], w_r[i]])
-			nest.SetStatus(conn, {"n": 10 * np.sum(w * reward) / np.sum(w)})
+			w = np.array([w_l[i], w_r[i], w_v[i]])
+			nest.SetStatus(conn, {"n": np.sum(w * reward) / np.sum(w)})
 
 	def simulate(self, state):
 		time = nest.GetKernelStatus("time")
@@ -67,10 +70,13 @@ class SpikingNeuralNetwork:
 
 		# Map state to poison spike generators
 		# Every value of state needs to be in the range [0;1] to be mapped to the [min, max] firing rate
-		state = state.reshape(state.size)
-		poisson_rate = np.multiply(np.clip(state, 0, 1), max_poisson_freq)
+		image = state[image_index]
+		image = image.reshape(image.size)
+		poisson_rate = np.multiply(np.clip(image, 0, 1), max_poisson_freq)
 		for i, r in enumerate(poisson_rate):
 			nest.SetStatus([self.spike_generators[i]], {"rate": r})
+
+		nest.SetStatus([self.spike_generators[image.size]], {"rate": state[distance_index]})
 
 		# Simulate network
 		nest.Simulate(sim_time_step)
