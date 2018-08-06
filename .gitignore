@@ -104,3 +104,5 @@ ENV/
 .idea/
 **/data/
 TODO.md
+*.bak
+

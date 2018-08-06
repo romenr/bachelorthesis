@@ -1,0 +1,12 @@
+\BOOKMARK [0][-]{section*.3}{Abstract}{}% 1
+\BOOKMARK [0][-]{section*.5}{List of Abbreviations}{}% 2
+\BOOKMARK [0][-]{chapter.1}{Introduction}{}% 3
+\BOOKMARK [1][-]{section.1.1}{Background}{chapter.1}% 4
+\BOOKMARK [1][-]{section.1.2}{Problem Statement}{chapter.1}% 5
+\BOOKMARK [0][-]{chapter.2}{Technology Overview}{}% 6
+\BOOKMARK [0][-]{chapter.3}{Implementation of Direct GPU-FPGA Communication}{}% 7
+\BOOKMARK [0][-]{chapter.4}{Evaluation}{}% 8
+\BOOKMARK [0][-]{chapter.5}{Conclusions and Future Work}{}% 9
+\BOOKMARK [-1][]{part*.7}{Appendix}{}% 10
+\BOOKMARK [0][-]{appendix.A}{Example RDMA application}{part*.7}% 11
+\BOOKMARK [0][-]{chapter*.8}{Bibliography}{part*.7}% 12

@@ -1,0 +1,133 @@
+ % The main file for CAMP reports
+ % Don't put any content in here.
+ % Don't even include content files by using \input or \inlcude.
+ % Put your content to TEXT.TEX or include it there using \input.
+ % Uses:
+ %		SETTINGS.TEX	contains the settings for this document
+ %		COMMANDS.TEX	contains commands which can be used while writing
+ %		INFO.TEX			contains the author, title and so on for the cover
+ %		COVER.TEX			formats the front cover of the document
+ %		ABSTRACT.TEX	contains the abstract to be included (if needed)
+ %		TEXT.TEX			contains the actual content of the document
+ %		BIB.BIB				containt the BibTeX entries for the document
+
+
+%% Draft document mode
+%% Final document
+\documentclass[11pt,a4paper,bibtotoc,idxtotoc,headsepline,footsepline,footexclude,BCOR14mm,DIV13]{scrbook}
+
+%\documentclass[11pt,a4paper,bibtotoc,idxtotoc,headsepline,footsepline,footexclude,BCOR20mm,DIV10]{scrbook}
+
+% KOMA-Optionen:
+%  bibtotoc: include bibliography in table of contents
+%  idxtotoc: include index in table of contents
+%  headsepline: use horizontalline under heading
+%  BCOR: binding correcion (Bindungskorrektur) (e.g.: BCOR5mm)
+%  DIV: Number of sheet sections (used for layout) (e.g.: DIV12)
+
+
+
+% include title and author information for the cover
+\input{components/info}
+
+% include settings
+\input{components/settings}
+
+% include commands
+\input{components/commands}
+
+\pdfinfo{
+   /Author (Ren\'e Romen)
+   /Title (Training a Spiking Neural Network using R-STDP to perform Autonomous Target Tracking on a Snake Car Robot)
+   /Keywords (SNN, Snake, Robot, Autonomous Target Tracking)
+}
+
+\hypersetup{%
+pdftitle={Training a Spiking Neural Network using R-STDP to perform Autonomous Target Tracking on a Snake Car Robot},%
+pdfauthor={Ren\'e Romen},%
+pdfkeywords={SNN, Snake, Robot, Autonomous Target Tracking},%
+}%
+
+\hypersetup{
+    colorlinks=false,
+    pdfborder={0 0 0},
+}
+
+
+%\makeindex
+	%% inter line spacing
+%\linespread{1.0}
+
+\makeglossary
+
+\begin{document}
+
+	\frontmatter
+	
+	
+	\input{components/cover}
+%	\clearemptydoublepage
+%	
+%	\input{components/titlepage}
+	
+	
+%	\input{components/cover_maschmeyer}
+	\clearemptydoublepage
+	
+	\input{components/titlepage}
+	
+	
+	\input{components/disclaimer}
+	
+	%\input{components/acknowledgements}
+	
+	\input{components/abstract}
+
+	\tableofcontents
+
+%  \input{components/outline}
+   \input{components/abbreviations}
+
+	\mainmatter
+	
+	
+		% ---------------------------------------------------------------------------
+		%
+		%Introduction and Background Theory
+		%
+		% ---------------------------------------------------------------------------
+		%\part[Introduction and Theory]{Introduction and Theory}
+		%\label{part:introAndBackgroundTheory}
+		\input{chapters/Introduction}
+		
+		\input{chapters/theory}
+		
+		\input{chapters/Implementation}
+		
+		\input{chapters/results}
+		
+		\input{chapters/discussion}
+		
+		% ---------------------------------------------------------------------------
+		%
+		% Appendix
+		%
+		% ---------------------------------------------------------------------------
+		
+		\part*{Appendix}
+		\addcontentsline{toc}{part}{Appendix}
+		
+		\appendix %---------------------------------------
+		
+		\input{chapters/oneAppendix}
+		
+	
+
+
+  \clearemptydoublepage
+
+	\bibliography{bibliography/literature}
+	
+
+\end{document}
+
