@@ -125,13 +125,13 @@ class VrepEnvironment:
 		# Publish turning angle and sleep for ~50ms
 		angle = self.get_turning_angle(snn_output)
 		self.angle_pub.publish(angle)
-
 		self.velocity_pub.publish(snn_output[velocity_neuron])
+		reward = self.get_relative_reward(snn_output)
 		self.rate.sleep()
 
 		s = self.get_state()					# New state
 		a = self.angle_to_target				# Angle to target (error angle)
-		r = self.get_linear_reward()			# Received reward
+		r = reward			# Received reward
 		t = self.terminate						# Episode Terminates
 		n = self.steps							# Current step
 		p = self.path_complete					# Terminated because Path was completed successfully
@@ -142,10 +142,19 @@ class VrepEnvironment:
 		velocity_reward = (self.distance_to_target - d_target) / d_target
 		return np.array([-self.angle_to_target, self.angle_to_target, velocity_reward]) * reward_factor
 
+	def get_event_based_reward(self):
+		velocity_reward = 0
+		if self.distance_to_target < 3.:
+			velocity_reward = -1
+		if self.distance_to_target > 5.5:
+			velocity_reward = 1
+		return np.array([-self.angle_to_target, self.angle_to_target, velocity_reward]) * reward_factor
+
 	def get_relative_reward(self, snn_output):
 		target = n_max * self.angle_to_target / a_max
 		r = ((target + snn_output[0]) - snn_output[1])/n_max
-		reward = np.array([-r, r]) * reward_factor
+		velocity_reward = (self.distance_to_target - d_target) / d_target
+		reward = np.array([-r, r, velocity_reward]) * reward_factor
 		return reward
 
 	def get_turning_angle(self, snn_output):

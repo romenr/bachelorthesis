@@ -14,9 +14,8 @@ class SpikingNeuralNetwork:
 		# INPUT LAYER
 		# The spike generators are the input of the snn
 		self.spike_generators = nest.Create("poisson_generator", input_layer_size, params=poisson_params)
-		# TODO Check what exactly these do (I think they prevent generators from firing multiple times at once)
+		# The parrot neuron repeats the same poisson spike train to each connected neuron
 		self.input_layer = nest.Create("parrot_neuron", input_layer_size)
-		nest.Connect(self.spike_generators, self.input_layer, "one_to_one")
 
 		# HIDDEN LAYER
 		self.hidden_layer = nest.Create("iaf_psc_alpha", hidden_layer_size, params=iaf_params)
@@ -26,7 +25,6 @@ class SpikingNeuralNetwork:
 		self.output_layer = nest.Create("iaf_psc_alpha", output_layer_size, params=iaf_params)
 		# Create Output spike detector
 		self.spike_detector = nest.Create("spike_detector", output_layer_size, params={"withtime": True})
-		nest.Connect(self.output_layer, self.spike_detector, "one_to_one")
 
 		# Create R-STDP all to all connection
 		self.vt = nest.Create("volume_transmitter")
@@ -40,8 +38,10 @@ class SpikingNeuralNetwork:
 			"A_minus": A_minus
 		}
 		nest.SetDefaults("stdp_dopamine_synapse", r_stdp_synapse_defaults)
+		nest.Connect(self.spike_generators, self.input_layer, "one_to_one")
 		nest.Connect(self.input_layer, self.hidden_layer, "all_to_all", syn_spec=r_stdp_synapse_options)
 		nest.Connect(self.hidden_layer, self.output_layer, "all_to_all", syn_spec=r_stdp_synapse_options)
+		nest.Connect(self.output_layer, self.spike_detector, "one_to_one")
 
 		# Create connection handles
 		self.conn_l = nest.GetConnections(target=[self.output_layer[left_neuron]])

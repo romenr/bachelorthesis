@@ -20,7 +20,7 @@ distance_index = 1
 
 # Network parameters
 input_layer_size = resolution[0] * resolution[1] + 1
-hidden_layer_size = 4
+hidden_layer_size = 2
 output_layer_size = 3				# Left, Right and Velocity neuron
 left_neuron = 0
 right_neuron = 1
@@ -42,13 +42,13 @@ nest_kernel_status = {				# Nest Kernel initialization options
 w_min = -3000.							# Minimum weight value
 w_max = 3000.						# Maximum weight value
 w0_min = 1000.						# Minimum initial random value
-w0_max = 1500.						# Maximum initial random value
+w0_max = 2000.						# Maximum initial random value
 # These tau_n and tau_c parameters are suggested by Izhikevich, E.M. (2007). Solving the distal reward problem
 # through linkage of STDP and dopamine signaling. Cereb. Cortex, 17(10), 2443-2452.
 tau_n = 200.						# Time constant of reward signal
 tau_c = 1000.						# Time constant of eligibility trace
 
-reward_factor = 0.001			# Reward factor modulating reward signal strength
+reward_factor = 0.01			# Reward factor modulating reward signal strength
 A_plus = 1.							# Constant scaling strength of potentiaion
 A_minus = 1.						# Constant scaling strength of depression
 
@@ -62,11 +62,11 @@ r_stdp_synapse_options = {					# Initialisation Options for R-STDP Synapses
 }
 
 # Snake turning model
-n_max = float(sim_time_step//t_refrac - 1)         # Maximum input activity (- #hiddenlayers)
+n_max = float(sim_time_step//t_refrac)         # Maximum input activity
 
 r_min = 3.0							# Minimum turning radius
 a_max = math.pi / 2					# Maximum turning angle
-d_target = 3.0						# Distance the snake should be behind the target
+d_target = 5.						# Distance the snake should be behind the target
 
 # Thermal Vision
 default_temperature = 128			# Default temperature of the simulation
