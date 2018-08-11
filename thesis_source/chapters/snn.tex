@@ -1,0 +1,21 @@
+\chapter{Spiking Neural Networks}
+\label{section:snn}
+
+\section{Leaky Integrate and Fire Neuron Model}
+
+% E. M. Izhikevich et. al. "Simple Model of spiking Neurons" 2003
+% Hodgking, Huxley 1952 A quantitive description of membrane current and its application to conduction and excition in nerves
+%	TODO look up on which paper nest implementation is based
+\[	
+	\tau_m \frac{dv \left( t \right)}{dt} = - \left( v \left( t \right) - v_{rest} \right) + RI \left( t \right)
+\]
+
+\section{Spike-Timing-Dependent-Plasticity}
+
+\[ \Delta t = t_{post} - t_{pre} \]
+
+\[ \Delta w_+ = A_+ e^{- \frac{\Delta t}{\tau_+}} if \Delta t > 0  \]
+
+\[ \Delta w_- = A_- e^{- \frac{\Delta t}{\tau_-}} if \Delta t < 0  \]
+
+\section{Reward-Modulated Spike-Timing-Dependent-Plasticity}
