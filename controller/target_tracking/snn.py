@@ -43,6 +43,8 @@ class SpikingNeuralNetwork:
 		nest.Connect(self.hidden_layer, self.output_layer, "all_to_all", syn_spec=r_stdp_synapse_options)
 		nest.Connect(self.output_layer, self.spike_detector, "one_to_one")
 
+		nest.PrintNetwork(depth=6)
+
 		# Create connection handles
 		self.conn_l = nest.GetConnections(target=[self.output_layer[left_neuron]])
 		self.conn_r = nest.GetConnections(target=[self.output_layer[right_neuron]])
@@ -61,7 +63,7 @@ class SpikingNeuralNetwork:
 		w_v = nest.GetStatus(self.conn_v, keys="weight")
 		for i, conn in enumerate(self.input_hidden_con):
 			w = np.array([w_l[i], w_r[i], w_v[i]])
-			nest.SetStatus(conn, {"n": np.sum(w * reward) / np.sum(w)})
+			nest.SetStatus(conn, {"n": 10 * np.sum(w * reward) / np.sum(w)})
 
 	def simulate(self, state):
 		time = nest.GetKernelStatus("time")
