@@ -3,19 +3,31 @@
 
 \section{Leaky Integrate and Fire Neuron Model}
 
+% iaf_psc_alpha - Leaky integrate-and-fire neuron model.
+% http://www.nest-simulator.org/helpindex/cc/iaf_psc_alpha.html
+
 % E. M. Izhikevich et. al. "Simple Model of spiking Neurons" 2003
 % Hodgking, Huxley 1952 A quantitive description of membrane current and its application to conduction and excition in nerves
 %	TODO look up on which paper nest implementation is based
-\[	
+
+
+
+\begin{equation}
 	\tau_m \frac{dv \left( t \right)}{dt} = - \left( v \left( t \right) - v_{rest} \right) + RI \left( t \right)
-\]
+\end{equation}
 
 \section{Spike-Timing-Dependent-Plasticity}
 
-\[ \Delta t = t_{post} - t_{pre} \]
+\begin{equation}
+	\Delta t = t_{post} - t_{pre}
+\end{equation}
 
-\[ \Delta w_+ = A_+ e^{- \frac{\Delta t}{\tau_+}} if \Delta t > 0  \]
+\begin{equation}
+	\Delta w_+ = A_+ e^{- \frac{\Delta t}{\tau_+}} if \Delta t > 0
+\end{equation}
 
-\[ \Delta w_- = A_- e^{- \frac{\Delta t}{\tau_-}} if \Delta t < 0  \]
+\begin{equation}
+	\Delta w_- = A_- e^{- \frac{\Delta t}{\tau_-}} if \Delta t < 0
+\end{equation}
 
 \section{Reward-Modulated Spike-Timing-Dependent-Plasticity}
