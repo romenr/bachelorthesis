@@ -6,6 +6,11 @@ from parameters import *
 from simulation import Simulation
 
 
+def get_state_reward_zero():
+	return dict(image=np.zeros((resolution[0], resolution[1]), dtype=int), distance=d_target), np.zeros(
+		output_layer_size)
+
+
 class VrepEnvironment:
 	def __init__(self, path, path_mirrored):
 		self.sim = Simulation()
@@ -42,7 +47,7 @@ class VrepEnvironment:
 		self.turn_pre = 0.0
 		self.sim.reset()
 		time.sleep(1)
-		return self.get_state_zero()
+		return get_state_reward_zero()
 
 	def step(self, snn_output):
 
@@ -114,7 +119,4 @@ class VrepEnvironment:
 				for x in range(img_resolution[1]):
 					new_state[x//self.resize_factor[0], y//self.resize_factor[1]] += self.sim.img[y + crop_top, x]
 
-		return [new_state / np.prod(self.resize_factor, dtype=float), self.sim.distance_to_target]
-
-	def get_state_zero(self):
-		return [np.zeros((resolution[0], resolution[1]), dtype=int), d_target], np.zeros(output_layer_size)
+		return dict(image=new_state / np.prod(self.resize_factor, dtype=float), distance=self.sim.distance_to_target)

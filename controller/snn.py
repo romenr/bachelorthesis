@@ -72,13 +72,13 @@ class SpikingNeuralNetwork:
 
 		# Map state to poison spike generators
 		# Every value of state needs to be in the range [0;1] to be mapped to the [min, max] firing rate
-		image = state[image_index]
+		image = state['image']
 		image = image.reshape(image.size)
 		poisson_rate = np.multiply(np.clip(image, 0, 1), max_poisson_freq)
 		for i, r in enumerate(poisson_rate):
 			nest.SetStatus([self.spike_generators[i]], {"rate": r})
 
-		nest.SetStatus([self.spike_generators[image.size]], {"rate": state[distance_index]})
+		nest.SetStatus([self.spike_generators[image.size]], {"rate": state['distance']})
 
 		# Simulate network
 		nest.Simulate(sim_time_step)
