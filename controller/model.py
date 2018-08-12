@@ -20,7 +20,7 @@ class Model:
 		self.snn.set_reward(reward)
 		output, self.weights = self.snn.simulate(state)
 		angle = self.get_turning_angle(output)
-		action = dict(angle=angle, velocity=output[velocity_neuron], left=output[left_neuron], right=output[right_neuron])
+		action = dict(angle=angle, left=output[left_neuron], right=output[right_neuron])
 		return action
 
 	def get_turning_angle(self, snn_output):

@@ -27,12 +27,11 @@ signal.signal(signal.SIGINT, signal_handler)
 h5f = h5py.File(path.join(args.dir, param.weights_file), 'r')
 w_l = np.array(h5f['w_l'], dtype=float)
 w_r = np.array(h5f['w_r'], dtype=float)
-w_h = np.array(h5f['w_h'], dtype=float)
 h5f.close()
 
 model = Model()
 env = VrepEnvironment(param.evaluation_path, param.evaluation_path_mirrored)
-model.snn.set_weights(w_l, w_r, w_h)
+model.snn.set_weights(w_l, w_r)
 
 # Arrays of variables that will be saved
 reward = []

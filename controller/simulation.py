@@ -20,14 +20,12 @@ class Simulation:
 		self.terminate = False
 		self.target_last_seen = 0
 		self.angle_to_target = 0.0
-		self.distance_to_target = d_target
 		self.path_complete = False
 
 		# Ros Node snake_controller setup
 		# Control the Snake by publishing the Radius OR Angle Publisher
 		self.radius_pub = rospy.Publisher('turningRadius', Float32, queue_size=1)
 		self.angle_pub = rospy.Publisher('turningAngle', Float32, queue_size=1)
-		self.velocity_pub = rospy.Publisher('velocity', Float32, queue_size=1)
 		self.select_path_pub = rospy.Publisher('selectPath', Int32, queue_size=1)
 		self.reset_pub = rospy.Publisher('resetRobot', Bool, queue_size=1)
 
@@ -43,17 +41,14 @@ class Simulation:
 		self.target_last_seen = 0
 		self.terminate = False
 		self.path_complete = False
-		self.distance_to_target = d_target
 		self.angle_to_target = 0
 		self.img_set = False
 
 		self.radius_pub.publish(0.0)
-		self.velocity_pub.publish(0.5)
 		self.reset_pub.publish(True)
 
-	def publish_action(self, angle, velocity):
+	def publish_action(self, angle):
 		self.angle_pub.publish(angle)
-		self.velocity_pub.publish(velocity)
 		self.rate.sleep()
 
 	def image_callback(self, msg):

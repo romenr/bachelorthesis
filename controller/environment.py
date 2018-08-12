@@ -6,11 +6,6 @@ from parameters import *
 from simulation import Simulation
 
 
-def get_state_reward_zero():
-	return dict(image=np.zeros((resolution[0], resolution[1]), dtype=int), distance=d_target, left=0, right=0), np.zeros(
-		output_layer_size)
-
-
 class VrepEnvironment:
 	def __init__(self, path, path_mirrored):
 		self.sim = Simulation()
@@ -56,7 +51,7 @@ class VrepEnvironment:
 		# Publish turning angle and sleep for ~50ms
 		angle = action['angle']
 		reward = self.get_relative_reward(angle)
-		self.sim.publish_action(angle, action['velocity'])
+		self.sim.publish_action(angle)
 
 		s = self.get_state(action)					# New state
 		a = self.sim.angle_to_target				# Angle to target (error angle)
@@ -68,21 +63,11 @@ class VrepEnvironment:
 		return s, a, r, t, n, p
 
 	def get_linear_reward(self):
-		velocity_reward = (self.sim.distance_to_target - d_target) / d_target
-		return np.array([-self.sim.angle_to_target, self.sim.angle_to_target, velocity_reward]) * reward_factor
-
-	def get_event_based_reward(self):
-		velocity_reward = 0
-		if self.sim.distance_to_target < 3.:
-			velocity_reward = -1
-		if self.sim.distance_to_target > 5.5:
-			velocity_reward = 1
-		return np.array([-self.sim.angle_to_target, self.sim.angle_to_target, velocity_reward]) * reward_factor
+		return np.array([-self.sim.angle_to_target, self.sim.angle_to_target]) * reward_factor
 
 	def get_relative_reward(self, angle):
 		r = (self.sim.angle_to_target - angle) / a_max
-		velocity_reward = (self.sim.distance_to_target - d_target) / d_target
-		reward = np.array([-r, r, velocity_reward]) * reward_factor
+		reward = np.array([-r, r]) * reward_factor
 		return reward
 
 	def get_state(self, last_action):
@@ -93,5 +78,9 @@ class VrepEnvironment:
 				for x in range(img_resolution[1]):
 					new_state[x//self.resize_factor[0], y//self.resize_factor[1]] += self.sim.img[y + crop_top, x]
 
-		return dict(image=new_state / np.prod(self.resize_factor, dtype=float), distance=self.sim.distance_to_target,
-					last_action=last_action)
+		return dict(image=new_state / np.prod(self.resize_factor, dtype=float), last_action=last_action)
+
+
+def get_state_reward_zero():
+	return dict(image=np.zeros((resolution[0], resolution[1]), dtype=int), left=0, right=0), np.zeros(
+		output_layer_size)

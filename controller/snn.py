@@ -16,15 +16,14 @@ class SpikingNeuralNetwork:
 		self.spike_generators = nest.Create("poisson_generator", input_layer_size, params=poisson_params)
 		# The parrot neuron repeats the same poisson spike train to each connected neuron
 		self.input_layer = nest.Create("parrot_neuron", input_layer_size)
-
-		# HIDDEN LAYER
-		self.hidden_layer = nest.Create("iaf_psc_alpha", hidden_layer_size, params=iaf_params)
+		nest.Connect(self.spike_generators, self.input_layer, "one_to_one")
 
 		# OUTPUT LAYER
 		# Create motor IAF neurons
 		self.output_layer = nest.Create("iaf_psc_alpha", output_layer_size, params=iaf_params)
 		# Create Output spike detector
 		self.spike_detector = nest.Create("spike_detector", output_layer_size, params={"withtime": True})
+		nest.Connect(self.output_layer, self.spike_detector, "one_to_one")
 
 		# Create R-STDP all to all connection
 		self.vt = nest.Create("volume_transmitter")
@@ -38,10 +37,7 @@ class SpikingNeuralNetwork:
 			"A_minus": A_minus
 		}
 		nest.SetDefaults("stdp_dopamine_synapse", r_stdp_synapse_defaults)
-		nest.Connect(self.spike_generators, self.input_layer, "one_to_one")
-		nest.Connect(self.input_layer, self.hidden_layer, "all_to_all", syn_spec=r_stdp_synapse_options)
-		nest.Connect(self.hidden_layer, self.output_layer, "all_to_all", syn_spec=r_stdp_synapse_options)
-		nest.Connect(self.output_layer, self.spike_detector, "one_to_one")
+		nest.Connect(self.input_layer, self.output_layer, "all_to_all", syn_spec=r_stdp_synapse_options)
 
 		# Print network for debugging
 		# nest.PrintNetwork(depth=6)
@@ -49,22 +45,11 @@ class SpikingNeuralNetwork:
 		# Create connection handles
 		self.conn_l = nest.GetConnections(target=[self.output_layer[left_neuron]])
 		self.conn_r = nest.GetConnections(target=[self.output_layer[right_neuron]])
-		self.conn_v = nest.GetConnections(target=[self.output_layer[velocity_neuron]])
-		self.input_hidden_con = []
-		for i in range(hidden_layer_size):
-			self.input_hidden_con.append(nest.GetConnections(target=[self.hidden_layer[i]]))
 
 	def set_reward(self, reward):
 		# Set reward signal for left and right network
-		nest.SetStatus(self.conn_l, {"n": reward[0]})
-		nest.SetStatus(self.conn_r, {"n": reward[1]})
-		nest.SetStatus(self.conn_v, {"n": reward[2]})
-		w_l = nest.GetStatus(self.conn_l, keys="weight")
-		w_r = nest.GetStatus(self.conn_r, keys="weight")
-		w_v = nest.GetStatus(self.conn_v, keys="weight")
-		for i, conn in enumerate(self.input_hidden_con):
-			w = np.array([w_l[i], w_r[i], w_v[i]])
-			nest.SetStatus(conn, {"n": 10 * np.sum(w * reward) / np.sum(w)})
+		nest.SetStatus(self.conn_l, {"n": reward[left_neuron]})
+		nest.SetStatus(self.conn_r, {"n": reward[right_neuron]})
 
 	def simulate(self, state):
 		time = nest.GetKernelStatus("time")
@@ -79,8 +64,6 @@ class SpikingNeuralNetwork:
 		for i, r in enumerate(poisson_rate):
 			nest.SetStatus([self.spike_generators[i]], {"rate": r})
 
-		nest.SetStatus([self.spike_generators[image.size]], {"rate": state['distance']})
-
 		# Simulate network
 		nest.Simulate(sim_time_step)
 		# Get left and right output spikes [left, right]
@@ -91,19 +74,13 @@ class SpikingNeuralNetwork:
 		nest.SetStatus(self.spike_detector, {"n_events": 0})
 
 		# Get network weights
-		weights_hidden = []
-		for conn in self.input_hidden_con:
-			weights_hidden.append(np.array(nest.GetStatus(conn, keys="weight")))
 		weights_l = np.array(nest.GetStatus(self.conn_l, keys="weight"))
 		weights_r = np.array(nest.GetStatus(self.conn_r, keys="weight"))
-		weights = [weights_l, weights_r, weights_hidden]
+		weights = [weights_l, weights_r]
 		return output, weights
 
-	def set_weights(self, weights_l, weights_r, weights_h):
+	def set_weights(self, weights_l, weights_r):
 		w_l = [{'weight': w} for w in weights_l]
 		w_r = [{'weight': w} for w in weights_r]
-		w_h = [[{'weight': w} for w in weights] for weights in weights_h]
 		nest.SetStatus(self.conn_l, w_l)
 		nest.SetStatus(self.conn_r, w_r)
-		for i, conn in enumerate(self.input_hidden_con):
-			nest.SetStatus(conn, w_h[i])

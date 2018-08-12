@@ -19,12 +19,10 @@ image_index = 0
 distance_index = 1
 
 # Network parameters
-input_layer_size = resolution[0] * resolution[1] + 1
-hidden_layer_size = 10
-output_layer_size = 3				# Left, Right and Velocity neuron
+input_layer_size = resolution[0] * resolution[1]
+output_layer_size = 2				# Left, Right and Velocity neuron
 left_neuron = 0
 right_neuron = 1
-velocity_neuron = 2
 
 
 sim_time_step = 50.0				# Length of network simulation during each step in ms
@@ -66,7 +64,6 @@ n_max = float(sim_time_step//t_refrac)         # Maximum input activity
 
 r_min = 3.0							# Minimum turning radius
 a_max = math.pi / 2.				# Maximum turning angle
-d_target = 5.						# Distance the snake should be behind the target
 
 # Thermal Vision
 default_temperature = 128			# Default temperature of the simulation
