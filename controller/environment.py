@@ -7,7 +7,7 @@ from simulation import Simulation
 
 
 def get_state_reward_zero():
-	return dict(image=np.zeros((resolution[0], resolution[1]), dtype=int), distance=d_target), np.zeros(
+	return dict(image=np.zeros((resolution[0], resolution[1]), dtype=int), distance=d_target, left=0, right=0), np.zeros(
 		output_layer_size)
 
 
@@ -58,7 +58,7 @@ class VrepEnvironment:
 		reward = self.get_relative_reward(angle)
 		self.sim.publish_action(angle, action['velocity'])
 
-		s = self.get_state()					# New state
+		s = self.get_state(action)					# New state
 		a = self.sim.angle_to_target				# Angle to target (error angle)
 		r = reward			# Received reward
 		t = self.sim.terminate						# Episode Terminates
@@ -85,7 +85,7 @@ class VrepEnvironment:
 		reward = np.array([-r, r, velocity_reward]) * reward_factor
 		return reward
 
-	def get_state(self):
+	def get_state(self, last_action):
 		new_state = np.zeros((resolution[0], resolution[1]), dtype=float)
 		# bring the red filtered image in the form of the state
 		if self.sim.img_set:
@@ -93,4 +93,5 @@ class VrepEnvironment:
 				for x in range(img_resolution[1]):
 					new_state[x//self.resize_factor[0], y//self.resize_factor[1]] += self.sim.img[y + crop_top, x]
 
-		return dict(image=new_state / np.prod(self.resize_factor, dtype=float), distance=self.sim.distance_to_target)
+		return dict(image=new_state / np.prod(self.resize_factor, dtype=float), distance=self.sim.distance_to_target,
+					last_action=last_action)
