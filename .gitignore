@@ -318,7 +318,7 @@ pythontex-files-*/
 *.xyc
 
 # endfloat
-*.ttt
+#*.ttt same as V-REP scene files
 *.fff
 
 # Latexian
