@@ -5,7 +5,7 @@ import signal
 import argparse
 import numpy as np
 from os import path
-from snn import SpikingNeuralNetwork
+from model import Model
 from environment import VrepEnvironment
 import parameters as param
 
@@ -30,9 +30,9 @@ w_r = np.array(h5f['w_r'], dtype=float)
 w_h = np.array(h5f['w_h'], dtype=float)
 h5f.close()
 
-snn = SpikingNeuralNetwork()
+model = Model()
 env = VrepEnvironment(param.evaluation_path, param.evaluation_path_mirrored)
-snn.set_weights(w_l, w_r, w_h)
+model.snn.set_weights(w_l, w_r, w_h)
 
 # Arrays of variables that will be saved
 reward = []
@@ -48,11 +48,11 @@ for i in range(param.evaluation_length):
 	# Simulate network for 50 ms
 	# Get left and right output spikes, get weights
 	# Fix the Reward at 0 to prevent the network from changing
-	output, weights = snn.simulate(s)
+	action = model.simulate(s, r)
 
 	# Feed output spikes into snake model
 	# Get state, angle to target, reward, termination, step, path completed
-	s, a, r, t, n, p = env.step(output)
+	s, a, r, t, n, p = env.step(action)
 
 	# Store information that should be saved
 	if t:

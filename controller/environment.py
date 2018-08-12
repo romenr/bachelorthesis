@@ -16,8 +16,6 @@ class VrepEnvironment:
 		self.sim = Simulation()
 
 		self.steps = 0
-		self.turn_pre = 0.0
-		self.angle_pre = 0.0
 		self.path = path
 		self.path_step_count = 0
 		self.path_mirrored = path_mirrored
@@ -44,12 +42,11 @@ class VrepEnvironment:
 			self.mirrored = not self.mirrored
 			self.update_path()
 		self.steps = 0
-		self.turn_pre = 0.0
 		self.sim.reset()
 		time.sleep(1)
 		return get_state_reward_zero()
 
-	def step(self, snn_output):
+	def step(self, action):
 
 		if self.sim.terminate:
 			self.reset()
@@ -57,9 +54,9 @@ class VrepEnvironment:
 		self.steps += 1
 
 		# Publish turning angle and sleep for ~50ms
-		angle = self.get_turning_angle(snn_output)
-		reward = self.get_relative_reward(snn_output)
-		self.sim.publish_action(angle, snn_output[velocity_neuron])
+		angle = action['angle']
+		reward = self.get_relative_reward(angle)
+		self.sim.publish_action(angle, action['velocity'])
 
 		s = self.get_state()					# New state
 		a = self.sim.angle_to_target				# Angle to target (error angle)
@@ -82,34 +79,11 @@ class VrepEnvironment:
 			velocity_reward = 1
 		return np.array([-self.sim.angle_to_target, self.sim.angle_to_target, velocity_reward]) * reward_factor
 
-	def get_relative_reward(self, snn_output):
-		target = n_max * self.sim.angle_to_target / a_max
-		r = ((target + snn_output[0]) - snn_output[1])/n_max
+	def get_relative_reward(self, angle):
+		r = (self.sim.angle_to_target - angle) / a_max
 		velocity_reward = (self.sim.distance_to_target - d_target) / d_target
 		reward = np.array([-r, r, velocity_reward]) * reward_factor
 		return reward
-
-	def get_turning_angle(self, snn_output):
-		# Snake turning model
-		m_l = snn_output[left_neuron]
-		m_r = snn_output[right_neuron]
-		angle = a_max * (m_l - m_r)
-		c = math.sqrt((m_l**2 + m_r**2)/2.0)
-		self.turn_pre = c * angle + (1 - c) * self.turn_pre
-		return angle
-
-	def get_turning_radius(self, n_l, n_r):
-		# Snake turning model
-		m_l = n_l/n_max
-		m_r = n_r/n_max
-		a = m_l - m_r
-		c = math.sqrt((m_l**2 + m_r**2)/2.0)
-		self.turn_pre = c*0.5*a + (1-c)*self.turn_pre
-		if abs(self.turn_pre) < 0.001:
-			radius = 0
-		else:
-			radius = r_min/self.turn_pre
-		return radius
 
 	def get_state(self):
 		new_state = np.zeros((resolution[0], resolution[1]), dtype=float)

@@ -43,7 +43,8 @@ class SpikingNeuralNetwork:
 		nest.Connect(self.hidden_layer, self.output_layer, "all_to_all", syn_spec=r_stdp_synapse_options)
 		nest.Connect(self.output_layer, self.spike_detector, "one_to_one")
 
-		nest.PrintNetwork(depth=6)
+		# Print network for debugging
+		# nest.PrintNetwork(depth=6)
 
 		# Create connection handles
 		self.conn_l = nest.GetConnections(target=[self.output_layer[left_neuron]])
