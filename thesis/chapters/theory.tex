@@ -1,2 +1,54 @@
 \chapter{Technology Overview}
 \label{section:theory}
+
+\section{Snake Movement Model}
+
+% TODO Do I want to write the whole derivation of the b?
+
+\begin{equation} \label{eq:jointAngles}
+\phi\left(t, k\right) = b + a \cos \left(\omega t - \lambda k\right)
+\end{equation}
+
+Equation \ref{eq:jointAngles} describes the angle of the k-th joint at time t. The bias parameter $ b $ decides on the turn the sake performs. The speed of the snake is decided by $ \omega$. The constant $\lambda $ describes the angle offset between the joints. Finally $ a $ decides on the magnitude of the movement curve.
+
+\begin{equation} \label{eq:calcBias}
+b\left(\alpha\right) = \alpha / K
+\end{equation}
+
+The correct bias to perform an turn by angle $ \alpha $ can be calculated using equation \ref{eq:calcBias}. Where $ K $ is the total number of Joints.
+
+% TODO a can be substituted by a function that calculates the magnitude based on the joint index in order to reduce the movement of the front modules and particularly the head.
+
+\subsection{Change Movement Speed}
+
+% TODO ordentliches kapitel schreiben
+
+First we initialize the offset as 0
+\[ \omega = \pi \]
+\[ offset = 0 \]
+So now lets assume
+\[ \omega_{new} = \frac{3\pi}{2} \]
+Then we can calculate the new offset (Note: the offset depends not on t, since it dose not change every time step. But it depends on the time t of the change to $\omega$)
+\[ offset_{new} = (\pi - \frac{3\pi}{2}) * t + 0 = -t\frac{\pi}{2} \]
+If we do this at $t = 10$ we get
+\[ \omega t + offset = 10\pi + 0 \]
+\[ \omega_{new}t + offset_{new} = 15\pi - 5\pi = 10\pi \]
+But if we do this calculation without the offset there is a jump!
+\[ \omega t = 10\pi \rightarrow \cos10\pi = \cos0 = 1 \]
+\[ \omega_{new}t = 15\pi \rightarrow \cos15\pi = \cos\pi = -1 \]
+Here is how the update code looks like\\
+$ \omega_{new} = \dots \text{ // calculate } \omega_{new} $\\
+$ offset = ((\omega - \omega_{new}) t + offset) \mod 2\pi $\\
+$\omega = \omega_{new}$ \\
+This new offset will prevent the Jump of the joint Angles.
+Here the $\omega$ and the offset get used to calculate the Angle for joint $i$\\
+amp = a* ((i-1)*y/K + z)\\
+phi = b + amp*math.cos(\textbf{w*t} - lambda * (i-1) + \textbf{offset})\\
+simSetJointTargetPosition(joints\_v[i], -phi*(1-math.exp(p*t)))\\
+
+Here I derive the Formula. The First line is what we want to archive, so in order to prevent a Jump the old $\omega t$ should be equal to the new $\omega_{new}t + offset$. By also allowing the $\omega t$ to already have an offset we can do this multiple times. The last line is the derived update rule we can use in the code to update the offset when we update $\omega$. Finally since this $\omega t + offset$ term is inside a cosinus we can take the offset modulo $2\pi$ without changing the result.
+\[ \omega t + offset = \omega_{new} t + offset_{new} \]
+\[ \omega t - \omega_{new} t + offset = offset_{new} \]
+\[ (\omega - \omega_{new}) t + offset = offset_{new} \]
+\[ offset_{new} = (\omega - \omega_{new}) t + offset \]
+
