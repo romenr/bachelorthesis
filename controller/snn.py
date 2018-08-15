@@ -74,8 +74,8 @@ class SpikingNeuralNetwork:
 		nest.SetStatus(self.spike_detector, {"n_events": 0})
 
 		# Get network weights
-		weights_l = np.array(nest.GetStatus(self.conn_l, keys="weight"))
-		weights_r = np.array(nest.GetStatus(self.conn_r, keys="weight"))
+		weights_l = np.array(nest.GetStatus(self.conn_l, keys="weight")).reshape(resolution)
+		weights_r = np.array(nest.GetStatus(self.conn_r, keys="weight")).reshape(resolution)
 		weights = [weights_l, weights_r]
 		return output, weights
 

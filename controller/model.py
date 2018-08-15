@@ -30,7 +30,7 @@ class Model:
 		angle = a_max * (m_l - m_r)
 		c = math.sqrt((m_l**2 + m_r**2)/2.0)
 		self.turn_pre = c * angle + (1 - c) * self.turn_pre
-		return angle
+		return self.turn_pre
 
 	def get_turning_radius(self, n_l, n_r):
 		# Snake turning model
