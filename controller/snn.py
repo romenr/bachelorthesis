@@ -80,7 +80,7 @@ class SpikingNeuralNetwork:
 		return output, weights
 
 	def set_weights(self, weights_l, weights_r):
-		w_l = [{'weight': w} for w in weights_l]
-		w_r = [{'weight': w} for w in weights_r]
+		w_l = [{'weight': w} for w in weights_l.reshape(weights_l.size)]
+		w_r = [{'weight': w} for w in weights_r.reshape(weights_r.size)]
 		nest.SetStatus(self.conn_l, w_l)
 		nest.SetStatus(self.conn_r, w_r)
