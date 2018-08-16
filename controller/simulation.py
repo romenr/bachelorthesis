@@ -33,6 +33,7 @@ class Simulation:
 		self.path_completed_sub = rospy.Subscriber('completedPath', Bool, self.path_completed_callback)
 		self.angle_to_target_sub = rospy.Subscriber('angleToTarget', Float32, self.angle_to_target_callback)
 		self.distance_to_target_sub = rospy.Subscriber('distanceToTarget', Float32, self.distance_to_target_callback)
+		self.collision_sub = rospy.Subscriber('collision', Bool, self.collision_callback)
 
 		rospy.init_node('snake_controller')
 		self.rate = rospy.Rate(rate)
@@ -83,3 +84,8 @@ class Simulation:
 			print "Path completed resetting simulation ..."
 			self.terminate = True
 			self.path_complete = True
+
+	def collision_callback(self, msg):
+		if msg.data:
+			print "Collision! resetting simulation ..."
+			self.terminate = True
