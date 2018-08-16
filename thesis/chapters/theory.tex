@@ -1,2 +1,90 @@
 \chapter{Technology Overview}
 \label{section:theory}
+
+
+
+
+
+Questions:
+Why am I using a Snake robot?
+What are the challenges whit Snake robots?
+How dose the model I use look like?
+What is the planar snake model and why is it a good representation for a real snake?
+What are the equations for the planar snake model?
+Which changes did I use from \cite{Bing}?
+What is linear reduction?
+What are the problems of the model?
+What about changing speed?
+
+
+
+
+
+\section{Snake Movement Model}
+
+% TODO Do I want to write the whole derivation of the b?
+
+
+
+\begin{equation} \label{eq:jointAngles}
+\phi\left(t, k\right) = b + a \sin \left(\omega t - \lambda k\right)
+\end{equation}
+
+Equation \ref{eq:jointAngles} describes the angle of the k-th joint at time t. The bias parameter $ b $ decides on the turn the sake performs. The speed of the snake is decided by $ \omega$. The constant $\lambda $ describes the angle offset between the joints. Finally $ a $ decides on the amplitude of the movement sine curve.
+
+\begin{equation} \label{eq:calcBias}
+b\left(\alpha\right) = \alpha / K
+\end{equation}
+
+The correct bias to perform an turn by angle $ \alpha $ can be calculated using equation \ref{eq:calcBias}. Where $ K $ is the total number of Joints.
+
+To reduce the movement of the head module the amplitude parameter $ a $ in equation \ref{eq:jointAngles} can be replaced by a function $amp\left(k\right)$. This can then be used to reduce the amplitude for the front modules and the head. In this work I used the following function suggested by Bing\cite{Bing}.
+
+\begin{equation}\label{eq:amp}
+amp\left(k\right) = a \left(\frac{\left(k - 1\right) y}{K} + z\right)
+\end{equation}
+
+It assigns $z \in \left[0; 1\right]$ to the head and then changes linearly to the full amplitude $ a$ for the last module. The total number of joints in \ref{eq:amp} is $ K $, the joint index is $k$ and $z = 1 - y$ is the percentage of the full amplitude the the first module should have. In the simulation $ z = y = \frac{1}{2} $ was used.
+
+Another improvement to reduce the head movement of the snake is the following head compensation angle also suggested by Bing\cite{Bing}. The idea is to adjust the angle of the head module to make it always look in the direction the snake is travelling. The compensation angle $ \beta $ can be calculated as follows.
+
+\begin{equation}\label{eq:comp}
+\beta = - \frac{1}{K + 1}\sum_{i = 1}^{K + 1}\sum_{j = 2}^{i} \theta_j
+\end{equation}
+
+Here the angle of the j-th module is $ \theta_j $ and $K$ is the number of joints.
+
+
+\subsection{Change Movement Speed}
+
+% TODO ordentliches kapitel schreiben
+
+First we initialize the offset as 0
+\[ \omega = \pi \]
+\[ offset = 0 \]
+So now lets assume
+\[ \omega_{new} = \frac{3\pi}{2} \]
+Then we can calculate the new offset (Note: the offset depends not on t, since it dose not change every time step. But it depends on the time t of the change to $\omega$)
+\[ offset_{new} = (\pi - \frac{3\pi}{2}) * t + 0 = -t\frac{\pi}{2} \]
+If we do this at $t = 10$ we get
+\[ \omega t + offset = 10\pi + 0 \]
+\[ \omega_{new}t + offset_{new} = 15\pi - 5\pi = 10\pi \]
+But if we do this calculation without the offset there is a jump!
+\[ \omega t = 10\pi \rightarrow \cos10\pi = \cos0 = 1 \]
+\[ \omega_{new}t = 15\pi \rightarrow \cos15\pi = \cos\pi = -1 \]
+Here is how the update code looks like\\
+$ \omega_{new} = \dots \text{ // calculate } \omega_{new} $\\
+$ offset = ((\omega - \omega_{new}) t + offset) \mod 2\pi $\\
+$\omega = \omega_{new}$ \\
+This new offset will prevent the Jump of the joint Angles.
+Here the $\omega$ and the offset get used to calculate the Angle for joint $i$\\
+amp = a* ((i-1)*y/K + z)\\
+phi = b + amp*math.cos(\textbf{w*t} - lambda * (i-1) + \textbf{offset})\\
+simSetJointTargetPosition(joints\_v[i], -phi*(1-math.exp(p*t)))\\
+
+Here I derive the Formula. The First line is what we want to archive, so in order to prevent a Jump the old $\omega t$ should be equal to the new $\omega_{new}t + offset$. By also allowing the $\omega t$ to already have an offset we can do this multiple times. The last line is the derived update rule we can use in the code to update the offset when we update $\omega$. Finally since this $\omega t + offset$ term is inside a cosinus we can take the offset modulo $2\pi$ without changing the result.
+\[ \omega t + offset = \omega_{new} t + offset_{new} \]
+\[ \omega t - \omega_{new} t + offset = offset_{new} \]
+\[ (\omega - \omega_{new}) t + offset = offset_{new} \]
+\[ offset_{new} = (\omega - \omega_{new}) t + offset \]
+
