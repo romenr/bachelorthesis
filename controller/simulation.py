@@ -2,8 +2,9 @@
 
 import rospy
 import cv2 as cv
+import numpy as np
 from cv_bridge import CvBridge
-from std_msgs.msg import Float32, Bool, Int32
+from std_msgs.msg import Float32, Bool, Int32, Float32MultiArray
 from sensor_msgs.msg import Image
 from parameters import *
 
@@ -21,6 +22,7 @@ class Simulation:
 		self.target_last_seen = 0
 		self.angle_to_target = 0.0
 		self.path_complete = False
+		self.prox_sensor_data = np.zeros(5)
 
 		# Ros Node snake_controller setup
 		# Control the Snake by publishing the Radius OR Angle Publisher
@@ -32,8 +34,8 @@ class Simulation:
 		self.image_sub = rospy.Subscriber('redImage', Image, self.image_callback)
 		self.path_completed_sub = rospy.Subscriber('completedPath', Bool, self.path_completed_callback)
 		self.angle_to_target_sub = rospy.Subscriber('angleToTarget', Float32, self.angle_to_target_callback)
-		self.distance_to_target_sub = rospy.Subscriber('distanceToTarget', Float32, self.distance_to_target_callback)
 		self.collision_sub = rospy.Subscriber('collision', Bool, self.collision_callback)
+		self.prox_sub = rospy.Subscriber('prox', Float32MultiArray, self.prox_sensor_callback)
 
 		rospy.init_node('snake_controller')
 		self.rate = rospy.Rate(rate)
@@ -44,6 +46,7 @@ class Simulation:
 		self.path_complete = False
 		self.angle_to_target = 0
 		self.img_set = False
+		self.prox_sensor_data = np.zeros(5)
 
 		self.radius_pub.publish(0.0)
 		self.reset_pub.publish(True)
@@ -76,9 +79,6 @@ class Simulation:
 	def angle_to_target_callback(self, msg):
 		self.angle_to_target = -msg.data  # Why -msg.data
 
-	def distance_to_target_callback(self, msg):
-		self.distance_to_target = msg.data
-
 	def path_completed_callback(self, msg):
 		if msg.data:
 			print "Path completed resetting simulation ..."
@@ -89,3 +89,11 @@ class Simulation:
 		if msg.data:
 			print "Collision! resetting simulation ..."
 			self.terminate = True
+
+	def prox_sensor_callback(self, msg):
+		data = np.array(msg.data)
+		# Sensor can measure in [0; prox_sensor_max_dist] and -1 means nothing sensed
+		data[data < 0] = prox_sensor_max_dist
+		data = np.ones(data.size) - (data / prox_sensor_max_dist)
+		self.prox_sensor_data = data
+

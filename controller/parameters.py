@@ -64,6 +64,7 @@ n_max = float(sim_time_step//t_refrac)         # Maximum input activity
 
 r_min = 3.0							# Minimum turning radius
 a_max = math.pi / 2.				# Maximum turning angle
+prox_sensor_max_dist = 10.				# Maximum proximity sensor sensing range
 
 # Thermal Vision
 default_temperature = 128			# Default temperature of the simulation
