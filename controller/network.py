@@ -2,69 +2,101 @@
 
 import nest
 import numpy as np
-import parameters as p
+from parameters import *
 
 
-class SpikingNeuralNetwork:
+class ProxSpikingNeuralNetwork:
 	def __init__(self):
-		# NEST options
-		np.set_printoptions(precision=1)
-		nest.set_verbosity('M_WARNING')
-		nest.ResetKernel()
-		nest.SetKernelStatus({"local_num_threads": 1, "resolution": p.time_resolution})
-		# Create Poisson neurons
-		self.spike_generators = nest.Create("poisson_generator", p.resolution[0]*p.resolution[1], params=p.poisson_params)
-		self.neuron_pre = nest.Create("parrot_neuron", p.resolution[0]*p.resolution[1])
-		# Create motor IAF neurons
-		self.neuron_post = nest.Create("iaf_psc_alpha", 2, params=p.iaf_params)
-		# Create Output spike detector
-		self.spike_detector = nest.Create("spike_detector", 2, params={"withtime": True})
-		# Create R-STDP synapses
-		self.syn_dict = {"model": "stdp_dopamine_synapse",
-						"weight": {"distribution": "uniform", "low": p.w0_min, "high": p.w0_max}}
-		self.vt = nest.Create("volume_transmitter")
-		nest.SetDefaults("stdp_dopamine_synapse", {"vt": self.vt[0], "tau_c": p.tau_c, "tau_n": p.tau_n, "Wmin": p.w_min, "Wmax": p.w_max, "A_plus": p.A_plus, "A_minus": p.A_minus})
-		nest.Connect(self.spike_generators, self.neuron_pre, "one_to_one")
-		nest.Connect(self.neuron_pre, self.neuron_post, "all_to_all", syn_spec=self.syn_dict)
-		nest.Connect(self.neuron_post, self.spike_detector, "one_to_one")
-		# Create connection handles for left and right motor neuron
-		self.conn_l = nest.GetConnections(target=[self.neuron_post[0]])
-		self.conn_r = nest.GetConnections(target=[self.neuron_post[1]])
 
-	def simulate(self, state, reward):
+		# INPUT LAYER
+		# The spike generators are the input of the snn
+		self.spike_generators_l = nest.Create("poisson_generator", 2, params=poisson_params)
+		# The parrot neuron repeats the same poisson spike train to each connected neuron
+		self.input_layer_l = nest.Create("parrot_neuron", 2)
+		nest.Connect(self.spike_generators_l, self.input_layer_l, "one_to_one")
+
+		# The spike generators are the input of the snn
+		self.spike_generators_r = nest.Create("poisson_generator", 2, params=poisson_params)
+		# The parrot neuron repeats the same poisson spike train to each connected neuron
+		self.input_layer_r = nest.Create("parrot_neuron", 2)
+		nest.Connect(self.spike_generators_r, self.input_layer_r, "one_to_one")
+
+		# OUTPUT LAYER
+		# Create motor IAF neurons
+		self.output_layer_l = nest.Create("iaf_psc_alpha", 1, params=iaf_params)
+		# Create Output spike detector
+		self.spike_detector_l = nest.Create("spike_detector", 1, params={"withtime": True})
+		nest.Connect(self.output_layer_l, self.spike_detector_l, "one_to_one")
+
+		self.output_layer_r = nest.Create("iaf_psc_alpha", 1, params=iaf_params)
+		# Create Output spike detector
+		self.spike_detector_r = nest.Create("spike_detector", 1, params={"withtime": True})
+		nest.Connect(self.output_layer_r, self.spike_detector_r, "one_to_one")
+
+		# Create R-STDP all to all connection
+		self.vt = nest.Create("volume_transmitter")
+		r_stdp_synapse_defaults = {
+			"vt": self.vt[0],
+			"tau_c": tau_c,
+			"tau_n": tau_n,
+			"Wmin": w_min,
+			"Wmax": w_max,
+			"A_plus": A_plus,
+			"A_minus": A_minus
+		}
+		nest.SetDefaults("stdp_dopamine_synapse", r_stdp_synapse_defaults)
+		nest.Connect(self.input_layer_r, self.output_layer_l, "all_to_all", syn_spec=r_stdp_synapse_options)
+		nest.Connect(self.input_layer_l, self.output_layer_r, "all_to_all", syn_spec=r_stdp_synapse_options)
+
+		# Print network for debugging
+		# nest.PrintNetwork(depth=6)
+
+		# Create connection handles
+		self.conn_l = nest.GetConnections(target=[self.output_layer_l[0]])
+		self.conn_r = nest.GetConnections(target=[self.output_layer_r[0]])
+
+	def set_reward(self, reward):
 		# Set reward signal for left and right network
-		nest.SetStatus(self.conn_l, {"n": -reward * p.reward_factor})
-		nest.SetStatus(self.conn_r, {"n": reward * p.reward_factor})
-		# Set poisson neuron firing time span
+		nest.SetStatus(self.conn_l, {"n": reward[2]})
+		nest.SetStatus(self.conn_r, {"n": reward[3]})
+
+	def simulate(self, state):
 		time = nest.GetKernelStatus("time")
-		nest.SetStatus(self.spike_generators, {"origin": time})
-		nest.SetStatus(self.spike_generators, {"stop": p.sim_time})
-		# Set poisson neuron firing frequency
-		state = state.reshape(state.size)
-		rate = np.multiply(np.clip(state, 0, 1), p.max_poisson_freq)
-		for i, r in enumerate(rate):
-			nest.SetStatus([self.spike_generators[i]], {"rate": r})
+		nest.SetStatus(self.spike_generators_l, {"origin": time})
+		nest.SetStatus(self.spike_generators_l, {"stop": sim_time_step})
+		nest.SetStatus(self.spike_generators_r, {"origin": time})
+		nest.SetStatus(self.spike_generators_r, {"stop": sim_time_step})
+
+		# Map state to poison spike generators
+		# Every value of state needs to be in the range [0;1] to be mapped to the [min, max] firing rate
+		prox_data = state['prox']
+		poisson_rate = np.multiply(np.clip(prox_data[1:], 0, 1), max_poisson_freq)
+		for i, r in enumerate(poisson_rate[0:1]):
+			nest.SetStatus([self.spike_generators_l[i]], {"rate": r})
+		for i, r in enumerate(poisson_rate[2:3]):
+			nest.SetStatus([self.spike_generators_r[i]], {"rate": r})
+
 		# Simulate network
-		nest.Simulate(p.sim_time)
-		# Get left and right output spikes
-		n_l = nest.GetStatus(self.spike_detector, keys="n_events")[0]
-		n_r = nest.GetStatus(self.spike_detector, keys="n_events")[1]
+		nest.Simulate(sim_time_step)
+		# Get left and right output spikes [left, right]
+		output_l = np.array(nest.GetStatus(self.spike_detector_l, keys="n_events"))
+		output_l = output_l / n_max
+		output_r = np.array(nest.GetStatus(self.spike_detector_r, keys="n_events"))
+		output_r = output_r / n_max
+		output = np.array([output_l[0], output_r[0]])
+
 		# Reset output spike detector
-		nest.SetStatus(self.spike_detector, {"n_events": 0})
+		nest.SetStatus(self.spike_detector_l, {"n_events": 0})
+		nest.SetStatus(self.spike_detector_r, {"n_events": 0})
+
 		# Get network weights
-		weights_l = np.array(nest.GetStatus(self.conn_l, keys="weight")).reshape(p.resolution)
-		weights_r = np.array(nest.GetStatus(self.conn_r, keys="weight")).reshape(p.resolution)
-		return n_l, n_r, weights_l, weights_r
+		weights_l = np.array(nest.GetStatus(self.conn_l, keys="weight"))
+		weights_r = np.array(nest.GetStatus(self.conn_r, keys="weight"))
+		weights = [weights_l, weights_r]
+		return output, weights
 
 	def set_weights(self, weights_l, weights_r):
-		# Translate weights into dictionary format
-		w_l = []
-		for w in weights_l.reshape(weights_l.size):
-			w_l.append({'weight': w})
-		w_r = []
-		for w in weights_r.reshape(weights_r.size):
-			w_r.append({'weight': w})
-		# Set left and right network weights
+		w_l = [{'weight': w} for w in weights_l.reshape(weights_l.size)]
+		w_r = [{'weight': w} for w in weights_r.reshape(weights_r.size)]
 		nest.SetStatus(self.conn_l, w_l)
 		nest.SetStatus(self.conn_r, w_r)
-		return

@@ -64,6 +64,8 @@ n_max = float(sim_time_step//t_refrac)         # Maximum input activity
 
 r_min = 3.0							# Minimum turning radius
 a_max = math.pi / 2.				# Maximum turning angle
+a_avoidance_max = math.pi / 9.		# Maximum obstacle avoidance angle
+prox_crit_dist = 0.9				# Critical distance for obstacle avoidance
 prox_sensor_max_dist = 10.				# Maximum proximity sensor sensing range
 
 # Thermal Vision

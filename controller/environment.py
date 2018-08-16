@@ -62,11 +62,17 @@ class VrepEnvironment:
 		return s, a, r, t, n, p
 
 	def get_linear_reward(self):
-		return np.array([-self.sim.angle_to_target, self.sim.angle_to_target]) * reward_factor
+		prox_reward_left = 0
+		prox_reward_right = 0
+		if self.sim.prox_sensor_data[1:2] > prox_crit_dist:
+			prox_reward_right = 0.2
+		if self.sim.prox_sensor_data[3:4] > prox_crit_dist:
+			prox_reward_left = 0.2
+		return np.array([-self.sim.angle_to_target, self.sim.angle_to_target, prox_reward_left, prox_reward_right]) * reward_factor
 
 	def get_relative_reward(self, angle):
 		r = (self.sim.angle_to_target - angle) / a_max
-		reward = np.array([-r, r]) * reward_factor
+		reward = np.array([-r, r, 0, 0]) * reward_factor
 		return reward
 
 	def get_state(self, last_action):
@@ -77,9 +83,9 @@ class VrepEnvironment:
 				for x in range(img_resolution[1]):
 					new_state[x//self.resize_factor[0], y//self.resize_factor[1]] += self.sim.img[y + crop_top, x]
 
-		return dict(image=new_state / np.prod(self.resize_factor, dtype=float), last_action=last_action)
+		return dict(image=new_state / np.prod(self.resize_factor, dtype=float), last_action=last_action, prox=self.sim.prox_sensor_data)
 
 
 def get_state_reward_zero():
-	return dict(image=np.zeros((resolution[0], resolution[1]), dtype=int), left=0, right=0), np.zeros(
-		output_layer_size)
+	return dict(image=np.zeros((resolution[0], resolution[1]), dtype=int), left=0, right=0, prox=np.zeros(5)), np.zeros(
+		output_layer_size + 2)
