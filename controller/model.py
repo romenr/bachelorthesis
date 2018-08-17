@@ -21,14 +21,17 @@ class Model:
 		self.angle_pre = 0.0
 
 	def simulate(self, state, reward):
-		self.snn.set_reward(reward)
-		self.psnn.set_reward(reward)
+		if reward is not None:
+			self.snn.set_reward(reward)
+			self.psnn.set_reward(reward)
 		output, self.weights = self.snn.simulate(state)
 		output_p, self.weigts_p = self.psnn.simulate(state)
+		print output_p
 		angle = self.get_turning_angle(output)
-		if np.any(state["prox"] > prox_crit_dist):
-			angle += self.get_obstacle_avoidance_angle(output_p)
-			print self.get_obstacle_avoidance_angle(output_p)
+
+		if np.any(state["prox"][1:] > 0.1):
+			angle = self.get_obstacle_avoidance_angle(output_p)
+		self.turn_pre = angle
 		action = dict(angle=angle, left=output[left_neuron], right=output[right_neuron])
 		return action
 

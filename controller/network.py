@@ -71,9 +71,9 @@ class ProxSpikingNeuralNetwork:
 		# Every value of state needs to be in the range [0;1] to be mapped to the [min, max] firing rate
 		prox_data = state['prox']
 		poisson_rate = np.multiply(np.clip(prox_data[1:], 0, 1), max_poisson_freq)
-		for i, r in enumerate(poisson_rate[0:1]):
+		for i, r in enumerate(poisson_rate[0:2]):
 			nest.SetStatus([self.spike_generators_l[i]], {"rate": r})
-		for i, r in enumerate(poisson_rate[2:3]):
+		for i, r in enumerate(poisson_rate[2:]):
 			nest.SetStatus([self.spike_generators_r[i]], {"rate": r})
 
 		# Simulate network

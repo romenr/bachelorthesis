@@ -64,7 +64,7 @@ n_max = float(sim_time_step//t_refrac)         # Maximum input activity
 
 r_min = 3.0							# Minimum turning radius
 a_max = math.pi / 2.				# Maximum turning angle
-a_avoidance_max = math.pi / 9.		# Maximum obstacle avoidance angle
+a_avoidance_max = math.pi / 6.		# Maximum obstacle avoidance angle
 prox_crit_dist = 0.9				# Critical distance for obstacle avoidance
 prox_sensor_max_dist = 10.				# Maximum proximity sensor sensing range
 
@@ -72,7 +72,7 @@ prox_sensor_max_dist = 10.				# Maximum proximity sensor sensing range
 default_temperature = 128			# Default temperature of the simulation
 
 # Other
-reset_steps = 5						# After how many steps without seeing the target should the simulation reset
+reset_steps = 20						# After how many steps without seeing the target should the simulation reset
 episode_steps = 2000				# Maximum steps in one episode
 rate = 20.							# ROS publication rate (step = 1/rate = 50ms)
 training_length = 40000		    	# Length of training procedure (1 step ~ 50 ms)
