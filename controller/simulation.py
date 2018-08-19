@@ -93,8 +93,8 @@ class Simulation:
 	def prox_sensor_callback(self, msg):
 		data = np.array(msg.data)
 		# Sensor can measure in [0; prox_sensor_max_dist] and -1 means nothing sensed
-		data[data < 0] = 2.
-		data[data > 2] = 2.
-		data = np.ones(data.size) - (data / 2.)
+		data[data < 0] = 3.
+		data[data > 3] = 3.
+		data = np.ones(data.size) - (data / 3.)
 		self.prox_sensor_data = data
 

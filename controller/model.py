@@ -29,9 +29,8 @@ class Model:
 		print output_p
 		angle = self.get_turning_angle(output)
 
-		if np.any(state["prox"][1:] > 0.1):
+		if np.any(state["prox"][1:] > 0.25):
 			angle = self.get_obstacle_avoidance_angle(output_p)
-		self.turn_pre = angle
 		action = dict(angle=angle, left=output[left_neuron], right=output[right_neuron])
 		return action
 
