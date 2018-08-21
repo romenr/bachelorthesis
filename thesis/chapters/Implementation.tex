@@ -45,6 +45,15 @@ The controller is written in python and distributed over 5 components as can be 
 	\item \textbf{SNN}: The implementation of the SNN network using Nest.
 \end{itemize}
 
+\section{Sensors}
+
+\begin{figure}
+	\includegraphics[width=\linewidth]{images/sensors.jpg}
+	\caption{a. Shows the vision sensor of the snake that is fixed on the snake head. b. Shows the five proximity sensors on the snake. The one in the middle senses the target while the other four sense obstacles.}
+	\label{fig:sensors}
+\end{figure}
+
+The sensors are all mounted on the head of the snake as shown in figure \ref{fig:sensors}. The first sensor is the vision sensor used for target following. It is a infra-red vision sensor with a field of view of 60°. It returns a 32x32 Pixel image of the environment. The only thing the camera can distinguish is the warm target since everything else has the same temperature. Then there are 5 proximity sensors on the snake head. The first one looks straight ahead and measures the distance to the target in a wide ark and is used to determine the speed of the snake. The other four have offsets of $\pm30°$ and $\pm60°$ respectively. They can sense obstacles in a straight line.
 
 \section{Target Following Controller}
 
