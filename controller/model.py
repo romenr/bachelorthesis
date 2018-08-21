@@ -22,7 +22,7 @@ class Model:
 
 	def simulate(self, state, reward):
 		if reward is not None:
-			self.snn.set_reward(reward)
+			# self.snn.set_reward(reward)
 			self.psnn.set_reward(reward)
 		output, self.weights = self.snn.simulate(state)
 		output_p, self.weigts_p = self.psnn.simulate(state)

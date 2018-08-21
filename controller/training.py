@@ -23,7 +23,14 @@ def signal_handler(signal, frame):
 stop_signal_received = False
 signal.signal(signal.SIGINT, signal_handler)
 
+# Read tracking network weights
+h5f = h5py.File(path.join(args.dir, param.weights_file), 'r')
+w_l = np.array(h5f['w_l'], dtype=float)
+w_r = np.array(h5f['w_r'], dtype=float)
+h5f.close()
+
 model = Model()
+model.snn.set_weights(w_l, w_r)
 env = VrepEnvironment(param.plus_path, param.plus_path_mirrored)
 
 # Arrays of variables that will be saved
