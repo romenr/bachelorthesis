@@ -64,11 +64,20 @@ class VrepEnvironment:
 	def get_linear_reward(self):
 		prox_reward_left = 0
 		prox_reward_right = 0
-		if np.any(self.sim.prox_sensor_data[1:3] > 0.):
-			prox_reward_right = 1
-		if np.any(self.sim.prox_sensor_data[3:] > 0.):
-			prox_reward_left = 1
-		return np.array([-self.sim.angle_to_target, self.sim.angle_to_target, prox_reward_left, prox_reward_right]) * reward_factor
+		if self.sim.terminate:
+			if np.any(self.sim.prox_sensor_data[1:3] > 0.) and self.sim.collision:
+				prox_reward_right = 1
+			else:
+				if not self.sim.collision:
+					prox_reward_right = -1
+		if self.sim.terminate:
+			if np.any(self.sim.prox_sensor_data[3:] > 0.) and self.sim.collision:
+				prox_reward_left = 1
+			else:
+				if not self.sim.collision:
+					prox_reward_left = -1
+		return np.array([0, 0, prox_reward_left, prox_reward_right]) * reward_factor
+		#return np.array([-self.sim.angle_to_target, self.sim.angle_to_target, prox_reward_left, prox_reward_right]) * reward_factor
 
 	def get_relative_reward(self, angle):
 		r = (self.sim.angle_to_target - angle) / a_max

@@ -22,6 +22,7 @@ class Simulation:
 		self.target_last_seen = 0
 		self.angle_to_target = 0.0
 		self.path_complete = False
+		self.collision = False
 		self.prox_sensor_data = np.zeros(5)
 
 		# Ros Node snake_controller setup
@@ -44,6 +45,7 @@ class Simulation:
 		self.target_last_seen = 0
 		self.terminate = False
 		self.path_complete = False
+		self.collision = False
 		self.angle_to_target = 0
 		self.img_set = False
 		self.prox_sensor_data = np.zeros(5)
@@ -89,6 +91,7 @@ class Simulation:
 		if msg.data:
 			print "Collision! resetting simulation ..."
 			self.terminate = True
+			self.collision = True
 
 	def prox_sensor_callback(self, msg):
 		data = np.array(msg.data)

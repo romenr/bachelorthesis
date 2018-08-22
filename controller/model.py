@@ -26,7 +26,6 @@ class Model:
 			self.psnn.set_reward(reward)
 		output, self.weights = self.snn.simulate(state)
 		output_p, self.weigts_p = self.psnn.simulate(state)
-		print output_p
 		angle = self.get_turning_angle(output)
 
 		if np.any(state["prox"][1:] > 0.25):
