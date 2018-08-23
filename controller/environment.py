@@ -50,14 +50,13 @@ class VrepEnvironment:
 
 		# Publish turning angle and sleep for ~50ms
 		angle = action['angle']
-		reward = self.get_relative_reward(angle)
 		self.sim.publish_action(angle)
 
 		s = self.get_state(action)					# New state
 		a = self.sim.angle_to_target				# Angle to target (error angle)
-		r = reward			# Received reward
+		r = self.get_linear_reward()				# Received reward
 		t = self.sim.terminate						# Episode Terminates
-		n = self.steps							# Current step
+		n = self.steps								# Current step
 		p = self.sim.path_complete					# Terminated because Path was completed successfully
 
 		return s, a, r, t, n, p
