@@ -77,4 +77,31 @@ The goal of the target following controller is it to successfully follow a targe
 	\label{fig:follw_rew}
 \end{figure}
 
+\section{Calculating the movement angle}
 
+\begin{figure}
+	\includegraphics[width=\linewidth]{images/angle_model.jpg}
+	\caption{Left and right neuron are muscles that compete.}
+	\label{fig:angle_model}
+\end{figure}
+
+The output of the SNN gets normalised and interpreted as 2 competing muscles as shown in figure \ref{fig:angle_model}. Let $l_t$ and $r_t$ be the firing rate of the left and right neuron respectively at the time $t$ and let $ \alpha_{max} $ be the maximum right turn the snake can make. Then the angle $\alpha$ the snake should move is given by
+
+% TODO check if it is l-r or r-l
+\begin{equation}\label{eq:angle}
+\alpha = \alpha_{max} \left(l_t - r_t\right)
+\end{equation}
+
+This angle is not given directly to the snake since that would lead to unstable movement. So we first take a combination parameteriset by $c \in \left[0; 1\right] $ of the angle from the last step and this step for the final angle.
+
+\begin{equation}
+\alpha_t = c \alpha + \left(1 - c\right) \alpha_{t-1}
+\end{equation}
+
+Where the $c$ gets calculated as follows
+%TODO
+\begin{equation}
+c = \dots
+\end{equation}
+
+We use the angle from the last time step when $c$ is $0$ witch happens when there is no visual input. In that case it is good that the snake follows the last known angle to hopefully gain vision of the target again. We use the new angle if we have a lot of visual input. This model <insert name> was made by \ref{} for cars but most of the advantages are also there for the snake robot.
