@@ -105,3 +105,15 @@ c = \dots
 \end{equation}
 
 We use the angle from the last time step when $c$ is $0$ witch happens when there is no visual input. In that case it is good that the snake follows the last known angle to hopefully gain vision of the target again. We use the new angle if we have a lot of visual input. This model <insert name> was made by \ref{} for cars but most of the advantages are also there for the snake robot.
+
+\section{Obstacle avoidance controller}
+
+\begin{figure}
+	\includegraphics[width=\linewidth]{images/avoid_arch.jpg}
+	\caption{Architecture of the obstacle avoidance controller.}
+	\label{fig:avoid_arch}
+\end{figure}
+% formalize this shit
+The obstacle avoidance controller makes sure the snake keeps a certain distance to obstacles. The network architecture is shown in figure \ref{fig:avoid_arch}. For this the 4 proximity sensors to the left and right of the snake are used. The preprocessing of the inputs goes as follows. First the maximum value gets assigned to a sensor if it senses nothing. Second there is a distance cut off after $3$m so everything farther away gets set to $3$. Next we divide by the maximum distance and take 1 minus that value as the input for the controller.
+The left neuron gets connected to the right proximity sensors and the right neuron to the left proximity sensors. The reward gets assigned inividually and event based. In case of a collision both receive a positive reward of $1$. When no collision happens but the robot looses sight while avoiding an obstacle the side it was evading reveives a reward of $-1$ .
+
