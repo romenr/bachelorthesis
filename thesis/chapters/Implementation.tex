@@ -57,4 +57,24 @@ The sensors are all mounted on the head of the snake as shown in figure \ref{fig
 
 \section{Target Following Controller}
 
-The goal of the target following controller is it to successfully follow a target trough the environment. In our simulation the target is represented by a warm ball that can be seen by the infrared camera on the head of the snake.
+\begin{figure}
+	\includegraphics[width=\linewidth]{images/img_pre.jpg}
+	\caption{a. 32x32 Infra red image b. cut out 32x8 pixel part c. 16x4 pixel image by averaged over 2x2 pixel patches}
+	\label{fig:img_pre}
+\end{figure}
+
+The goal of the target following controller is it to successfully follow a target trough the environment. In our simulation the target is represented by a warm ball that can be seen by the infra red camera on the head of the snake. The input for the controller is a infra red image with size 32x32 pixel. The preprocesing of the image has 2 steps as shown in figure \ref{fig:img_pre} before it gets feed to the network. First the top and bottom part gets removed, since these will only see the floor and ceiling. Then the image gets down sampled by taking the average over 2x2 pixels. The resulting image is now 16x4 and gets scaled and mapped to poison firing rates witch are the input for the 64 input neurons for the network. The network has a  simple feed forward architecture shown in figure \ref{fig:follw_arch} with 64 input neurons and 2 output neurons. The input gets transformed to spike trains by poison distributed spike generators. The output of the Network is the ammount of spikes the left and right neuron produce. The right neuron gets assigned reward proportional to the angle between the direction the snake looks and the target. THe left neuron gets assigned the negative of the reward for the right neuron.
+
+\begin{figure}
+	\includegraphics[width=\linewidth]{images/follow_arch.jpg}
+	\caption{Target following snn architecture. 64 input neurons with all to all connections to 2 output neurons.}
+	\label{fig:follw_arch}
+\end{figure}
+
+\begin{figure}
+	\includegraphics[width=\linewidth]{images/follow_rew.jpg}
+	\caption{Reward function for the left and right neuron.}
+	\label{fig:follw_rew}
+\end{figure}
+
+
