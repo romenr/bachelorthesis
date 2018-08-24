@@ -27,9 +27,11 @@ class Model:
 		output, self.weights = self.snn.simulate(state)
 		output_p, self.weigts_p = self.psnn.simulate(state)
 		angle = self.get_turning_angle(output)
+		dodge_angle = self.get_obstacle_avoidance_angle(output_p)
 
-		if np.any(state["prox"][1:] > 0.25):
-			angle = self.get_obstacle_avoidance_angle(output_p)
+		if np.any(state["prox"][1:] > 0.25) and not (
+						abs(angle) > abs(dodge_angle) and np.sign(angle) == np.sign(dodge_angle)):
+			angle = dodge_angle
 		action = dict(angle=angle, left=output[left_neuron], right=output[right_neuron])
 		return action
 
