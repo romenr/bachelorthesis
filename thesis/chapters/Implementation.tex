@@ -1,6 +1,60 @@
 \chapter{Implementation of Direct GPU-FPGA Communication}
 \label{section:implementation}
 
+\section{Environment}
+
+As simulation environment I am using V-REP 3.4.0\cite{Rohmer2013}
+
+SNN controllers are implemented using NEST simulator 2.14.0\cite{Peyser2017}
+
+The simulation and the python controller communicate over ROS kinetic\cite{}
+
+
+
 \begin{lstlisting}[label=listing:example_code, caption=example]
 code = example
 \end{lstlisting}
+
+\section{Setup}
+
+\begin{figure}
+	\includegraphics[width=\linewidth]{images/setup.jpg}
+	\caption{The two main components and the communication channel}
+	\label{fig:setup}
+\end{figure}
+
+
+This section gives a high overview of the experiment. In figure \ref{fig:setup} you can see that there are two main components. First we have the simulation made with V-Rep witch contains the snake like robot and the environment. The environment is made out of a target ball the snake will learn to follow and obstacles in the form of walls. The snake moves according to the movement model from section \ref{section:model}. The second important component is the python controller that will learn to manoeuvre the snake through the environment successfully. The structure of the controller is described in detail in the following section. It contains SNN that will solve a target following and an obstacle avoidance task. The SNN are implemented using the NEST simulator. Both components communicate with each other using ROS. They are both ROS nodes and can exchange messages over the ROS Topic messaging protocol.
+
+
+\section{Controller}
+
+\begin{figure}
+	\includegraphics[width=\linewidth]{images/controller.jpg}
+	\caption{Architecture of the python controller}
+	\label{fig:controller}
+\end{figure}
+
+The controller is written in python and distributed over 5 components as can be seen in figure \ref{fig:controller}. Each is implemented in one file. The responsibilities are distributed as follows:
+
+\begin{itemize}
+	\item \textbf{Simulation}: The simulation class implements a ROS node and represents the simulation for the controller. All communication with V-Rep goes through this class. Messages are processed and then send to the simulation. Received information gets preprocessed before they are used. It contains the state of the environment as the robot is able to perceive it at a certain moment.
+	\item \textbf{Environment}: This class uses the information form the simulation to create a state object. The reward for each output neuron in the SNN's are also calculated here. This class manages changes in the environment like resets.
+	\item \textbf{Controll scripts}: They are controlling the experiment flow like if and witch network gets trained. It will also collect data from the environment and the model and save it for later analysis. Examples for these scripts are the training script that will train one model or the controll script that will execute one model for evaluation.
+	\item \textbf{Model}: Here the state is feed to the SNN to recive outputs witch then will be interpreted to cosntruct an action that the snake in the simulation will perform.
+	\item \textbf{SNN}: The implementation of the SNN network using Nest.
+\end{itemize}
+
+\section{Sensors}
+
+\begin{figure}
+	\includegraphics[width=\linewidth]{images/sensors.jpg}
+	\caption{a. Shows the vision sensor of the snake that is fixed on the snake head. b. Shows the five proximity sensors on the snake. The one in the middle senses the target while the other four sense obstacles.}
+	\label{fig:sensors}
+\end{figure}
+
+The sensors are all mounted on the head of the snake as shown in figure \ref{fig:sensors}. The first sensor is the vision sensor used for target following. It is a infra-red vision sensor with a field of view of 60°. It returns a 32x32 Pixel image of the environment. The only thing the camera can distinguish is the warm target since everything else has the same temperature. Then there are 5 proximity sensors on the snake head. The first one looks straight ahead and measures the distance to the target in a wide ark and is used to determine the speed of the snake. The other four have offsets of $\pm30°$ and $\pm60°$ respectively. They can sense obstacles in a straight line.
+
+\section{Target Following Controller}
+
+The goal of the target following controller is it to successfully follow a target trough the environment. In our simulation the target is represented by a warm ball that can be seen by the infrared camera on the head of the snake.

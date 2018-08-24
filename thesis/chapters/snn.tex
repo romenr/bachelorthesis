@@ -1,7 +1,56 @@
 \chapter{Spiking Neural Networks}
 \label{section:snn}
 
+For an more in depth introduction to spiking neural networks see \cite{Vreeken2003}
+
+Notes:
+
+
+
+
+Spiking neural networks are the third generation of neural network models. They are more realistic and Wolfgang Maass showed that they are in theory computationally more powerful than threshold and sigmoidal gates\cite{Maass1997}.
+
+Generations of neural networks:
+1. generation consisted of McCulloch-Pitts threshold neurons
+simple model. neuron sends a binary 'high' signal if the sum of its weighted inputs rises above a threshold value
+used successfully in multi-layer perceptrons and Hopfield nets. Any function with boolean output can be computed by a multilayer perception with single hidden layer
+2. generation neuronal networks
+successfully used in deep nn and others
+
+Neurons of the first two generations do not employ individual pulses but their output signals typically lie between 0 and 1. These signals can be seen as normalized firing rates of the neuron within a certain period of time. rate coding. there ,ist ne am averaging window and the outputs of all neurons can be calculated by using the firing rates instead of working with single spikes. Neurons of the second generation are biologically more realisic and powerful than neurons of the first generation. They use a continuous activation function withc allows us to apply a gradient descet learning algorithm like back propagation.
+
+The third generation of neural network once again raises teh level of biological realism by using individual spikes. This allows incorporating spatial-temporal information in communication and computation. These neurons use pulse coding instead of rate coding. Humans can classyfy visual input in under 100ms it takes at leas 10 synapic steps from the retina to the temporal lobe this leaves about 10 ms of processing time per neuron. such a time window is much to little to allow an averagin mechanism like rate coding
+
+Why use snn over other models?
+SNN raise the biological plausibility in comparison to ann since they simulate individual spikes instead of using averaged firing frequencys.
+On robotic platforms like a snake like robot the energy and computing resources are limited. The human brain needs only 20 W of power  (Drubach, 2000). Yet is able to perform visual pattern analysis and classification in just 100 ms, despite it taking at least 10 synaptic stages (Thorpe et al., 2001).
+SNN can use the temporal information, precise timing of events can contain information
+SNN allow to invorporate spatial-temporal information that would be lost by averaging over pulse frequencies. This ability is essencial in a environment that is rich with temporal information. 
+
 \section{Leaky Integrate and Fire Neuron Model}
+% TODO rewrite
+% Izhikevich (2004). comparison of different models
+The neuron model used in this work is the Leaky integrate and fire neuron model(LIF)\cite{(Stein, 1965)}, a variant of the Integrate-and-Fire model from Burkitt\cite{(Burkitt, 2006)}. It is a widely used model because it is a good trade off between biological plausibility and complexity. It is compared to other models simple since it can be explained using principles form electronics. The model is based on the assumption that timing of spikes rather than the specific shape carries neural information. The sequences of firing times are called spike trains and can be described as
+
+\begin{equation}\label{eq:spikeTrain}
+S\left(t\right) = \sum_{f}\delta\left(t - t^f\right)
+\end{equation}
+
+where $ f = 1, 2, \dots $ is the label of a spike and $\delta\left(\cdot\right) $ is a Dirac function % TODO explain dirac ? alpha shaped function??
+
+The incoming spike train will trigger the following synaptic electric current
+
+\begin{equation}\label{eq:current}
+i\left(t\right) = \int_{0}^{\infty} S_j\left(s - t\right)\exp\left(\frac{-s}{\tau_s}\right)
+\end{equation}
+
+The post synaptic current then charges the LIF neuron model increasing the potential u according to
+
+\begin{equation}\label{eq:potential}
+\tau_m\frac{du}{dt}\left(t\right)=u_{rest} - u\left(t\right) + R\left(i_0\left(t\right) + \sum w_ji_j\left(t\right) \right)
+\end{equation}
+
+where $\tau_m=RC$ is the time constant of the neuron membrane, modeling the voltage leakage depending on the resistance R. The potential after a reset is $u_{rest}$. The external current $i_0\left(t\right)$ drives the neuron state, the input current $i_j\left(t\right)$ from the j-th synaptic input while $w_j$ represents the strength of the connection. Once the membrane potential $u$ reaches a certain firing threshold $\vartheta$ the neuron fires a single spike and its membrane potential is set back to $u_{rest}$. This event is followed by a refracory period in wich the neuron is inactive and can't be charged.
 
 % iaf_psc_alpha - Leaky integrate-and-fire neuron model.
 % http://www.nest-simulator.org/helpindex/cc/iaf_psc_alpha.html
@@ -10,13 +59,14 @@
 % Hodgking, Huxley 1952 A quantitive description of membrane current and its application to conduction and excition in nerves
 %	TODO look up on which paper nest implementation is based
 
-
-
+% TODO choose wich one i want to use
 \begin{equation}
 	\tau_m \frac{dv \left( t \right)}{dt} = - \left( v \left( t \right) - v_{rest} \right) + RI \left( t \right)
 \end{equation}
 
 \section{Spike-Timing-Dependent-Plasticity}
+
+Synaptic plasticity is a change of the pre-processing, so it is a different way of saying 'learning'. Hebbian plasticity is a local form of long term potentiation (LTP) and depression (TLD) of synapses based on the correlation of firing activity between pre and post synaptic neurons. Spike Timing Dependent synaptic plasticity (STDP) is a form of hebbian learning that uses the exact spike timing information.
 
 \begin{equation}
 	\Delta t = t_{post} - t_{pre}

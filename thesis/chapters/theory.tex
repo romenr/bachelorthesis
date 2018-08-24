@@ -1,4 +1,4 @@
-\chapter{Technology Overview}
+\chapter{Theoretical Background}
 \label{section:theory}
 
 
@@ -49,10 +49,10 @@ It assigns $z \in \left[0; 1\right]$ to the head and then changes linearly to th
 Another improvement to reduce the head movement of the snake is the following head compensation angle also suggested by Bing\cite{Bing}. The idea is to adjust the angle of the head module to make it always look in the direction the snake is travelling. The compensation angle $ \beta $ can be calculated as follows.
 
 \begin{equation}\label{eq:comp}
-\beta = - \frac{1}{K + 1}\sum_{i = 1}^{K + 1}\sum_{j = 2}^{i} \theta_j
+\beta = - \frac{1}{M}\sum_{i = 1}^{M}\sum_{j = 2}^{i} \theta_j
 \end{equation}
 
-Here the angle of the j-th module is $ \theta_j $ and $K$ is the number of joints.
+Here the angle of the j-th module is $ \theta_j $ and $M$ is the number of modules.
 
 
 \subsection{Change Movement Speed}
