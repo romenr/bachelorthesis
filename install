@@ -1,0 +1,46 @@
+Project setup
+
+ * Ubuntu 16.0.4
+
+ * Install Ros Kinetic http://wiki.ros.org/kinetic/Installation/Ubuntu
+	- Use the Desktop-Full Install
+
+ * Install Nest 2.14.0 http://www.nest-simulator.org/download/
+	- Install pip: sudo apt install python-pip
+	- Install cython: pip install Cython
+	- python -m pip install --user numpy scipy matplotlib jupyter pandas sympy nose
+	- unzip nest and open the directory in a terminal then execute
+	- cmake -DCMAKE_INSTALL_PREFIX:PATH=~/opt/nest -Dwith-python=2 .
+		~ Check that it says Python bindings: Yes (Python 2.7: ...
+		~ Check that it found the include and libraries paths for 2.7
+	- make
+	- make install
+	- make installcheck
+	
+	- add export PYTHONPATH="${PYTHONPATH}:/home/<user>/opt/nest/lib/python2.7/site-packages"
+
+ * Install V-Rep 3.4.0 http://www.coppeliarobotics.com/previousversions.html
+
+ * Install Ros interface 
+	- cd vrep/programming/ros_packages/v_repExtRosInterface
+	- mkdir external
+	- cd external
+	- git clone https://github.com/CoppeliaRobotics/v_repStubsGen.git
+	- export PYTHONPATH=$PYTHONPATH:$PWD
+	- sudo apt-get install python-catkin-tools
+	- create a catkin folder and create a src folder in it (e.g. ~/catkin/src)
+	- go to catkin folder
+	- catkin init
+	- cp ~/vrep/programming/ros_packages/v_repExtRosInterface ~/catkin/src/vrep_ros_interface
+	- export VREP_ROOT="/home/user/Software/V-REP_PRO_EDU_V3_3_2_64_Linux/"
+	- in ~/catkin: catkin build
+	- in devel/lib should now be the file libv_repExtRosInterface.so
+	
+* Run roscore
+* go to vrep folder and run ./vrep.sh
+* Check if rosinterface was loaded successfully
+
+pip install h5py
+
+
+
