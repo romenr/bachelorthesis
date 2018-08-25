@@ -60,6 +60,66 @@ def connect_all_to_all_r_stdp(first_layer, second_layer):
 	nest.Connect(first_layer, second_layer, "all_to_all", syn_spec=r_stdp_synapse_options)
 
 
+def set_inputs(spike_generators, inputs):
+	"""Reset the spike generators and set the inputs.
+	The i-th input is assigned to the i-th spike_generator.
+	All input values must be in [0;1]
+	:param spike_generators: The spike generators
+	:param inputs: Inputs for the network
+	"""
+	time = nest.GetKernelStatus("time")
+	nest.SetStatus(spike_generators, {"origin": time})
+	nest.SetStatus(spike_generators, {"stop": sim_time_step})
+
+	poisson_rates = np.multiply(np.clip(inputs, 0, 1), max_poisson_freq)
+	for i, r in enumerate(poisson_rates):
+		nest.SetStatus([spike_generators[i]], {"rate": r})
+
+
+def set_reward(connections, reward):
+	"""Set the dopamine level in connections to reward
+	:param connections: The connections to be rewarded
+	:param reward: The reward
+	"""
+	nest.SetStatus(connections, {"n": reward})
+
+
+def get_output(spike_detectors):
+	"""Read the number of spikes from the spike detector and normalize them.
+	Reset the spike detectors.
+	:param spike_detectors: The spike detectors
+	:return: Normalized firing rates of the output neurons
+	"""
+	output = np.array(nest.GetStatus(spike_detectors, keys="n_events"))
+	nest.SetStatus(spike_detectors, {"n_events": 0})
+	output = output / n_max
+	return output
+
+
+def set_weights(connections, weights):
+	"""Set the weights on the connections.
+	Size of connections and weights must be equal.
+	:param connections: Connections
+	:param weights: Weights
+	"""
+	w = [{'weight': w} for w in weights.reshape(weights.size)]
+	nest.SetStatus(connections, w)
+
+
+def get_weights(connections):
+	"""Returns the weights of the connections
+	:param connections:
+	:return: Numpy array of weights
+	"""
+	return np.array(nest.GetStatus(connections, keys="weight"))
+
+
+def nest_simulate():
+	"""Simulate all networks
+	"""
+	nest.Simulate(sim_time_step)
+
+
 class TargetFollowingSNN:
 	def __init__(self):
 		self.spike_generators, self.input_layer = create_input_layer(input_layer_size)
@@ -71,43 +131,23 @@ class TargetFollowingSNN:
 		self.conn_r = nest.GetConnections(target=[self.output_layer[right_neuron]])
 
 	def set_reward(self, reward):
-		# Set reward signal for left and right network
-		nest.SetStatus(self.conn_l, {"n": reward[left_neuron]})
-		nest.SetStatus(self.conn_r, {"n": reward[right_neuron]})
+		set_reward(self.conn_l, reward[left_neuron])
+		set_reward(self.conn_r, reward[right_neuron])
 
-	def simulate(self, state):
-		time = nest.GetKernelStatus("time")
-		nest.SetStatus(self.spike_generators, {"origin": time})
-		nest.SetStatus(self.spike_generators, {"stop": sim_time_step})
-
-		# Map state to poison spike generators
-		# Every value of state needs to be in the range [0;1] to be mapped to the [min, max] firing rate
+	def set_input(self, state):
 		image = state['image']
 		image = image.reshape(image.size)
-		poisson_rate = np.multiply(np.clip(image, 0, 1), max_poisson_freq)
-		for i, r in enumerate(poisson_rate):
-			nest.SetStatus([self.spike_generators[i]], {"rate": r})
+		set_inputs(self.spike_generators, image)
 
-		# Simulate network
-		nest.Simulate(sim_time_step)
-		# Get left and right output spikes [left, right]
-		output = np.array(nest.GetStatus(self.spike_detectors, keys="n_events"))
-		output = output / n_max
-
-		# Reset output spike detector
-		nest.SetStatus(self.spike_detectors, {"n_events": 0})
-
-		# Get network weights
-		weights_l = np.array(nest.GetStatus(self.conn_l, keys="weight")).reshape(resolution)
-		weights_r = np.array(nest.GetStatus(self.conn_r, keys="weight")).reshape(resolution)
-		weights = [weights_l, weights_r]
-		return output, weights
+	def get_results(self):
+		output = get_output(self.spike_detectors)
+		weights_l = get_weights(self.conn_l).reshape(resolution)
+		weights_r = get_weights(self.conn_r).reshape(resolution)
+		return output, [weights_l, weights_r]
 
 	def set_weights(self, weights_l, weights_r):
-		w_l = [{'weight': w} for w in weights_l.reshape(weights_l.size)]
-		w_r = [{'weight': w} for w in weights_r.reshape(weights_r.size)]
-		nest.SetStatus(self.conn_l, w_l)
-		nest.SetStatus(self.conn_r, w_r)
+		set_weights(self.conn_l, weights_l)
+		set_weights(self.conn_r, weights_r)
 
 
 class ObstacleAvoidanceSNN:
@@ -123,40 +163,19 @@ class ObstacleAvoidanceSNN:
 		self.conn_r = nest.GetConnections(target=[self.output_layer[right_neuron]])
 
 	def set_reward(self, reward):
-		# Set reward signal for left and right network
-		nest.SetStatus(self.conn_l, {"n": reward[2]})
-		nest.SetStatus(self.conn_r, {"n": reward[3]})
+		set_reward(self.conn_l, reward[left_neuron])
+		set_reward(self.conn_r, reward[right_neuron])
 
-	def simulate(self, state):
-		time = nest.GetKernelStatus("time")
-		nest.SetStatus(self.spike_generators, {"origin": time})
-		nest.SetStatus(self.spike_generators, {"stop": sim_time_step})
+	def set_input(self, state):
+		set_inputs(self.spike_generators, state['prox'][1:])
 
-		# Map state to poison spike generators
-		# Every value of state needs to be in the range [0;1] to be mapped to the [min, max] firing rate
-		prox_data = state['prox']
-		poisson_rate = np.multiply(np.clip(prox_data[1:], 0, 1), max_poisson_freq)
-		for i, r in enumerate(poisson_rate):
-			nest.SetStatus([self.spike_generators[i]], {"rate": r})
-
-		# Simulate network
-		nest.Simulate(sim_time_step)
-		# Get left and right output spikes [left, right]
-		output = np.array(nest.GetStatus(self.spike_detectors, keys="n_events"))
-		output = output / n_max
-
-		# Reset output spike detector
-		nest.SetStatus(self.spike_detectors, {"n_events": 0})
-
-		# Get network weights
-		weights_l = np.array(nest.GetStatus(self.conn_l, keys="weight"))
-		weights_r = np.array(nest.GetStatus(self.conn_r, keys="weight"))
-		weights = [weights_l, weights_r]
-		return output, weights
+	def get_results(self):
+		output = get_output(self.spike_detectors)
+		weights_l = get_weights(self.conn_l)
+		weights_r = get_weights(self.conn_r)
+		return output, [weights_l, weights_r]
 
 	def set_weights(self, weights_l, weights_r):
-		w_l = [{'weight': w} for w in weights_l.reshape(weights_l.size)]
-		w_r = [{'weight': w} for w in weights_r.reshape(weights_r.size)]
-		nest.SetStatus(self.conn_l, w_l)
-		nest.SetStatus(self.conn_r, w_r)
+		set_weights(self.conn_l, weights_l)
+		set_weights(self.conn_r, weights_r)
 

@@ -2,7 +2,7 @@
 
 import numpy as np
 from parameters import *
-from snn import TargetFollowingSNN, ObstacleAvoidanceSNN
+from snn import TargetFollowingSNN, ObstacleAvoidanceSNN, nest_simulate
 
 
 class Model:
@@ -21,10 +21,17 @@ class Model:
 
 	def simulate(self, state, reward):
 		if reward is not None:
-			# self.snn.set_reward(reward)
-			self.snn_oa.set_reward(reward)
-		output, self.weights_tf = self.snn_tf.simulate(state)
-		output_p, self.weights_oa = self.snn_oa.simulate(state)
+			# self.snn.set_reward(reward[:2])
+			self.snn_oa.set_reward(reward[2:])
+
+		self.snn_tf.set_input(state)
+		self.snn_oa.set_input(state)
+
+		# Simulate both networks
+		nest_simulate()
+
+		output, self.weights_tf = self.snn_tf.get_results()
+		output_p, self.weights_oa = self.snn_oa.get_results()
 		angle = self.get_turning_angle(output)
 		dodge_angle = self.get_obstacle_avoidance_angle(output_p)
 
