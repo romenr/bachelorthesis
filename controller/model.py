@@ -2,19 +2,18 @@
 
 import numpy as np
 from parameters import *
-from snn import SpikingNeuralNetwork
-from network import ProxSpikingNeuralNetwork
+from snn import TargetFollowingSNN, ObstacleAvoidanceSNN
 
 
 class Model:
 
 	def __init__(self):
-		self.snn = SpikingNeuralNetwork()
-		self.psnn = ProxSpikingNeuralNetwork()
+		self.snn_tf = TargetFollowingSNN()
+		self.snn_oa = ObstacleAvoidanceSNN()
 		self.turn_pre = 0.0
 		self.angle_pre = 0.0
-		self.weights = []
-		self.weigts_p = []
+		self.weights_tf = []
+		self.weights_oa = []
 
 	def reset(self):
 		self.turn_pre = 0.0
@@ -23,9 +22,9 @@ class Model:
 	def simulate(self, state, reward):
 		if reward is not None:
 			# self.snn.set_reward(reward)
-			self.psnn.set_reward(reward)
-		output, self.weights = self.snn.simulate(state)
-		output_p, self.weigts_p = self.psnn.simulate(state)
+			self.snn_oa.set_reward(reward)
+		output, self.weights_tf = self.snn_tf.simulate(state)
+		output_p, self.weights_oa = self.snn_oa.simulate(state)
 		angle = self.get_turning_angle(output)
 		dodge_angle = self.get_obstacle_avoidance_angle(output_p)
 

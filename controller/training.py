@@ -30,7 +30,7 @@ w_r = np.array(h5f['w_r'], dtype=float)
 h5f.close()
 
 model = Model()
-model.snn.set_weights(w_l, w_r)
+model.snn_tf.set_weights(w_l, w_r)
 env = VrepEnvironment(param.plus_path, param.plus_path_mirrored)
 
 # Arrays of variables that will be saved
@@ -63,10 +63,10 @@ for i in range(param.training_length):
 	if t:
 		episode_steps.append(n)
 		episode_completed.append(p)
-	weights = model.weights
+	weights = model.weights_tf
 	weights_l.append(weights[0])
 	weights_r.append(weights[1])
-	weights_p.append(model.weigts_p)
+	weights_p.append(model.weights_oa)
 	weights_i.append(i)
 	rewards.append(r)
 	angle_to_target.append(a)

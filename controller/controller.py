@@ -33,8 +33,8 @@ h5f.close()
 model = Model()
 env = VrepEnvironment(param.plus_path, param.plus_path_mirrored)
 # env = VrepEnvironment(param.evaluation_path, param.evaluation_path_mirrored)
-model.snn.set_weights(w_l, w_r)
-model.psnn.set_weights(w_p[0], w_p[1])
+model.snn_tf.set_weights(w_l, w_r)
+model.snn_oa.set_weights(w_p[0], w_p[1])
 
 # Arrays of variables that will be saved
 reward = []
