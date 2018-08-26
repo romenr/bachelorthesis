@@ -28,7 +28,7 @@ stop_signal_received = False
 signal.signal(signal.SIGINT, signal_handler)
 
 print "Using", controller[args.controller]
-is_oa = args.controller == controller['oa']
+is_oa = args.controller == 'oa'
 
 model = Model()
 
@@ -39,12 +39,10 @@ model.snn_tf.set_weights(w_tf[0], w_tf[1])
 if is_oa:
 	w_oa = np.array(h5f['w_oa'], dtype=float)
 	model.snn_oa.set_weights(w_oa[0], w_oa[1])
-h5f.close()
-
-if is_oa:
 	env = VrepEnvironment(param.plus_path, param.plus_path_mirrored)
 else:
 	env = VrepEnvironment(param.evaluation_path, param.evaluation_path_mirrored)
+h5f.close()
 
 # Arrays of variables that will be saved
 reward = []
@@ -79,7 +77,10 @@ for i in range(param.evaluation_length):
 		break
 
 # Save performance data
-h5f = h5py.File(path.join(args.dir, param.evaluation_file), 'w')
+if is_oa:
+	h5f = h5py.File(path.join(args.dir, param.evaluation_file_oa), 'w')
+else:
+	h5f = h5py.File(path.join(args.dir, param.evaluation_file_tf), 'w')
 h5f.create_dataset('angle_to_target', data=angle_to_target)
 h5f.create_dataset('reward', data=reward)
 h5f.create_dataset('episode_steps', data=episode_steps)

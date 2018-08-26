@@ -28,7 +28,7 @@ stop_signal_received = False
 signal.signal(signal.SIGINT, signal_handler)
 
 print "Using", controller[args.controller]
-is_oa = args.controller == controller['oa']
+is_oa = args.controller == 'oa'
 
 model = Model()
 if is_oa:
@@ -68,8 +68,10 @@ for i in range(param.training_length):
 	if t:
 		episode_steps.append(n)
 		episode_completed.append(p)
-	weights_tf.append(model.weights_tf)
+
 	weights_oa.append(model.weights_oa)
+	weights_tf.append(model.weights_tf)
+
 	rewards.append(r)
 	angle_to_target.append(a)
 
@@ -81,7 +83,10 @@ for i in range(param.training_length):
 		break
 
 # Save performance data
-h5f = h5py.File(path.join(args.dir, param.training_file), 'w')
+if is_oa:
+	h5f = h5py.File(path.join(args.dir, param.training_file_oa), 'w')
+else:
+	h5f = h5py.File(path.join(args.dir, param.training_file_tf), 'w')
 h5f.create_dataset('w_tf', data=weights_tf)
 h5f.create_dataset('w_oa', data=weights_oa)
 h5f.create_dataset('reward', data=rewards)
@@ -93,7 +98,6 @@ h5f.close()
 # Save trained weights
 h5f = h5py.File(path.join(args.dir, param.weights_file), 'w')
 h5f.create_dataset('w_tf', data=weights_tf[-1])
-if is_oa:
-	h5f.create_dataset('w_oa', data=weights_oa[-1])
+h5f.create_dataset('w_oa', data=weights_oa[-1])
 h5f.close()
 

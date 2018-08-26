@@ -5,8 +5,10 @@ import math
 # Save file Options
 default_dir = './data/default'				# Default dir if scrips are called without dir
 weights_file = 'weights.h5'				# Trained weights
-training_file = 'training_data.h5'			# Results from training
-evaluation_file = 'evaluation_data.h5'		# Results from evaluation
+training_file_tf = 'tf_training_data.h5'			# Results from training
+training_file_oa = 'oa_training_data.h5'			# Results from training
+evaluation_file_tf = 'evaluation_data.h5'		# Results from evaluation
+evaluation_file_oa = 'evaluation_data.h5'		# Results from evaluation
 
 # Input image
 img_resolution = [32, 32]			# Original DVS frame resolution
