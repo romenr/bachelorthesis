@@ -5,14 +5,18 @@ import signal
 import argparse
 import numpy as np
 from os import path
-from model import Model
 from environment import VrepEnvironment
 import parameters as param
 
 # Configure Command Line interface
-parser = argparse.ArgumentParser(description='Run the model')
+controller = dict(tf="target following controller", oa="obstacle avoidance controller")
+parser = argparse.ArgumentParser(description='Evaluate the controller')
+parser.add_argument('controller', choices=controller, default='oa', help="tf - target following, oa - obstacle avoidance")
 parser.add_argument('dir', help='Base directory of the experiment eg. ./data/session_xyz', default=param.default_dir)
 args = parser.parse_args()
+
+# Import after argparse is done to prevent nest from showing up in help
+from model import Model
 
 
 # Stop the Simulation and save results up to that point
@@ -23,18 +27,25 @@ def signal_handler(signal, frame):
 stop_signal_received = False
 signal.signal(signal.SIGINT, signal_handler)
 
+print "Using", controller[args.controller]
+is_oa = args.controller == controller['oa']
+
+model = Model()
+
 # Read network weights
 h5f = h5py.File(path.join(args.dir, param.weights_file), 'r')
 w_l = np.array(h5f['w_l'], dtype=float)
 w_r = np.array(h5f['w_r'], dtype=float)
-w_p = np.array(h5f['w_p'], dtype=float)
+model.snn_tf.set_weights(w_l, w_r)
+if is_oa:
+	w_p = np.array(h5f['w_p'], dtype=float)
+	model.snn_oa.set_weights(w_p[0], w_p[1])
 h5f.close()
 
-model = Model()
-env = VrepEnvironment(param.plus_path, param.plus_path_mirrored)
-# env = VrepEnvironment(param.evaluation_path, param.evaluation_path_mirrored)
-model.snn_tf.set_weights(w_l, w_r)
-model.snn_oa.set_weights(w_p[0], w_p[1])
+if is_oa:
+	env = VrepEnvironment(param.plus_path, param.plus_path_mirrored)
+else:
+	env = VrepEnvironment(param.evaluation_path, param.evaluation_path_mirrored)
 
 # Arrays of variables that will be saved
 reward = []
@@ -48,13 +59,11 @@ s, r = env.reset()
 for i in range(param.evaluation_length):
 
 	# Simulate network for 50 ms
-	# Get left and right output spikes, get weights
-	# Fix the Reward at 0 to prevent the network from changing
-	action = model.simulate(s, None)
+	angle = model.simulate(s)
 
 	# Feed output spikes into snake model
 	# Get state, angle to target, reward, termination, step, path completed
-	s, a, r, t, n, p = env.step(action)
+	s, a, r, t, n, p = env.step(angle)
 
 	# Store information that should be saved
 	if t:

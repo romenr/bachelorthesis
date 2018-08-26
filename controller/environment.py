@@ -41,7 +41,7 @@ class VrepEnvironment:
 		time.sleep(1)
 		return get_state_reward_zero()
 
-	def step(self, action):
+	def step(self, angle):
 
 		if self.sim.terminate:
 			self.reset()
@@ -49,10 +49,9 @@ class VrepEnvironment:
 		self.steps += 1
 
 		# Publish turning angle and sleep for ~50ms
-		angle = action['angle']
 		self.sim.publish_action(angle)
 
-		s = self.get_state(action)					# New state
+		s = self.get_state()						# New state
 		a = self.sim.angle_to_target				# Angle to target (error angle)
 		r = self.get_linear_reward()				# Received reward
 		t = self.sim.terminate						# Episode Terminates
@@ -76,15 +75,14 @@ class VrepEnvironment:
 			else:
 				if not self.sim.collision:
 					prox_reward_left = -1
-		return np.array([0, 0, prox_reward_left, prox_reward_right]) * reward_factor
-		#return np.array([-self.sim.angle_to_target, self.sim.angle_to_target, prox_reward_left, prox_reward_right]) * reward_factor
+		return np.array([-self.sim.angle_to_target, self.sim.angle_to_target, prox_reward_left, prox_reward_right]) * reward_factor
 
 	def get_relative_reward(self, angle):
 		r = (self.sim.angle_to_target - angle) / a_max
 		reward = np.array([-r, r, 0, 0]) * reward_factor
 		return reward
 
-	def get_state(self, last_action):
+	def get_state(self):
 		new_state = np.zeros((resolution[0], resolution[1]), dtype=float)
 		# bring the red filtered image in the form of the state
 		if self.sim.img_set:
@@ -92,9 +90,9 @@ class VrepEnvironment:
 				for x in range(img_resolution[1]):
 					new_state[x//self.resize_factor[0], y//self.resize_factor[1]] += self.sim.img[y + crop_top, x]
 
-		return dict(image=new_state / np.prod(self.resize_factor, dtype=float), last_action=last_action, prox=self.sim.prox_sensor_data)
+		return dict(image=new_state / np.prod(self.resize_factor, dtype=float), prox=self.sim.prox_sensor_data)
 
 
 def get_state_reward_zero():
-	return dict(image=np.zeros((resolution[0], resolution[1]), dtype=int), left=0, right=0, prox=np.zeros(5)), np.zeros(
+	return dict(image=np.zeros((resolution[0], resolution[1]), dtype=int), prox=np.zeros(5)), np.zeros(
 		output_layer_size + 2)

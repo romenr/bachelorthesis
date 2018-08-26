@@ -19,11 +19,7 @@ class Model:
 		self.turn_pre = 0.0
 		self.angle_pre = 0.0
 
-	def simulate(self, state, reward):
-		if reward is not None:
-			# self.snn.set_reward(reward[:2])
-			self.snn_oa.set_reward(reward[2:])
-
+	def simulate(self, state):
 		self.snn_tf.set_input(state)
 		self.snn_oa.set_input(state)
 
@@ -38,8 +34,7 @@ class Model:
 		if np.any(state["prox"][1:] > 0.25) and not (
 						abs(angle) > abs(dodge_angle) and np.sign(angle) == np.sign(dodge_angle)):
 			angle = dodge_angle
-		action = dict(angle=angle, left=output[left_neuron], right=output[right_neuron])
-		return action
+		return angle
 
 	def get_turning_angle(self, snn_output):
 		# Snake turning model
