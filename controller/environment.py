@@ -61,6 +61,7 @@ class VrepEnvironment:
 		return s, a, r, t, n, p
 
 	def get_linear_reward(self):
+		att = self.sim.angle_to_target * reward_factor_tf
 		prox_reward_left = 0
 		prox_reward_right = 0
 		if self.sim.terminate:
@@ -75,12 +76,7 @@ class VrepEnvironment:
 			else:
 				if not self.sim.collision:
 					prox_reward_left = -1
-		return np.array([-self.sim.angle_to_target, self.sim.angle_to_target, prox_reward_left, prox_reward_right]) * reward_factor
-
-	def get_relative_reward(self, angle):
-		r = (self.sim.angle_to_target - angle) / a_max
-		reward = np.array([-r, r, 0, 0]) * reward_factor
-		return reward
+		return np.array([-att, att, prox_reward_left * reward_factor_oa, prox_reward_right * reward_factor_oa])
 
 	def get_state(self):
 		new_state = np.zeros((resolution[0], resolution[1]), dtype=float)

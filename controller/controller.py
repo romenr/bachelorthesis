@@ -34,12 +34,11 @@ model = Model()
 
 # Read network weights
 h5f = h5py.File(path.join(args.dir, param.weights_file), 'r')
-w_l = np.array(h5f['w_l'], dtype=float)
-w_r = np.array(h5f['w_r'], dtype=float)
-model.snn_tf.set_weights(w_l, w_r)
+w_tf = np.array(h5f['w_tf'], dtype=float)
+model.snn_tf.set_weights(w_tf[0], w_tf[1])
 if is_oa:
-	w_p = np.array(h5f['w_p'], dtype=float)
-	model.snn_oa.set_weights(w_p[0], w_p[1])
+	w_oa = np.array(h5f['w_oa'], dtype=float)
+	model.snn_oa.set_weights(w_oa[0], w_oa[1])
 h5f.close()
 
 if is_oa:

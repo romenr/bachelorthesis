@@ -46,7 +46,8 @@ w0_max = 1100.						# Maximum initial random value
 tau_n = 200.						# Time constant of reward signal
 tau_c = 1000.						# Time constant of eligibility trace
 
-reward_factor = 0.1			# Reward factor modulating reward signal strength
+reward_factor_oa = 0.1				# Reward factor modulating reward signal strength for obstacle avoidance
+reward_factor_tf = 0.002			# Target following
 A_plus = 1.							# Constant scaling strength of potentiaion
 A_minus = 1.						# Constant scaling strength of depression
 
@@ -75,11 +76,11 @@ default_temperature = 128			# Default temperature of the simulation
 reset_steps = 30						# After how many steps without seeing the target should the simulation reset
 episode_steps = 2000				# Maximum steps in one episode
 rate = 20.							# ROS publication rate (step = 1/rate = 50ms)
-training_length = 40000		    	# Length of training procedure (1 step ~ 50 ms)
-evaluation_length = 20000			# Length of evaluation procedure
+training_length = 4000		    	# Length of training procedure (1 step ~ 50 ms)
+evaluation_length = 2000			# Length of evaluation procedure
 
 # Path numbers
-plus_path = 2						# Simple path in + shape
-plus_path_mirrored = 3
-evaluation_path = 4					# Simple path in + shape
-evaluation_path_mirrored = 5
+plus_path = 1						# Simple path in + shape
+plus_path_mirrored = 2
+evaluation_path = 3					# Simple path in + shape
+evaluation_path_mirrored = 4
