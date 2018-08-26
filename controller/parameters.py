@@ -74,10 +74,9 @@ default_temperature = 128			# Default temperature of the simulation
 
 # Other
 reset_steps = 30						# After how many steps without seeing the target should the simulation reset
-episode_steps = 2000				# Maximum steps in one episode
 rate = 20.							# ROS publication rate (step = 1/rate = 50ms)
-training_length = 4000		    	# Length of training procedure (1 step ~ 50 ms)
-evaluation_length = 2000			# Length of evaluation procedure
+training_length = 40000		    	# Length of training procedure (1 step ~ 50 ms)
+evaluation_length = 20000			# Length of evaluation procedure
 
 # Path numbers
 plus_path = 1						# Simple path in + shape
