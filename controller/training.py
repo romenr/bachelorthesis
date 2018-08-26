@@ -93,6 +93,7 @@ h5f.close()
 # Save trained weights
 h5f = h5py.File(path.join(args.dir, param.weights_file), 'w')
 h5f.create_dataset('w_tf', data=weights_tf[-1])
-h5f.create_dataset('w_oa', data=weights_oa[-1])
+if is_oa:
+	h5f.create_dataset('w_oa', data=weights_oa[-1])
 h5f.close()
 

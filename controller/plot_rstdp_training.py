@@ -16,10 +16,11 @@ args = parser.parse_args()
 
 h5f = h5py.File(path.join(args.dir, param.training_file), 'r')
 
-w_l = np.array(h5f['w_l'], dtype=float)
-w_r = np.array(h5f['w_r'], dtype=float)
-w_p = np.array(h5f['w_p'], dtype=float)
-w_i = np.array(h5f['w_i'], dtype=float)
+w_tf = np.array(h5f['w_tf'], dtype=float)
+w_l = w_tf[:, 0]
+w_r = w_tf[:, 1]
+#w_p = np.zeros(10)#np.array(h5f['w_oa'], dtype=float)
+w_i = range(0, w_l.shape[0])
 episode_steps = np.array(h5f["episode_steps"], dtype=float)
 episode_completed = np.array(h5f['episode_completed'], dtype=bool)
 rewards = np.array(h5f['reward'], dtype=float)
@@ -81,9 +82,9 @@ ax6.set_xlim((0, xlim))
 ax6.set_ylim((param.w_min, param.w_max))
 ax6.text(1000, 2800, 'Obstacle avoidance', color='0.4')
 ax6.tick_params(axis='both', which='both', direction='in', bottom=True, top=True, left=True, right=True)
-for i in range(w_p.shape[1]):
-	for j in range(w_p.shape[2]):
-		plt.plot(w_i, w_p[:, i, j])
+#for i in range(w_p.shape[1]):
+#	for j in range(w_p.shape[2]):
+#		plt.plot(w_i, w_p[:, i, j])
 ax6.set_xlabel('Simulation Time [1 step = 50 ms]')
 ax6.set_ylabel("Weight")
 
