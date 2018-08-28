@@ -14,7 +14,7 @@ parser.add_argument('-n', '--noShow', help='Do not show the resulting Plot in a 
 parser.add_argument('dir', help='Base directory of the experiment eg. ./data/session_xyz', default=param.default_dir)
 args = parser.parse_args()
 
-h5f = h5py.File(path.join(args.dir, param.evaluation_file), 'r')
+h5f = h5py.File(path.join(args.dir, param.evaluation_file_oa), 'r')
 
 rewards = np.array(h5f['reward'], dtype=float)
 episode_steps = np.array(h5f["episode_steps"], dtype=int)
