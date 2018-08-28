@@ -117,3 +117,22 @@ We use the angle from the last time step when $c$ is $0$ witch happens when ther
 The obstacle avoidance controller makes sure the snake keeps a certain distance to obstacles. The network architecture is shown in figure \ref{fig:avoid_arch}. For this the 4 proximity sensors to the left and right of the snake are used. The preprocessing of the inputs goes as follows. First the maximum value gets assigned to a sensor if it senses nothing. Second there is a distance cut off after $3$m so everything farther away gets set to $3$. Next we divide by the maximum distance and take 1 minus that value as the input for the controller.
 The left neuron gets connected to the right proximity sensors and the right neuron to the left proximity sensors. The reward gets assigned inividually and event based. In case of a collision both receive a positive reward of $1$. When no collision happens but the robot looses sight while avoiding an obstacle the side it was evading reveives a reward of $-1$ .
 
+
+// Simulate the network and calculate the angle
+// Simulate functions return array with output neuron firing rates
+out_tf = network_tf.simulate(image_data)
+out_oa = network_oa.simulate(prox_data)
+angle_tf = tf_calculate_angle(tf_out)
+angle_oa = oa_calculate_angle(out_oa)
+
+// Check if the obstacle avoidance should take controll
+if sum(out_oa) > 0.25 then
+	// Check if following the snake avoids the obstacle
+	if abs(angle_tf) > abs(angle_oa) and sign(angle_tf) == sign(angle_oa) then
+		angle = angle_tf
+	else
+		angle = angle_oa
+	end
+else
+	angle = angle_tf
+end
