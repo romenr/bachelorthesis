@@ -27,14 +27,16 @@ Project setup
 	- cd external
 	- git clone https://github.com/CoppeliaRobotics/v_repStubsGen.git
 	- export PYTHONPATH=$PYTHONPATH:$PWD
-	- sudo apt-get install python-catkin-tools
-	- create a catkin folder and create a src folder in it (e.g. ~/catkin/src)
-	- go to catkin folder
+	- Install catkin anyway you like and create a workspace e.g.
+		- sudo apt-get install python-catkin-tools
+		- create a catkin folder and create a src folder in it (e.g. ~/catkin/src)
+		- go to catkin folder
 	- catkin init
+	- Copy the ros interface to the catkin workspace and rename it to vrep_ros_interface
 	- cp ~/vrep/programming/ros_packages/v_repExtRosInterface ~/catkin/src/vrep_ros_interface
 	- export VREP_ROOT="/home/user/Software/V-REP_PRO_EDU_V3_3_2_64_Linux/"
 	- in ~/catkin: catkin build
-	- in devel/lib should now be the file libv_repExtRosInterface.so
+	- in devel/lib should now be the file libv_repExtRosInterface.so, copy this file to the vrep
 	
 * Run roscore
 * go to vrep folder and run ./vrep.sh
