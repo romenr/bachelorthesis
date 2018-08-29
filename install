@@ -6,7 +6,7 @@ Project setup
 	- Use the Desktop-Full Install
 
  * Install Nest 2.14.0 http://www.nest-simulator.org/download/
-	- Install pip: sudo apt install python-pip
+	- Install pip: sudo apt-get install python-pip
 	- Install cython: pip install Cython
 	- python -m pip install --user numpy scipy matplotlib jupyter pandas sympy nose
 	- unzip nest and open the directory in a terminal then execute
