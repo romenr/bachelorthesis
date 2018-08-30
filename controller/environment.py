@@ -76,7 +76,7 @@ class VrepEnvironment:
 			else:
 				if not self.sim.collision:
 					prox_reward_left = -1
-		return np.array([-att, att, prox_reward_left * reward_factor_oa, prox_reward_right * reward_factor_oa])
+		return np.array([att, -att, prox_reward_left * reward_factor_oa, prox_reward_right * reward_factor_oa])
 
 	def get_state(self):
 		new_state = np.zeros((resolution[0], resolution[1]), dtype=float)

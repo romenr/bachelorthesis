@@ -79,7 +79,7 @@ class Simulation:
 		cv.waitKey(2)
 
 	def angle_to_target_callback(self, msg):
-		self.angle_to_target = -msg.data  # Why -msg.data
+		self.angle_to_target = msg.data
 
 	def path_completed_callback(self, msg):
 		if msg.data:
