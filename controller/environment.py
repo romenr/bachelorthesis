@@ -65,17 +65,15 @@ class VrepEnvironment:
 		prox_reward_left = 0
 		prox_reward_right = 0
 		if self.sim.terminate:
-			if np.any(self.sim.prox_sensor_data[1:3] > 0.) and self.sim.collision:
+			if self.sim.collision:
 				prox_reward_right = 1
 			else:
-				if not self.sim.collision:
-					prox_reward_right = -1
+				prox_reward_right = -1
 		if self.sim.terminate:
-			if np.any(self.sim.prox_sensor_data[3:] > 0.) and self.sim.collision:
+			if self.sim.collision:
 				prox_reward_left = 1
 			else:
-				if not self.sim.collision:
-					prox_reward_left = -1
+				prox_reward_left = -1
 		return np.array([att, -att, prox_reward_left * reward_factor_oa, prox_reward_right * reward_factor_oa])
 
 	def get_state(self):
