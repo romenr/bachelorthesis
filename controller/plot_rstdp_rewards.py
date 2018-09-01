@@ -15,9 +15,9 @@ parser.add_argument('dir', help='Base directory of the experiment eg. ./data/ses
 args = parser.parse_args()
 
 
-h5f = h5py.File(path.join(args.dir, param.training_file), 'r')
+h5f = h5py.File(path.join(args.dir, "training_data.h5"), 'r')
 
-rewards = np.array(h5f['reward'], dtype=float)
+rewards = np.array(h5f['reward'], dtype=float)[:, 0]
 episode_steps = np.array(h5f["episode_steps"], dtype=float)
 episode_max = np.max(episode_steps)
 for i in range(len(episode_steps) - 1):
@@ -29,7 +29,7 @@ fig = plt.figure(figsize=(10, 6))
 gs = gridspec.GridSpec(1, 1)
 
 # Skip s - 1 out of s values to increase plot readability
-s = 10
+s = 1
 
 # Plot 1 Plot Rewards in Episode i
 ax1 = plt.subplot(gs[0, 0])

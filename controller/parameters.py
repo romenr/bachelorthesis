@@ -49,7 +49,7 @@ tau_n = 200.						# Time constant of reward signal
 tau_c = 1000.						# Time constant of eligibility trace
 
 reward_factor_oa = 0.1				# Reward factor modulating reward signal strength for obstacle avoidance
-reward_factor_tf = 0.002			# Target following
+reward_factor_tf = 0.0005			# Target following
 A_plus = 1.							# Constant scaling strength of potentiaion
 A_minus = 1.						# Constant scaling strength of depression
 

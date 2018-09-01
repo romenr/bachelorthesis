@@ -17,17 +17,15 @@ cp parameters.py ${dir}
 
 # Train the Network
 echo "Training Network, saving results in ${dir}"
-python training.py ${dir}
+python training.py tf ${dir}
 
 # Create the Training plots
 echo "Creating Training Plots"
-python plot_rstdp_weights.py -n ${dir}
-python plot_rstdp_training.py -n ${dir}
-python plot_rstdp_rewards.py -n ${dir}
+python plot_rstdp_training.py tf -n ${dir}
 
 # Evaluate the Network
 echo "Checking Network performance, saving results in ${dir}"
-python controller.py ${dir}
+python controller.py tf ${dir}
 
 # Create the Evaluation plots
 echo "Creating Evaluation plots"

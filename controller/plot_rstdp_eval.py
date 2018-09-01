@@ -14,7 +14,7 @@ parser.add_argument('-n', '--noShow', help='Do not show the resulting Plot in a 
 parser.add_argument('dir', help='Base directory of the experiment eg. ./data/session_xyz', default=param.default_dir)
 args = parser.parse_args()
 
-h5f = h5py.File(path.join(args.dir, param.evaluation_file_oa), 'r')
+h5f = h5py.File(path.join(args.dir, param.evaluation_file_tf), 'r')
 
 rewards = np.array(h5f['reward'], dtype=float)
 episode_steps = np.array(h5f["episode_steps"], dtype=int)
@@ -70,6 +70,6 @@ ax5.grid(True)
 ax5.text(0.1, 0.9, 'mean = '+str(np.mean(angle_to_target))+' variance = '+str(np.var(angle_to_target)), transform=ax5.transAxes)
 
 fig.tight_layout()
-plt.savefig(path.join(args.dir, "eval.png"))
+plt.savefig(path.join(args.dir, "eval_tf.png"))
 if not args.noShow:
 	plt.show()
