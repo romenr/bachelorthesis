@@ -21,6 +21,11 @@ is_oa = args.controller == 'oa'
 
 if is_oa:
 	h5f = h5py.File(path.join(args.dir, param.training_file_oa), 'r')
+	w_tf = np.array(h5f['w_tf'], dtype=float)
+	w_l = w_tf[:, 0]
+	w_r = w_tf[:, 1]
+	w_i = range(0, w_l.shape[0])
+	w_p = np.array(h5f['w_oa'], dtype=float)
 else:
 	h5f = h5py.File(path.join(args.dir, param.training_file_tf), 'r')
 	w_tf = np.array(h5f['w_tf'], dtype=float)
@@ -30,7 +35,6 @@ else:
 
 
 
-#w_p = np.zeros(10)#np.array(h5f['w_oa'], dtype=float)
 episode_steps = np.array(h5f["episode_steps"], dtype=float)
 episode_completed = np.array(h5f['episode_completed'], dtype=bool)
 rewards = np.array(h5f['reward'], dtype=float)
@@ -39,7 +43,7 @@ angle_to_target = np.array(h5f['angle_to_target'], dtype=float)
 xlim = w_r.shape[0]
 
 fig = plt.figure(figsize=(7, 18))
-gs = gridspec.GridSpec(5, 1, height_ratios=[1, 2, 2, 1, 1])
+gs = gridspec.GridSpec(6, 1, height_ratios=[1, 2, 2, 1, 1,2])
 
 ax1 = plt.subplot(gs[0])
 values_x = np.array(range(episode_steps.size))
@@ -87,18 +91,16 @@ ax5.plot(angle_to_target)
 ax5.set_ylabel("Angle error")
 ax5.set_xlabel("Step")
 
-"""
 ax6 = plt.subplot(gs[5])
 ax6.set_xlim((0, xlim))
 ax6.set_ylim((param.w_min, param.w_max))
 ax6.text(1000, 2800, 'Obstacle avoidance', color='0.4')
 ax6.tick_params(axis='both', which='both', direction='in', bottom=True, top=True, left=True, right=True)
-#for i in range(w_p.shape[1]):
-#	for j in range(w_p.shape[2]):
-#		plt.plot(w_i, w_p[:, i, j])
+for i in range(w_p.shape[1]):
+	for j in range(w_p.shape[2]):
+		plt.plot(w_i, w_p[:, i, j])
 ax6.set_xlabel('Simulation Time [1 step = 50 ms]')
 ax6.set_ylabel("Weight")
-"""
 
 fig.tight_layout()
 plt.savefig(path.join(args.dir, "training_tf.png"))
