@@ -43,7 +43,11 @@ angle_to_target = np.array(h5f['angle_to_target'], dtype=float)
 xlim = w_r.shape[0]
 
 fig = plt.figure(figsize=(7, 18))
-gs = gridspec.GridSpec(6, 1, height_ratios=[1, 2, 2, 1, 1,2])
+gs = {}
+if is_oa:
+	gs = gridspec.GridSpec(6, 1, height_ratios=[1, 2, 2, 1, 1, 2])
+else:
+	gs = gridspec.GridSpec(5, 1, height_ratios=[1, 2, 2, 1, 1])
 
 ax1 = plt.subplot(gs[0])
 values_x = np.array(range(episode_steps.size))
@@ -91,16 +95,17 @@ ax5.plot(angle_to_target)
 ax5.set_ylabel("Angle error")
 ax5.set_xlabel("Step")
 
-ax6 = plt.subplot(gs[5])
-ax6.set_xlim((0, xlim))
-ax6.set_ylim((param.w_min, param.w_max))
-ax6.text(1000, 2800, 'Obstacle avoidance', color='0.4')
-ax6.tick_params(axis='both', which='both', direction='in', bottom=True, top=True, left=True, right=True)
-for i in range(w_p.shape[1]):
-	for j in range(w_p.shape[2]):
-		plt.plot(w_i, w_p[:, i, j])
-ax6.set_xlabel('Simulation Time [1 step = 50 ms]')
-ax6.set_ylabel("Weight")
+if is_oa:
+	ax6 = plt.subplot(gs[5])
+	ax6.set_xlim((0, xlim))
+	ax6.set_ylim((param.w_min, param.w_max))
+	ax6.text(1000, 2800, 'Obstacle avoidance', color='0.4')
+	ax6.tick_params(axis='both', which='both', direction='in', bottom=True, top=True, left=True, right=True)
+	for i in range(w_p.shape[1]):
+		for j in range(w_p.shape[2]):
+			plt.plot(w_i, w_p[:, i, j])
+	ax6.set_xlabel('Simulation Time [1 step = 50 ms]')
+	ax6.set_ylabel("Weight")
 
 fig.tight_layout()
 plt.savefig(path.join(args.dir, "training_tf.png"))
