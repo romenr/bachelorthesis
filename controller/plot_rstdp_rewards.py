@@ -15,7 +15,7 @@ parser.add_argument('dir', help='Base directory of the experiment eg. ./data/ses
 args = parser.parse_args()
 
 
-h5f = h5py.File(path.join(args.dir, "training_data.h5"), 'r')
+h5f = h5py.File(path.join(args.dir, param.training_file_tf), 'r')
 
 rewards = np.array(h5f['reward'], dtype=float)[:, 0]
 episode_steps = np.array(h5f["episode_steps"], dtype=float)
@@ -23,7 +23,8 @@ episode_max = np.max(episode_steps)
 for i in range(len(episode_steps) - 1):
 	episode_steps[i + 1] += episode_steps[i]
 rewards = np.split(rewards, episode_steps.astype(int))
-#rewards = rewards[1::4]
+rewards = rewards[1::2]
+#rewards = rewards[0::2]
 
 fig = plt.figure(figsize=(10, 6))
 gs = gridspec.GridSpec(1, 1)
@@ -34,11 +35,11 @@ s = 1
 # Plot 1 Plot Rewards in Episode i
 ax1 = plt.subplot(gs[0, 0])
 for i in range(len(rewards) - 2):
-	ax1.plot(rewards[i][1::s], color=plt.cm.autumn(float(len(rewards) - i) / len(rewards)), label="Episode " + str(i))
+	ax1.plot(rewards[i][1::s], color=plt.cm.autumn(float(len(rewards) - i) / len(rewards)), label="Episode " + str(2 * i))
 ax1.plot(rewards[-2][1::s], color=(0, 0, 1, 1), label="Last Episode")
 ax1.plot([0, episode_max / float(s)], [0, 0], color='g', linestyle='-', linewidth=1)
 ax1.set_ylabel("Reward")
-ax1.set_xlabel(str(s) + " Steps")
+ax1.set_xlabel("Step")
 
 box = ax1.get_position()
 ax1.set_position([box.x0, box.y0, box.width * 0.8, box.height])

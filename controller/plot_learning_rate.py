@@ -14,8 +14,8 @@ parser.add_argument('-n', '--noShow', help='Do not show the resulting Plot in a 
 parser.add_argument('dir', help='Base directory of the experiment eg. ./data/session_xyz', default=param.default_dir)
 args = parser.parse_args()
 
-data_x = [895.55, 976.19, 1261.87, 1229.12]
-data_y = [0.01, 0.005, 0.001, 0.0005]
+data_x = [895.55, 976.19, 1316.7, 1261.87, 1229.12]
+data_y = [0.01, 0.005, 0.002, 0.001, 0.0005]
 
 fig = plt.figure()
 gs = gridspec.GridSpec(1, 1)

@@ -53,26 +53,31 @@ class VrepEnvironment:
 
 		s = self.get_state()						# New state
 		a = self.sim.angle_to_target				# Angle to target (error angle)
-		r = self.get_linear_reward()				# Received reward
+		r = self.get_reward()					# Received reward
 		t = self.sim.terminate						# Episode Terminates
 		n = self.steps								# Current step
 		p = self.sim.path_complete					# Terminated because Path was completed successfully
 
 		return s, a, r, t, n, p
 
-	def get_linear_reward(self):
+	def get_reward(self):
 		att = self.sim.angle_to_target * reward_factor_tf
-		prox_reward_left = self.get_prox_reward(np.any(self.sim.prox_sensor_data[3:] > 0.))
-		prox_reward_right = self.get_prox_reward(np.any(self.sim.prox_sensor_data[1:3] > 0.))
+		prox_reward_left, prox_reward_right = self.get_prox_reward()
 		return np.array([att, -att, prox_reward_left * reward_factor_oa, prox_reward_right * reward_factor_oa])
 
-	def get_prox_reward(self, obstacle_detected):
-		if not self.sim.terminate or not obstacle_detected:
-			return 0
-		if self.sim.collision:
-			return 1
+	def get_prox_reward(self):
+		if not self.sim.terminate or self.sim.collision_side_left is None:
+			return 0, 0
+		if self.sim.collision_side_left:
+			if self.sim.collision:
+				return -1, 1
+			else:
+				return 1, -1
 		else:
-			return -1
+			if self.sim.collision:
+				return 1, -1
+			else:
+				return -1, 1
 
 	def get_state(self):
 		new_state = np.zeros((resolution[0], resolution[1]), dtype=float)

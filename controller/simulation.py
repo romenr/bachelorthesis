@@ -24,6 +24,7 @@ class Simulation:
 		self.path_complete = False
 		self.collision = False
 		self.prox_sensor_data = np.zeros(5)
+		self.collision_side_left = None
 
 		# Ros Node snake_controller setup
 		# Control the Snake by publishing the Radius OR Angle Publisher
@@ -49,6 +50,7 @@ class Simulation:
 		self.angle_to_target = 0
 		self.img_set = False
 		self.prox_sensor_data = np.zeros(5)
+		self.collision_side_left = None
 
 		self.radius_pub.publish(0.0)
 		self.reset_pub.publish(True)
@@ -100,4 +102,6 @@ class Simulation:
 		data[data > 3] = 3.
 		data = np.ones(data.size) - (data / 3.)
 		self.prox_sensor_data = data
+		if np.any(data[1:] > 0):
+			self.collision_side_left = data[1:3].sum > data[3:].sum
 

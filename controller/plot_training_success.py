@@ -5,9 +5,8 @@ import h5py
 import matplotlib.pyplot as plt
 from matplotlib import gridspec
 from os import path
-import argparse
 import parameters as param
-import seaborn as sns
+import argparse
 
 # Configure Command Line interface
 controller = dict(tf="target following controller", oa="obstacle avoidance controller")
@@ -20,38 +19,45 @@ args = parser.parse_args()
 print "Using", controller[args.controller]
 is_oa = args.controller == 'oa'
 
-h5f = None
 if is_oa:
-	h5f = h5py.File(path.join(args.dir, param.evaluation_file_oa), 'r')
+	h5f = h5py.File(path.join(args.dir, param.training_file_oa), 'r')
+	w_tf = np.array(h5f['w_tf'], dtype=float)
+	w_l = w_tf[:, 0]
+	w_r = w_tf[:, 1]
+	w_i = range(0, w_l.shape[0])
+	w_p = np.array(h5f['w_oa'], dtype=float)
 else:
-	h5f = h5py.File(path.join(args.dir, param.evaluation_file_tf), 'r')
+	h5f = h5py.File(path.join(args.dir, param.training_file_tf), 'r')
+	w_tf = np.array(h5f['w_tf'], dtype=float)
+	w_l = w_tf[:, 0]
+	w_r = w_tf[:, 1]
+	w_i = range(0, w_l.shape[0])
 
-rewards = np.array(h5f['reward'], dtype=float)
-episode_steps = np.array(h5f["episode_steps"], dtype=int)
-angle_to_target = np.array(h5f['angle_to_target'], dtype=float)
+episode_steps = np.array(h5f["episode_steps"], dtype=float)
 episode_completed = np.array(h5f['episode_completed'], dtype=bool)
+rewards = np.array(h5f['reward'], dtype=float)
+angle_to_target = np.array(h5f['angle_to_target'], dtype=float)
+
+xlim = w_r.shape[0]
 
 fig = plt.figure()
 gs = gridspec.GridSpec(1, 1)
 
-# Calculate Values
-angle_to_target_sum = [0]
-for i in range(angle_to_target.size):
-	angle_to_target_sum.append(angle_to_target_sum[i-1] + abs(angle_to_target[i]))
-
-# Plot 5 Distribution of Distance
-ax5 = plt.subplot(gs[0])
-ax5.hist(angle_to_target, 50, facecolor='b', alpha=0.75, density=True)
-ax5.set_ylabel("Probability")
-ax5.set_xlabel("Distance error")
-ax5.grid(True)
-#ax5.text(0.1, 0.9, 'mean = '+str(np.mean(angle_to_target))+' variance = '+str(np.var(angle_to_target)), transform=ax5.transAxes)
-print 'mean = ', str(np.mean(angle_to_target)), ' variance = ', str(np.var(angle_to_target))
+ax1 = plt.subplot(gs[0])
+values_x = np.array(range(episode_steps.size))
+success_y = episode_steps[episode_completed]
+success_x = values_x[episode_completed]
+failures_y = episode_steps[~episode_completed]
+failures_x = values_x[~episode_completed]
+ax1.scatter(success_x, success_y, marker='^', color='g')
+ax1.scatter(failures_x, failures_y, marker='x', color='r')
+ax1.set_ylabel("Duration")
+ax1.set_xlabel("Episode")
 
 fig.tight_layout()
 if is_oa:
-	plt.savefig(path.join(args.dir, "dist_oa.png"))
+	plt.savefig(path.join(args.dir, "success_oa.png"))
 else:
-	plt.savefig(path.join(args.dir, "dist_tf.png"))
+	plt.savefig(path.join(args.dir, "success_tf.png"))
 if not args.noShow:
 	plt.show()

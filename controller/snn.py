@@ -40,7 +40,7 @@ def create_output_layer(n):
 	return output_layer, spike_detectors
 
 
-def connect_all_to_all_r_stdp(first_layer, second_layer):
+def connect_all_to_all_r_stdp(first_layer, second_layer, r_stdp_synapse_options):
 	"""Connect the first layer to the second layer with stdp dopamine synapses (r-stdp).
 	The layers are connected all to all method.
 	:param first_layer: The neurons of the first layer
@@ -124,7 +124,7 @@ class TargetFollowingSNN:
 	def __init__(self):
 		self.spike_generators, self.input_layer = create_input_layer(input_layer_size)
 		self.output_layer, self.spike_detectors = create_output_layer(output_layer_size)
-		connect_all_to_all_r_stdp(self.input_layer, self.output_layer)
+		connect_all_to_all_r_stdp(self.input_layer, self.output_layer, r_stdp_synapse_options_tf)
 
 		# Create connection handles
 		self.conn_l = nest.GetConnections(target=[self.output_layer[left_neuron]])
@@ -155,8 +155,7 @@ class ObstacleAvoidanceSNN:
 		self.spike_generators, self.input_layer = create_input_layer(4)
 		self.output_layer, self.spike_detectors = create_output_layer(2)
 		# Connect the right proximity sensors to the left neuron and the other way around
-		connect_all_to_all_r_stdp(self.input_layer[2:], [self.output_layer[left_neuron]])
-		connect_all_to_all_r_stdp(self.input_layer[:2], [self.output_layer[right_neuron]])
+		connect_all_to_all_r_stdp(self.input_layer, self.output_layer, r_stdp_synapse_options_oa)
 
 		# Create connection handles
 		self.conn_l = nest.GetConnections(target=[self.output_layer[left_neuron]])

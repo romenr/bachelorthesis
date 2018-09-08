@@ -28,6 +28,7 @@ class Model:
 
 		output, self.weights_tf = self.snn_tf.get_results()
 		output_p, self.weights_oa = self.snn_oa.get_results()
+		print output_p
 		angle = self.get_turning_angle(output)
 		dodge_angle = self.get_obstacle_avoidance_angle(output_p)
 

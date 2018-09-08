@@ -41,8 +41,10 @@ nest_kernel_status = {				# Nest Kernel initialization options
 # R-STDP parameters
 w_min = 0.							# Minimum weight value
 w_max = 3000.						# Maximum weight value
-w0_min = 1499.						# Minimum initial random value
-w0_max = 1501.						# Maximum initial random value
+w0_min_tf = 1500.						# Minimum initial random value
+w0_max_tf = 1501.						# Maximum initial random value
+w0_min_oa = 1000.						# Minimum initial random value
+w0_max_oa = 1001.						# Maximum initial random value
 # These tau_n and tau_c parameters are suggested by Izhikevich, E.M. (2007). Solving the distal reward problem
 # through linkage of STDP and dopamine signaling. Cereb. Cortex, 17(10), 2443-2452.
 tau_n = 200.						# Time constant of reward signal
@@ -53,14 +55,24 @@ reward_factor_tf = 0.002			# Target following
 A_plus = 1.							# Constant scaling strength of potentiaion
 A_minus = 1.						# Constant scaling strength of depression
 
-r_stdp_synapse_options = {					# Initialisation Options for R-STDP Synapses
+r_stdp_synapse_options_tf = {					# Initialisation Options for R-STDP Synapses
 	"model": "stdp_dopamine_synapse",		# R-STDP Model
 	"weight": {
 		"distribution": "uniform",				# Initial weight distribution
-		"low": w0_min,
-		"high": w0_max
+		"low": w0_min_tf,
+		"high": w0_max_tf
 	}
 }
+
+r_stdp_synapse_options_oa = {					# Initialisation Options for R-STDP Synapses
+	"model": "stdp_dopamine_synapse",		# R-STDP Model
+	"weight": {
+		"distribution": "uniform",				# Initial weight distribution
+		"low": w0_min_oa,
+		"high": w0_max_oa
+	}
+}
+
 
 # Snake turning model
 n_max = float(sim_time_step//t_refrac)         # Maximum input activity
