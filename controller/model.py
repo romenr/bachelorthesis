@@ -28,13 +28,13 @@ class Model:
 
 		output, self.weights_tf = self.snn_tf.get_results()
 		output_p, self.weights_oa = self.snn_oa.get_results()
-		print output_p
+
 		angle = self.get_turning_angle(output)
-		dodge_angle = self.get_obstacle_avoidance_angle(output_p)
+		angle_oa = self.get_obstacle_avoidance_angle(output_p)
 
 		if np.any(state["prox"][1:] > 0.25) and not (
-						abs(angle) > abs(dodge_angle) and np.sign(angle) == np.sign(dodge_angle)):
-			angle = dodge_angle
+						abs(angle) > abs(angle_oa) and np.sign(angle) == np.sign(angle_oa)):
+			angle = angle_oa
 		return angle
 
 	def get_turning_angle(self, snn_output):
