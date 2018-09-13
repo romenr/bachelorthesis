@@ -24,7 +24,8 @@ class Simulation:
 		self.path_complete = False
 		self.collision = False
 		self.prox_sensor_data = np.zeros(5)
-		self.collision_side_left = None
+		self.collision_side_left = True
+		self.target_pos = []
 
 		# Ros Node snake_controller setup
 		# Control the Snake by publishing the Radius OR Angle Publisher
@@ -50,7 +51,6 @@ class Simulation:
 		self.angle_to_target = 0
 		self.img_set = False
 		self.prox_sensor_data = np.zeros(5)
-		self.collision_side_left = None
 
 		self.radius_pub.publish(0.0)
 		self.reset_pub.publish(True)
@@ -69,11 +69,17 @@ class Simulation:
 		m = cv.moments(self.img, True)						# compute image moments
 		if m['m00'] == 0:
 			# If there is nothing visible
+			if self.target_pos and self.target_pos[-1] > 0:
+				self.target_pos.append(1.1)
+			else:
+				self.target_pos.append(-1.1)
 			self.target_last_seen += 1
 			if self.target_last_seen >= reset_steps:
 				self.terminate = True
 		else:
 			self.target_last_seen = 0
+			# normalized centroid position
+			self.target_pos.append(2 * m['m10'] / (m['m00'] * img_resolution[1]) - 1.0)
 
 		# Show the black and white image that the snake sees
 		dst = cv.resize(self.img, (200, 200))
@@ -102,6 +108,3 @@ class Simulation:
 		data[data > 3] = 3.
 		data = np.ones(data.size) - (data / 3.)
 		self.prox_sensor_data = data
-		if np.any(data[1:] > 0):
-			self.collision_side_left = data[1:3].sum > data[3:].sum
-

@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 import numpy as np
 import h5py
@@ -96,11 +97,14 @@ ax_3.set_xlim((0,xlim))
 ax_3.set_ylim((ymin1, ymax1))
 plt.grid(True)
 ax_3.tick_params(axis='both', which='both', direction='in', bottom=True, top=True, left=True, right=True)
-print w_l.shape
+print w_l.shape, w_l[-1]
 for i in range(w_l.shape[1]):
 	plt.plot(w_i, w_l[:,i])
 for item in ([ax_3.title, ax_3.xaxis.label, ax_3.yaxis.label] + ax_3.get_xticklabels() + ax_3.get_yticklabels()):
 	item.set_fontsize(16)
+#if is_oa:
+#	ax_3.legend([u'Left 60°', u'Left 30°', u'Right 30°', u'Right 60°'])
+
 
 ymin2 = param.w_min
 ymax2 = param.w_max

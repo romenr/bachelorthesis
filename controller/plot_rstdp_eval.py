@@ -9,12 +9,20 @@ import argparse
 import parameters as param
 
 # Configure Command Line interface
-parser = argparse.ArgumentParser(description='Plot the Controller evaluation results and show it in a Window')
+controller = dict(tf="target following controller", oa="obstacle avoidance controller")
+parser = argparse.ArgumentParser(description='Plot the final weights and show it in a Window')
+parser.add_argument('controller', choices=controller, default='oa', help="tf - target following, oa - obstacle avoidance")
 parser.add_argument('-n', '--noShow', help='Do not show the resulting Plot in a window', action="store_true")
 parser.add_argument('dir', help='Base directory of the experiment eg. ./data/session_xyz', default=param.default_dir)
 args = parser.parse_args()
 
-h5f = h5py.File(path.join(args.dir, param.evaluation_file_tf), 'r')
+print "Using", controller[args.controller]
+is_oa = args.controller == 'oa'
+
+if is_oa:
+	h5f = h5py.File(path.join(args.dir, param.evaluation_file_oa), 'r')
+else:
+	h5f = h5py.File(path.join(args.dir, param.evaluation_file_tf), 'r')
 
 rewards = np.array(h5f['reward'], dtype=float)
 episode_steps = np.array(h5f["episode_steps"], dtype=int)
@@ -70,6 +78,9 @@ ax5.grid(True)
 ax5.text(0.1, 0.9, 'mean = '+str(np.mean(angle_to_target))+' variance = '+str(np.var(angle_to_target)), transform=ax5.transAxes)
 
 fig.tight_layout()
-plt.savefig(path.join(args.dir, "eval_tf.png"))
+if is_oa:
+	plt.savefig(path.join(args.dir, "eval_oa.pdf"), bbox_inches='tight')
+else:
+	plt.savefig(path.join(args.dir, "eval_tf.pdf"), bbox_inches='tight')
 if not args.noShow:
 	plt.show()

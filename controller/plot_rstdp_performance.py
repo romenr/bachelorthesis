@@ -1,14 +1,34 @@
 import numpy as np
 import h5py
 from environment import *
-from parameters import *
+from os import path
+import parameters as param
+import argparse
 import matplotlib.pyplot as plt
 from matplotlib import gridspec
 
-env = VrepEnvironment()
+# Configure Command Line interface
+controller = dict(tf="target following controller", oa="obstacle avoidance controller")
+parser = argparse.ArgumentParser(description='Plot the final weights and show it in a Window')
+parser.add_argument('controller', choices=controller, default='oa', help="tf - target following, oa - obstacle avoidance")
+parser.add_argument('-n', '--noShow', help='Do not show the resulting Plot in a window', action="store_true")
+parser.add_argument('dir', help='Base directory of the experiment eg. ./data/session_xyz', default=param.default_dir)
+args = parser.parse_args()
 
-h5f = h5py.File(path + '/rstdp_performance_data_' + track_type +'.h5', 'r')
-distances = np.array(h5f['distance'], dtype=float)
+print "Using", controller[args.controller]
+is_oa = args.controller == 'oa'
+
+if is_oa:
+	h5f = h5py.File(path.join(args.dir, param.evaluation_file_oa), 'r')
+else:
+	h5f = h5py.File(path.join(args.dir, param.evaluation_file_tf), 'r')
+
+
+episode_steps = np.array(h5f["episode_steps"], dtype=int)
+episode_completed = np.array(h5f['episode_completed'], dtype=bool)
+distances = np.array(h5f['angle_to_target'], dtype=float)
+
+distances = distances[episode_steps[0]:np.sum(episode_steps[:2])]
 
 # Plot
 fig = plt.subplots(figsize=(12, 4))
@@ -21,13 +41,13 @@ xlim1 = distances.size
 plt.plot(distances, lw=3, color='darkorange')
 ax_1.set_xlim((0, xlim1))
 ax_1.set_ylim((-1.2, 1.2))
-ax_1.set_ylabel('Distance')
+ax_1.set_ylabel('Distance [rad]')
 ax_1.set_xlabel('Time Steps')
 my_xtick = np.arange(0, len(distances), 500)
 ax_1.set_xticks(my_xtick)
 plt.grid()
-plt.axhline(y=-1, color='green', lw=3, linestyle='--')
-plt.axhline(y=1, color='green', lw=3, linestyle='--')
+plt.axhline(y=-0.52, color='green', lw=3, linestyle='--')
+plt.axhline(y=0.52, color='green', lw=3, linestyle='--')
 
 # Plot Histgram figure
 ax_2 = plt.subplot(gs[1])
@@ -41,13 +61,17 @@ plt.axhline(y=0, linewidth=0.5, color='0.')
 ax_2.set_xlabel('Histogram')
 
 for item in ([ax_1.title, ax_1.xaxis.label, ax_1.yaxis.label] +
-             ax_1.get_xticklabels() + ax_1.get_yticklabels()):
-    item.set_fontsize(20)
+				ax_1.get_xticklabels() + ax_1.get_yticklabels()):
+	item.set_fontsize(20)
 
 for item in ([ax_2.title, ax_2.xaxis.label, ax_2.yaxis.label] +
-             ax_2.get_xticklabels() + ax_2.get_yticklabels()):
-    item.set_fontsize(20)
+				ax_2.get_xticklabels() + ax_2.get_yticklabels()):
+	item.set_fontsize(20)
 
 plt.subplots_adjust(wspace=0., hspace=0.1, right=0.88, left=0.1, bottom=0.2)
-plt.savefig(path + '/plot_rstdp_performance_'+ track_type +'.pdf', bbox_inches='tight')
+if is_oa:
+	plt.savefig(path.join(args.dir, "performance_oa.pdf"), bbox_inches='tight')
+else:
+	plt.savefig(path.join(args.dir, "performance_tf.pdf"), bbox_inches='tight')
+
 plt.show()

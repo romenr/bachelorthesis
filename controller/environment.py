@@ -18,14 +18,17 @@ class VrepEnvironment:
 		resize_x = img_resolution[1]//resolution[0]
 		resize_y = (img_resolution[0] - crop_top - crop_bottom)//resolution[1]
 		self.resize_factor = np.array([resize_x, resize_y])
+		self.rewards_tf = []
 
 		# Publish initial path
 		self.update_path()
 
 	def update_path(self):
 		if self.mirrored:
+			self.sim.collision_side_left = True
 			self.sim.select_path_pub.publish(self.path)
 		else:
+			self.sim.collision_side_left = False
 			self.sim.select_path_pub.publish(self.path_mirrored)
 
 	def reset(self):
@@ -37,6 +40,7 @@ class VrepEnvironment:
 			self.mirrored = not self.mirrored
 			self.update_path()
 		self.steps = 0
+		self.rewards_tf = []
 		self.sim.reset()
 		time.sleep(1)
 		return get_state_reward_zero()
@@ -62,22 +66,24 @@ class VrepEnvironment:
 
 	def get_reward(self):
 		att = self.sim.angle_to_target * reward_factor_tf
+		self.rewards_tf.append(att)
+		att = np.average(self.rewards_tf[-average_window:])
 		prox_reward_left, prox_reward_right = self.get_prox_reward()
 		return np.array([att, -att, prox_reward_left * reward_factor_oa, prox_reward_right * reward_factor_oa])
 
 	def get_prox_reward(self):
-		if not self.sim.terminate or self.sim.collision_side_left is None:
-			return 0, 0
+		if not self.sim.terminate or self.sim.path_complete:
+			return 0., 0.
 		if self.sim.collision_side_left:
 			if self.sim.collision:
-				return -1, 1
+				return -1., 1.
 			else:
-				return 1, -1
+				return 1., -1.
 		else:
 			if self.sim.collision:
-				return 1, -1
+				return 1., -1.
 			else:
-				return -1, 1
+				return -1., 1.
 
 	def get_state(self):
 		new_state = np.zeros((resolution[0], resolution[1]), dtype=float)

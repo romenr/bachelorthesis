@@ -1,0 +1,14 @@
+## TODO
+Move all discussions and opinions to discussion
+	fast slow changing weights reasons
+	discuss why the snake goes from failing early in each try to successfully do the path
+	In the first tries the snake fails the first turn. Then the snake manages to do the first turn but fails at the second in the opposite direction. Then the snake again succedes in the other direction but dosent fail on the second turn since it can now do bot turns just fine. Thats why it is now able to complete the path without problems.
+
+discuss in training details only the training and training results no opinions or discussion
+
+discuss in results only the results no opinions or discussion
+
+record weight center position in range -1,1 for result plot and decide wich one to use
+
+create plot for evaluation path
+
