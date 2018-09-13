@@ -38,6 +38,12 @@ if is_oa:
 	h5f.close()
 	model.snn_tf.set_weights(w_tf[0], w_tf[1])
 
+	w_l = param.w0_min_oa + np.random.rand(4) * (param.w0_max_oa - param.w0_min_oa)
+	w_r = param.w0_min_oa + np.random.rand(4) * (param.w0_max_oa - param.w0_min_oa)
+	model.snn_oa.set_weights(w_l, w_r)
+
+
+
 env = VrepEnvironment(param.plus_path, param.plus_path_mirrored)
 
 # Arrays of variables that will be saved

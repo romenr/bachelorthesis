@@ -35,10 +35,8 @@ class VrepEnvironment:
 		# Reset model
 		print "Terminate episode after", self.steps, "steps"
 		# Change path only if there is at least half the progress on this path than on the other one
-		if self.steps > self.path_step_count / 2:
-			self.path_step_count = self.steps
-			self.mirrored = not self.mirrored
-			self.update_path()
+		self.mirrored = not self.mirrored
+		self.update_path()
 		self.steps = 0
 		self.rewards_tf = []
 		self.sim.reset()
