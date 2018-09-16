@@ -99,6 +99,7 @@ h5f.create_dataset('reward', data=rewards)
 h5f.create_dataset('angle_to_target', data=angle_to_target)
 h5f.create_dataset('episode_steps', data=episode_steps)
 h5f.create_dataset('episode_completed', data=episode_completed)
+h5f.create_dataset('target_pos', data=env.sim.target_pos)
 h5f.close()
 
 # Save trained weights

@@ -27,6 +27,7 @@ else:
 episode_steps = np.array(h5f["episode_steps"], dtype=int)
 episode_completed = np.array(h5f['episode_completed'], dtype=bool)
 distances = np.array(h5f['angle_to_target'], dtype=float)
+#distances = np.array(h5f["target_pos"], dtype=float)
 
 distances = distances[episode_steps[0]:np.sum(episode_steps[:2])]
 
@@ -41,7 +42,7 @@ xlim1 = distances.size
 plt.plot(distances, lw=3, color='darkorange')
 ax_1.set_xlim((0, xlim1))
 ax_1.set_ylim((-1.2, 1.2))
-ax_1.set_ylabel('Distance [rad]')
+ax_1.set_ylabel('Angle')
 ax_1.set_xlabel('Time Steps')
 my_xtick = np.arange(0, len(distances), 500)
 ax_1.set_xticks(my_xtick)

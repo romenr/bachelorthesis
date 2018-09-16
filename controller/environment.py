@@ -25,10 +25,8 @@ class VrepEnvironment:
 
 	def update_path(self):
 		if self.mirrored:
-			self.sim.collision_side_left = True
 			self.sim.select_path_pub.publish(self.path)
 		else:
-			self.sim.collision_side_left = False
 			self.sim.select_path_pub.publish(self.path_mirrored)
 
 	def reset(self):

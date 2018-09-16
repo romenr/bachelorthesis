@@ -96,10 +96,10 @@ class Simulation:
 			self.path_complete = True
 
 	def collision_callback(self, msg):
-		if msg.data:
-			print "Collision! resetting simulation ..."
-			self.terminate = True
-			self.collision = True
+		print "Collision! resetting simulation ..."
+		self.terminate = True
+		self.collision = True
+		self.collision_side_left = msg.data
 
 	def prox_sensor_callback(self, msg):
 		data = np.array(msg.data)

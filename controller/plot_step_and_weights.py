@@ -42,6 +42,7 @@ else:
 
 episode_steps = np.array(h5f["episode_steps"], dtype=float)
 episode_completed = np.array(h5f['episode_completed'], dtype=bool)
+#dopamine = np.array(h5f["target_pos"], dtype=float)
 
 values_x = np.array(range(episode_steps.size))
 success_y = episode_steps[episode_completed]
@@ -75,7 +76,7 @@ ax_1.scatter(failures_x, failures_y, marker='x', color='r', s=12)
 
 ax_2 = plt.subplot(412)
 span_value = 20
-time_step = np.arange(0, 40000)
+time_step = np.arange(0, dopamine.size)
 fwd = ewma(dopamine, span=span_value)
 bwd = ewma(dopamine[::-1], span=span_value)
 c = np.vstack((fwd, bwd[::-1]))

@@ -43,16 +43,16 @@ w_min = 0.							# Minimum weight value
 w_max = 3000.						# Maximum weight value
 w0_min_tf = 1500.					# Minimum initial random value
 w0_max_tf = 1501.					# Maximum initial random value
-w0_min_oa = 500.						# Minimum initial random value
-w0_max_oa = 2000.					# Maximum initial random value
+w0_min_oa = 1000.						# Minimum initial random value
+w0_max_oa = 1001.					# Maximum initial random value
 # These tau_n and tau_c parameters are suggested by Izhikevich, E.M. (2007). Solving the distal reward problem
 # through linkage of STDP and dopamine signaling. Cereb. Cortex, 17(10), 2443-2452.
 tau_n = 200.						# Time constant of reward signal
 tau_c = 1000.						# Time constant of eligibility trace
 
-reward_factor_oa = 0.01				# Reward factor modulating reward signal strength for obstacle avoidance
+reward_factor_oa = 0.1				# Reward factor modulating reward signal strength for obstacle avoidance
 reward_factor_tf = 0.002			# Target following
-average_window = 60					# Size of the window used for averaging
+average_window = 20					# Size of the window used for averaging
 A_plus = 1.							# Constant scaling strength of potentiaion
 A_minus = 1.						# Constant scaling strength of depression
 

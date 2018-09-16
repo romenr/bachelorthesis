@@ -1,13 +1,12 @@
-#!/usr/bin/env python
-
 import numpy as np
 import h5py
+from environment import *
+from os import path
+import parameters as param
+import argparse
 import matplotlib.pyplot as plt
 from matplotlib import gridspec
-from os import path
-import argparse
-import parameters as param
-import seaborn as sns
+from scipy.stats import linregress
 
 # Configure Command Line interface
 controller = dict(tf="target following controller", oa="obstacle avoidance controller")
@@ -20,38 +19,38 @@ args = parser.parse_args()
 print "Using", controller[args.controller]
 is_oa = args.controller == 'oa'
 
-h5f = None
 if is_oa:
 	h5f = h5py.File(path.join(args.dir, param.evaluation_file_oa), 'r')
 else:
 	h5f = h5py.File(path.join(args.dir, param.evaluation_file_tf), 'r')
 
-rewards = np.array(h5f['reward'], dtype=float)
-episode_steps = np.array(h5f["episode_steps"], dtype=int)
-angle_to_target = np.array(h5f['angle_to_target'], dtype=float)
-episode_completed = np.array(h5f['episode_completed'], dtype=bool)
 
-fig = plt.figure()
+episode_steps = np.array(h5f["episode_steps"], dtype=int)
+episode_completed = np.array(h5f['episode_completed'], dtype=bool)
+distances = np.array(h5f['angle_to_target'], dtype=float)
+distances_vision = np.array(h5f["target_pos"], dtype=float)
+
+distances = (distances[episode_steps[0]:np.sum(episode_steps[:2])])
+distances_vision = (distances_vision[episode_steps[0]-1:np.sum(episode_steps[:2])-1])
+print linregress(distances, distances_vision)
+
+# Plot
+fig = plt.subplots()
 gs = gridspec.GridSpec(1, 1)
 
-# Calculate Values
-angle_to_target_sum = [0]
-for i in range(angle_to_target.size):
-	angle_to_target_sum.append(angle_to_target_sum[i-1] + abs(angle_to_target[i]))
+ax_1 = plt.subplot(gs[0])
 
-# Plot 5 Distribution of Distance
-ax5 = plt.subplot(gs[0])
-ax5.hist(angle_to_target, 50, facecolor='b', alpha=0.75, density=True)
-ax5.set_ylabel("Probability")
-ax5.set_xlabel("Distance error")
-ax5.grid(True)
-#ax5.text(0.1, 0.9, 'mean = '+str(np.mean(angle_to_target))+' variance = '+str(np.var(angle_to_target)), transform=ax5.transAxes)
-print 'mean = ', str(np.mean(angle_to_target)), ' variance = ', str(np.var(angle_to_target))
+plt.scatter(distances_vision, distances)
+ax_1.set_ylabel('Distance [rad]')
+ax_1.set_xlabel('Normalized centroid position')
+my_xtick = np.arange(0, len(distances), 500)
+plt.grid()
 
-fig.tight_layout()
+
+plt.subplots_adjust(wspace=0., hspace=0.1, right=0.88, left=0.1, bottom=0.2)
 if is_oa:
-	plt.savefig(path.join(args.dir, "dist_oa.png"))
+	plt.savefig(path.join(args.dir, "performance_oa.pdf"), bbox_inches='tight')
 else:
-	plt.savefig(path.join(args.dir, "dist_tf.png"))
-if not args.noShow:
-	plt.show()
+	plt.savefig(path.join(args.dir, "performance_tf.pdf"), bbox_inches='tight')
+
+plt.show()

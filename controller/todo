@@ -12,3 +12,5 @@ record weight center position in range -1,1 for result plot and decide wich one 
 
 create plot for evaluation path
 
+create plot for the network architectures
+
