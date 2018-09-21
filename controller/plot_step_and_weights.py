@@ -40,8 +40,12 @@ else:
 	w_i = range(0, w_l.shape[0])
 	dopamine = np.array(h5f['reward'], dtype=float)[:, 0]
 
-episode_steps = np.array(h5f["episode_steps"], dtype=float)
+episode_steps = np.array(h5f["episode_steps"], dtype=int)
 episode_completed = np.array(h5f['episode_completed'], dtype=bool)
+
+episode_completed = episode_completed[episode_steps > 5]
+episode_steps = episode_steps[episode_steps > 5]
+
 #dopamine = np.array(h5f["target_pos"], dtype=float)
 
 values_x = np.array(range(episode_steps.size))
@@ -51,7 +55,7 @@ failures_y = episode_steps[~episode_completed]
 failures_x = values_x[~episode_completed]
 
 # retrieve the dat
-steps = np.array(h5f["episode_steps"], dtype=float)
+steps =episode_steps
 
 # Plot
 fig= plt.subplots(figsize=(9, 14))

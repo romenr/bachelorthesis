@@ -43,14 +43,14 @@ w_min = 0.							# Minimum weight value
 w_max = 3000.						# Maximum weight value
 w0_min_tf = 1500.					# Minimum initial random value
 w0_max_tf = 1501.					# Maximum initial random value
-w0_min_oa = 1000.						# Minimum initial random value
-w0_max_oa = 1001.					# Maximum initial random value
+w0_min_oa = 1.						# Minimum initial random value
+w0_max_oa = 3000.					# Maximum initial random value
 # These tau_n and tau_c parameters are suggested by Izhikevich, E.M. (2007). Solving the distal reward problem
 # through linkage of STDP and dopamine signaling. Cereb. Cortex, 17(10), 2443-2452.
 tau_n = 200.						# Time constant of reward signal
 tau_c = 1000.						# Time constant of eligibility trace
 
-reward_factor_oa = 0.1				# Reward factor modulating reward signal strength for obstacle avoidance
+reward_factor_oa = 0.01				# Reward factor modulating reward signal strength for obstacle avoidance
 reward_factor_tf = 0.002			# Target following
 average_window = 20					# Size of the window used for averaging
 A_plus = 1.							# Constant scaling strength of potentiaion
@@ -88,7 +88,7 @@ prox_sensor_max_dist = 10.				# Maximum proximity sensor sensing range
 default_temperature = 128			# Default temperature of the simulation
 
 # Other
-reset_steps = 30						# After how many steps without seeing the target should the simulation reset
+reset_steps = 20						# After how many steps without seeing the target should the simulation reset
 rate = 20.							# ROS publication rate (step = 1/rate = 50ms)
 training_length = 40000		    	# Length of training procedure (1 step ~ 50 ms)
 evaluation_length = 20000			# Length of evaluation procedure

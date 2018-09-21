@@ -1,0 +1,218 @@
+hatten\begin{frame2
+    \frametitle{Voyager - Planung}
+    \begin{itemize}
+        \item Erste Sonde zur Erkundung der äußereren Planeten
+        \item Basierend auf dem Termoelectric Outer Planets Spacecraft
+        \item Ursprünglich 4-5 Sonden geplant
+        \item Auf Lebensdauer von 4 Jahren ausgelegt
+    \end{itemize}
+\end{frame}
+
+
+\begin{frame}
+    \frametitle{Voyager - Vor dem Start}
+    \begin{itemize}
+        \item Projektstart 1972
+        \item Starke Einschräkungen der NASA
+        \item Uranus/Neptun nicht mehr Missionsziele
+        \item Planung bis 1975 abgeschlossen
+        \item Über 10000 mögliche Flugbahnen
+    \end{itemize}
+\end{frame}
+
+
+\begin{frame}
+    \frametitle{Aufbau der Sonden}
+    \begin{itemize}
+        \begin{columns}[c]
+            \begin{column}[T]{5cm}
+                \item Sonden fast identisch
+                \item Vieles von Viking Sonden \\ kopiert
+                \item Stromversorgung durch \\ Radioisotopenbatterien
+                \item 16 Düsen für Kurskorrekturen
+            \end{column}
+            \begin{column}[T]{5.5cm}
+    \begin{figure}
+		        \includegraphics[height=6cm,width=5cm]{pics/voyager_sonde.png}
+                \caption{Zeichnung der Sonde\cite{Leitenberger_Voyager}}
+                \end{figure}
+            \end{column}
+        \end{columns}
+    \end{itemize}
+\end{frame}
+
+
+\begin{frame}
+    \frametitle{Boardcomputer}
+    \begin{itemize}
+        \item Einiges von Viking Sonden kopiert
+        \item Frei programmierbares System
+        \item Aufteilung in drei redundante Hauptsubsysteme
+            \begin{itemize}
+                \item Communication and Command Subsystem (CCS)
+                \item Attitude and Articulation Control System (AACS)
+                \item Flight Data Subsystem (FDS)
+            \end{itemize}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Communication and Command Subsystem I}
+    \begin{itemize}
+        \item Steuerung der anderen Subsysteme und der Sonde
+        \item Kommunikation mit der Erde
+        \item Kopiert aus der Viking Sonde
+        \item Anpassungen an Ein-/Ausgabe interface
+        \item AACSIN zur Überwachung des AACS
+    \end{itemize}
+\end{frame}
+
+
+\begin{frame}
+    \frametitle{Communication and Command Subsystem II}
+    \begin{itemize}
+        \item Drei mögliche Betriebsarten
+        \item Immer eingeschaltet
+        \item Aktiv zu 3\%-4\% der Zeit
+        \item 18-bit Prozessor mit 64 Befehlen
+        \item Komplettes System redundant
+    \end{itemize}
+\end{frame}
+
+
+\begin{frame}
+    \frametitle{Communication and Command Subsystem III}
+    \begin{center}
+    \begin{figure}
+		\includegraphics[height=6cm, width=11cm]{pics/voyager_ccs.jpg}
+        \caption{Aufbau des Viking CCS\cite{nasaphoto}}
+                \end{figure}
+    \end{center}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Flight Data Subsystem}
+    \begin{itemize}
+        \item Sammlung und Verarbeitung von Daten
+        \item Hohe Ein-/Ausgabegeschwindigkeiten notwending
+        \item Speicher aus CMOS Bausteinen
+    \end{itemize}
+    \begin{figure}
+    \begin{center}
+	\includegraphics[height=3.7cm, width=8cm]{pics/voyager_fds.jpg}
+    \caption{Voyagers FDS\cite{nasaphoto}}
+    \end{center}
+    \end{figure}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Attitude and Articulation Control System}
+    \begin{itemize}
+        \item Kontrolle und Ausrichtung der Sonde
+        \item Umgebaute Version des CCS mit HYPACE
+        \item Erstes aktives System
+        \item Beide AACS nie Gleichzeitig aktiv
+        \item Gyromodus und Sternenmodus
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Missionsablauf}
+    \begin{itemize}
+        \item Start am 20. August und 5. September 1977
+        \item Probleme mit Voyager 2 nach dem Start
+        \item Letzte Kurskorrekturen wurden durchgeführt
+        \item Planung für Jupiter Vorbeiflug
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Jupitervorbeiflug}
+    \begin{figure}
+    \begin{tikzpicture}
+        \node (img1) {
+            \includegraphics[height=4.5cm]{pics/voyager_io.jpg}
+        };
+        \node (img2) at (img1.south east)[yshift=0.5cm,xshift=2cm] {\includegraphics[height=4cm]{pics/voyager_jupiter}};
+        \end{tikzpicture}
+        \caption{Links: Mond IO von Voyager 1, Rechts: Jupiter mit IO von Voyager 2\cite{nasaphoto}}
+    \end{figure}
+\end{frame}
+
+
+%\begin{frame}
+    %\frametitle{Swing-by Resultat}
+    %\begin{figure} 
+        %\includegraphics[height=6cm,width=7cm]{pics/s.png}
+    %    \caption{Relative Geschwindigket von Voyager 2 zur Sonne}
+    %\end{figure}
+
+%\end{frame}
+
+\begin{frame}
+    \frametitle{Saturnvorbeiflug}
+    \begin{figure} 
+    \begin{tikzpicture}
+        \node (img1) {
+            \includegraphics[height=4.5cm]{pics/saturn_voyager1.jpg} 
+        };
+        \node (img2) at (img1.south east)[yshift=1.5cm,xshift=2cm] {\includegraphics[width=4cm]{pics/saturn_voyager2}};
+        \end{tikzpicture}
+        \caption{Links: Saturn von Voyager 1, Rechts: Saturnringe von Voyager 2\cite{nasaphoto}}
+    \end{figure}
+\end{frame}
+
+
+\begin{frame}
+    \frametitle{Voyager 1 - Missionsende}
+    \begin{columns}
+    \begin{column}[T]{0.5\textwidth}
+    \begin{itemize}
+        \item Keine weiteren \\ Planetenbesuche
+        \item Als Testobjekt für Voyager 2 benutzt
+        \item Seit 2007 Abschaltung der Systeme
+        \item 2025-2030 Ende der Sonde
+    \end{itemize}
+    \end{column}
+    \begin{column}[T]{0.5\textwidth}
+        \begin{figure}
+            \includegraphics[width=6cm, height=5cm]{pics/voyager1_end}
+            \caption{Voyager 1 Flugbahn\cite{nasaphoto}}
+        \end{figure}
+    \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Uranusvorbeiflug}
+    \begin{figure} 
+    \begin{tikzpicture}
+        \node (img1) {
+            \includegraphics[height=4.5cm]{pics/uranus.jpg} 
+        };
+        \node (img2) at (img1.south east)[yshift=1.5cm,xshift=2cm] {\includegraphics[width=4cm]{pics/uranus_ringe.jpg}};
+        \end{tikzpicture}
+        \caption{Links: Uranus von Voyager 2, Rechts: Uranusringe von Voyager 2\cite{nasaphoto}}
+    \end{figure}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Neptunvorbeiflug}
+    \begin{figure}
+    \begin{tikzpicture}
+        \node (img1) {
+            \includegraphics[height=4.5cm]{pics/neptun.jpg}
+        };
+        \node (img2) at (img1.south east)[yshift=1.5cm,xshift=2cm] {\includegraphics[width=4cm]{pics/triton.jpg}};
+        \end{tikzpicture}
+        \caption{Links: Neptunwolken von Voyager 2, Rechts: Mond Triton von Voyager 2\cite{nasaphoto}}
+    \end{figure}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Voyager - Missionsende}
+        \begin{figure}
+            \includegraphics[width=8cm,height=6cm]{pics/voyager_traj.jpg}
+            \caption{Voyager 1 und 2 Flugbahnen\cite{nasaphoto}}
+        \end{figure}
+\end{frame}

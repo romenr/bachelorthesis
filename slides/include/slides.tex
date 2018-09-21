@@ -1,0 +1,32 @@
+\usepackage[utf8]{inputenc}
+\usepackage{packages}
+\usepackage{beamermods}
+
+\setitemize{itemsep=0.5em,topsep=0.3em,label=\usebeamerfont*{itemize item}%
+  \usebeamercolor[fg]{itemize item}
+  \usebeamertemplate{itemize item}}
+
+% For beamer mode (default):
+\author[R. Romen]{Ren\'e Romen}
+\title[Bachelor Thesis]{Training a Spiking Neural Network using R-STDP to perform Autonomous Target Tracking on a Snake Car Robot}
+
+
+% For lecture mode (use package option 'lecture'):
+%\lecture[GRNVS]{Grundlagen Rechnernetze und Verteilte Systeme}
+%\module{IN0010}
+%\semester{SoSe\,2016}
+%\assistants{Johannes Naab, Stephan Günther, Maurice Leclaire}
+
+
+\usepackage{pgfpages}
+\usepackage{ifthen}
+% ============================================================================
+% jobname solution
+% ============================================================================
+\newif\ifsolution%
+\ifthenelse{\equal{\detokenize{notes}}{\jobname}}{%
+\setbeameroption{show notes on second screen=bottom}
+\setbeamercolor{note page}{bg=white, fg=black}
+\setbeamercolor{note title}{bg=white!95!black, fg=black}
+}{
+}

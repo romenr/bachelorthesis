@@ -1,0 +1,242 @@
+
+\begin{frame}
+	\frametitle{Galileo - Weg zum Start}
+	\begin{itemize}
+		\item Antrag genehmigt am 14.4.1977
+		\item Erforschung von Jupiter und seinen Monden
+		\item Flugbahn\"anderungen durch Monde
+		\item Raumsonde und Atmosph\"arenprobe
+		\item Geplanter Start 1982
+	\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+	\frametitle{Verteiltes Rechnen auf Galileo}
+	\begin{itemize}
+		\item CDS - Command and Data Subsystem
+		\item DPU - Data Processing Units
+		\item AACS - Attitude and Articulation Control Subsystem
+		\item Atmosph\"arensonde System
+		\item Systemsynchronisation über Clock alle 2.5 Millisekunden
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{CDS - Command and Data Subsystem}
+	\begin{itemize}
+		\item CDS besteht aus HLM, zwei LLM und Bus
+		\item HLM - High-level module
+		\begin{itemize}
+			\item RCA 1802, Speicher, Bussystem
+			\item Bus kontrolle, System\"uberwachung
+		\end{itemize}
+		\item LLM - Low-level modules
+		\begin{itemize}
+			\item RCA 1802, Speicher
+			\item \"Uberwachung der Raumsonde, Atmosph\"arenprobe
+		\end{itemize}
+		\item Identisches Backup
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{CDS Software}
+	\begin{itemize}
+		\item Assembler mit Macros (IF, DO, ASSIGN)
+		\item Vordergrund Prozesse z.B. Selbstest, Bus Kontrolle
+		\item Hintergrundprozesse 6 Virtuelle Maschinen
+		\item Jede VM hat einen Programmstack im Speicher
+		\item VM mit höherer Priorität bekommen mehr Rechenzeit
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{DPU - Data Processing Unit}
+	\begin{itemize}
+		\item Eine DPU pro Experiment
+		\item RCA 1802 und Speicher
+		\item Antenne im Time-Sharing Betrieb
+		\item Anfallende Daten gehen im n\"achsten Zeitslot zur Erde
+		\item Assembler
+		\item Eine DPU wurde mit FORTH programmiert
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{AACS - Attitude and Articulation Control Subsystem}
+	\begin{itemize}
+		\item Basiert auf Voyager's System
+		\item Zwei redundande ATAC - Applied Technologies Advanced Computer
+		\item Orientierung der Sonde im Raum
+		\item Ausrichtung der Instrumentenplattform
+		\item Z\"undung der Triebwerke
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{AACS}
+	\begin{itemize}
+		\item 16 Bit Computer bestehend aus vier 4 Bit AMD 2900 bitslice Prozessoren
+		\item 9,5 MHz
+		\item HAL/S Programme
+		\item Assembler Betriebssystem GRACOS - Galileo Real-time Attitude Control Operating System
+		\item SEU Problem anf\"allig
+		\item Ohne Versp\"atung beim Start Ausfall wegen Io m\"oglich
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{RCA 1802}
+	\begin{itemize}
+		\item Strahlengeh\"artet Silizium auf Saphir
+		\item 3.2 MHz Taktrate
+		\item RISC mit 8 Bit Befehlen, nur 16 Befehle
+		\item 16 Register zu je 16 Bit
+		\item Programmcounter und Indexregister kann frei gew\"ahlt werden
+		\item I/O direkt vom und in den Speicher
+	\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Start}
+	\begin{itemize}
+		\item Start verschoben in 1982, 1985 und 1986
+		\begin{itemize}
+			\item Verz\"ogerungen beim Spaceshuttle Programm
+			\item Pr\"asident Reagan
+			\item Challenger Katastrophe
+		\end{itemize}
+		\item Folgen jeder Verschiebung
+		\begin{itemize}
+			\item Neue Route zum Jupiter
+			\item Umbau der Raumsonde
+		\end{itemize}
+		\item Start am 18.10.1989
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Flug zum Jupiter \"Ubersicht}
+	\begin{itemize}
+		\item Dauer 6 Jahre
+		\item Schwung holen an Venus und zwei mal an Erde
+		\item Vorbeiflug an Planetoiden Gaspra und Ida
+		\item Primärmission beginnt beim Jupiter
+	\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+	\begin{figure}
+		\centering
+		\includegraphics[width=0.5\textwidth]{pics/venus.jpg}
+		\caption{Vorbeiflug an Venus am 14.2.1990\cite{nasaphoto}}
+		\label{VENUS}
+	\end{figure}
+\end{frame}
+
+\begin{frame}
+	\begin{figure}
+		\centering
+		\includegraphics[width=0.5\textwidth]{pics/erde0.jpg}
+		\caption{Vorbeiflug an Erde am 12.12.1990\cite{nasaphoto}}
+		\label{ERDE0}
+	\end{figure}
+\end{frame}
+
+\begin{frame}
+	\begin{figure}
+		\centering
+		\includegraphics[width=0.5\textwidth]{pics/gaspra.jpg}
+		\caption{Vorbeiflug an Planetoiden Gaspra am 29.10.1991\cite{nasaphoto}}
+		\label{GASPRA}
+	\end{figure}
+\end{frame}
+
+\begin{frame}
+	\begin{figure}
+		\centering
+		\includegraphics[width=0.7\textwidth]{pics/ida.jpg}
+		\caption{Vorbeiflug an Planetoiden Ida und sein Mond Dactyl am 28.8.1991\cite{nasaphoto}}
+		\label{IDA}
+	\end{figure}
+\end{frame}
+
+\begin{frame}
+	\begin{figure}
+		\centering
+		\includegraphics[width=0.7\textwidth]{pics/jupiter.jpg}
+		\caption{Komet Shoemaker-Levy 9 schl\"agt auf Jupiter ein. 22.7.1994\cite{nasaphoto}}
+		\label{JUPITER}
+	\end{figure}
+\end{frame}
+
+\begin{frame}
+	\begin{figure}
+		\centering
+		\includegraphics[width=0.8\textwidth]{pics/monde.jpg}
+		\caption{Die Galileischen Monde Io, Europa, Ganymede, und Callisto\cite{nasaphoto}}
+		\label{GALILEO_MONDE}
+	\end{figure}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Probleme wärend der Reise zum Jupiter}
+	\begin{itemize}
+		\item HGA - Hochgewinnantenne Entfaltet sich nicht
+		\item NGA - Niedriggewinnantenne nur \"Ubertragungsrate 10 Bit/s
+		
+		\item Bandrekorder reagiert für 18 Stunden nicht
+		\item Leichter Schaden f\"uhrt zu 16\% weniger Speicher
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Probleml\"osung durch Software Updates}
+	\begin{itemize}
+		\item Antenne Paketbasierter Betrieb
+		\item DPU's erstellen und w\"ahlen Pakete
+		\item Bilder werden auf Bandrekorder zwischengespeichert
+		\item CDS bearbeitet und komprimiert Bilder
+		\item DCT - Diskrete Cosinustransformation zur verlustbehaftete Bildkomprimierung (JPEG)
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Prim\"armission}
+	\begin{itemize}
+		\item 7.5.1995 bis 7.12.1997
+		\item 11 Orbits um Jupiter
+		\item Relativ naher Vorbeiflug an je einem Mond
+		\item Unerwartet große Treibstoffreserven nach Mission
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Verl\"angerungen}
+	\begin{itemize}
+		\item GEM - Galileo Europa Mission
+		\begin{itemize}
+			\item 8.12.1997 bis 31.12.1999
+			\item 14 Orbits, 7 Vorbeifl\"uge an Europa
+		\end{itemize}
+		\item GMM - Galileo Millennium Mission
+		\begin{itemize}
+			\item 1.2.2000 bis 21.9.2003
+			\item Probleme h\"aufen sich
+			\item Riskante Vorbeifl\"uge an Io
+		\end{itemize}
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Vielen Dank f\"ur Ihre Aufmerksamkeit!}
+	\begin{figure}
+		\centering
+		\includegraphics[width=0.6\textwidth]{pics/number_of_computers.png}
+		\caption{xkcd Comic\cite{xkcd}}
+		\label{NUMBER_OF_COMPUTERS}
+	\end{figure}
+\end{frame}
