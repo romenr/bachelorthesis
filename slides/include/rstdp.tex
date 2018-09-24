@@ -189,3 +189,27 @@
 			\end{overprint}
 	\end{columns}
 \end{frame}
+
+\begin{frame}
+	\frametitle{Evaluation}
+	\begin{itemize}
+		\item <1-> Average error $ e = \SI{7,39}{\degree}$
+		\item <2-> Average error $ e = \SI{8.71}{\degree}$
+	\end{itemize}
+	\begin{overprint}
+		\onslide<1>
+		\begin{figure}
+			\centering
+			\includegraphics[width=\textwidth]{img/performance_tf.pdf}
+			\caption{Performance on Target Following Task}
+			\label{fig:Performance_tf}
+		\end{figure}
+		\onslide<2>
+		\begin{figure}
+			\centering
+			\includegraphics[width=\textwidth]{img/performance_oa.pdf}
+			\caption{Performance on Target Tracking and Obstacle Avoidance Task}
+			\label{fig:Performance_oa}
+		\end{figure}
+	\end{overprint}
+\end{frame}
