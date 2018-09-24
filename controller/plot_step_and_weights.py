@@ -59,7 +59,7 @@ steps =episode_steps
 
 # Plot
 fig= plt.subplots(figsize=(9, 14))
-gs = gridspec.GridSpec(4, 1, height_ratios=[1, 1, 1, 1])
+gs = gridspec.GridSpec(1, 1, height_ratios=[1])
 
 ax_1 = plt.subplot(411)
 xlim1 = steps.size
@@ -110,7 +110,6 @@ for item in ([ax_3.title, ax_3.xaxis.label, ax_3.yaxis.label] + ax_3.get_xtickla
 #if is_oa:
 #	ax_3.legend([u'Left 60°', u'Left 30°', u'Right 30°', u'Right 60°'])
 
-
 ymin2 = param.w_min
 ymax2 = param.w_max
 ax_4 = plt.subplot(414, sharex=ax_3)
@@ -126,7 +125,8 @@ ax_4.set_xlabel('Simulation Time [1 step = 50 ms]')
 for item in ([ax_4.title, ax_4.xaxis.label, ax_4.yaxis.label] + ax_4.get_xticklabels() + ax_4.get_yticklabels()):
 	item.set_fontsize(16)
 
-plt.grid()
+plt.grid(True)
+
 
 plt.subplots_adjust(wspace=0., hspace=0.3, right=0.96, left=0.16, bottom=0.06, top=0.96)
 if is_oa:
