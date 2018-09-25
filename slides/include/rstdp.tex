@@ -1,22 +1,13 @@
 
 \begin{frame}
-	\frametitle{SNN and the Planar snake car model}
-	\begin{itemize}
-		\item Spiking Neuronal Networks are promising for robotics
-		\item \textbf{BUT} they can't be trained using gradient descend methods
-		\item Snake-like robots are very mobile
-		\item Simple planar snake robot with slithering gait model and wheels
-		\item Highlevel controll using SNN
-	\end{itemize}
-\end{frame}
-
-\begin{frame}
 	\frametitle{Task: Target Tracking}
 	\begin{columns}
 		\column{0.5\linewidth}
 			\begin{itemize}
-				\item <1-> Target Tracking
+				\item <1-> Target Tracking SNN
 				\item <2-> Prevent collisions with walls
+				\item <2-> Obstacle Avoidance SNN
+				\item <2-> R-STDP learning rule
 			\end{itemize}
 		\column{0.5\linewidth}
 			\begin{overprint}
@@ -43,11 +34,11 @@
 	\begin{columns}
 		\column{0.5\linewidth}
 			\begin{itemize}
-				\item <1-> Infrared image input $16 \times 4 $ pixel resolution
+				\item <1-> Infrared image $32 \times 32 $ pixel resolution
 				\item <2-> Image preprocessing
 				\item <3-> 64 Poisson input neurons
 				\item <3-> Feed forward architecture
-				\item <3-> Left and Right LIF output Neurons
+				\item <3-> Left and Right LIF output neurons
 			\end{itemize}
 		\column{0.5\linewidth}
 			\begin{overprint}
@@ -118,7 +109,7 @@
 				\item <2-> Proximity data preprocessing
 				\item <3-> 4 Poisson input neurons
 				\item <3-> Feed forward architecture
-				\item <3-> Left and Right LIF output Neurons
+				\item <3-> Left and right LIF output neurons
 			\end{itemize}
 		\column{0.5\linewidth}
 			\begin{overprint}
@@ -155,7 +146,6 @@
 				\item <1-> Output interpreted as angle
 				\[decode\left(n_{spikes}\right) = \frac{n_{spikes}}{n_{max}}\]
 				\[\alpha = \alpha_{max} \left(n_l - n_r\right)\]
-				\[\alpha_t = c \alpha + \left(1 - c\right) \alpha_{t-1}\]
 				\item <2-> Event based rewards on Episode failure
 				\item <2-> Left and right neuron get the opposite rewards of each other
 				\item <2-> 4 Reward cases, collision and target lost, obstacle left or right side
@@ -164,30 +154,83 @@
 \end{frame}
 
 \begin{frame}
-	\frametitle{Training}
+	\frametitle{Controller Selection}
+	\begin{itemize}
+		\item Both SNN return an angle
+		\item Select one as command for the robot
+		\item Choose the target tracking angle except if that brings the robot too close to an obstacle.
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Training Environment}
 	\begin{columns}
-		\column{0.5\linewidth}
-			\begin{itemize}
-				\item <1-> Training environments
-			\end{itemize}
-		\column{0.5\linewidth}
+		\column{\linewidth}
 			\begin{overprint}
 				\onslide<1>
 				\begin{figure}
 					\centering
-					\includegraphics[width=\textwidth]{img/tf_training_path.pdf}
-					\caption{Target tracking SNN training path.}
+					\includegraphics[height=0.6\textheight]{img/tf_training_path.pdf}
+					\caption{Target tracking SNN training path}
 					\label{fig:tf_training_path}
 				\end{figure}
-				\onslide<2>
+			\end{overprint}
+	\end{columns}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Training Target Tracking SNN}
+	\begin{figure}
+		\centering
+		\includegraphics[width=\textwidth]{img/success_tf.pdf}
+		\caption{Target Tracking Training}
+		\label{fig:tf_success}
+	\end{figure}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Training Target Tracking SNN}
+	\begin{figure}
+		\centering
+		\includegraphics[width=\textwidth]{img/weight_change_left_tf.pdf}
+		\caption{Left neuron weight changes during training}
+		\label{fig:tf_weight_changes_left}
+	\end{figure}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Training Environment}
+	\begin{columns}
+		\column{\linewidth}
+			\begin{overprint}
 				\begin{figure}
 					\centering
 					\includegraphics[height=0.6\textheight]{img/oa_training_path.pdf}
-					\caption{Obstacle avoidance SNN training path.}
+					\caption{Obstacle avoidance SNN training path}
 					\label{fig:oa_training_path}
 				\end{figure}
 			\end{overprint}
 	\end{columns}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Training Obstacle Avoidance SNN}
+	\begin{figure}
+		\centering
+		\includegraphics[width=\textwidth]{img/success_oa.pdf}
+		\caption{Obstacle Avoidance Training}
+		\label{fig:oa_success}
+	\end{figure}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Training Target Tracking SNN}
+	\begin{figure}
+		\centering
+		\includegraphics[width=\textwidth]{img/weight_change_left_oa.pdf}
+		\caption{Left neuron weight changes during training}
+		\label{fig:oa_weight_changes_left}
+	\end{figure}
 \end{frame}
 
 \begin{frame}
@@ -212,4 +255,8 @@
 			\label{fig:Performance_oa}
 		\end{figure}
 	\end{overprint}
+\end{frame}
+
+\begin{frame}
+	\frametitle{title}
 \end{frame}
